@@ -5,6 +5,7 @@ import java.awt.Graphics2D;
 import java.awt.GraphicsConfiguration;
 import java.awt.GraphicsDevice;
 import java.awt.GraphicsEnvironment;
+import java.awt.GridLayout;
 import java.awt.HeadlessException;
 import java.awt.Image;
 import java.awt.RenderingHints;
@@ -31,24 +32,28 @@ public class ZoomPanel extends JPanel {
 		originalImage = Imagen;
 		
 		final Zoom zoom = new Zoom();
-		JButton plus = new JButton(new AbstractAction("+") { 
+		JButton plus = new JButton(new AbstractAction("Zoom +") { 
 			@Override
 		  public void actionPerformed(ActionEvent e) {
 			  zoom.increaseZoom();
 		  }
 	  });
-	  JButton minus = new JButton(new AbstractAction("-") {
+	  JButton minus = new JButton(new AbstractAction("Zoom -") {
 		  @Override
 		  public void actionPerformed(ActionEvent e) {
 			  zoom.decreaseZoom();
 		  }
 	  });
  
-
+      JPanel BotonesPanel = new JPanel();
+      BotonesPanel.setLayout(new GridLayout(1,2));
+      BotonesPanel.add(plus);
+      BotonesPanel.add(minus);
+      
 	  this.setLayout(new BorderLayout());
-	  this.add(minus, BorderLayout.WEST);
 	  this.add(zoom, BorderLayout.CENTER);
-	  this.add(plus, BorderLayout.EAST);
+	  this.add(BotonesPanel, BorderLayout.SOUTH);
+	  
  
   }
  
