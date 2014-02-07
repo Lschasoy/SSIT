@@ -8,6 +8,7 @@ import java.io.IOException;
 import javax.imageio.ImageIO;
 import javax.swing.*;
 
+
 public class Ventana extends JFrame implements ActionListener{
 	
 	private static final long serialVersionUID = 1L;
@@ -83,7 +84,14 @@ public class Ventana extends JFrame implements ActionListener{
 		  if( e.getSource() == seleccionar){
 			  
 				 System.out.println("Seleccionar Imagen");
-			
+		
+                 SeleccionPanel selec = null;
+				 selec = new SeleccionPanel(ImagActPanel);
+				 setPreferredSize(new Dimension(680,420));                 
+                 add(selec);
+                 setVisible(true);
+          
+				 
 			  }
 			  if( e.getSource() == escalar){
 				  System.out.println("Escalar Imagen");		
@@ -93,10 +101,10 @@ public class Ventana extends JFrame implements ActionListener{
 				  
 				  frame.add(zoom);
 				  frame.setPreferredSize(new Dimension(680,420));
-				 
+				  setLocationRelativeTo( null );
 				  frame.pack();
 				  frame.setVisible(true);
-				  setLocationRelativeTo( null );
+				  
 			  }
 			  if( e.getSource() == girar){
 				  System.out.println("Girar Imagen");
