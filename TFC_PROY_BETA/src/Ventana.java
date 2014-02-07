@@ -16,6 +16,8 @@ public class Ventana extends JFrame implements ActionListener{
 	private JButton seleccionar, girar, escalar, recortar, cargar, salvar, salir;
 		
 	public BufferedImage originalImage;
+
+	Image imagen;
 	private int returnVal;
 	
 
@@ -98,6 +100,17 @@ public class Ventana extends JFrame implements ActionListener{
 			  }
 			  if( e.getSource() == girar){
 				  System.out.println("Girar Imagen");
+				  RotatedPanel rot = new RotatedPanel(originalImage);
+				  JFrame frame = new JFrame("Zoom a imagen");
+				  frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);			
+				  
+				  frame.add(rot);
+				  frame.setPreferredSize(new Dimension(680,420));
+				 
+				  frame.pack();
+				  frame.setVisible(true);
+				  setLocationRelativeTo( null );			
+				
 			  }
 			  if( e.getSource() == recortar){
 				  System.out.println("Recortar Imagen");
@@ -131,8 +144,6 @@ public class Ventana extends JFrame implements ActionListener{
 				  System.exit(0);
 			  }
 	}
-	
-	
 	
 	/*************************************************/
 	public Ventana (){
