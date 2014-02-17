@@ -10,7 +10,8 @@ public class Proyecto{
      
      win.setTitle("Proyecto fin de grado");
 	 win.setDefaultCloseOperation( JFrame.EXIT_ON_CLOSE );
-	 win.setSize( 1024, 680 );
+	 win.setResizable(false);
+	 win.setSize( 1024, 640 );	
 	 win.setLocationRelativeTo( null );
      win.setVisible(true);
      

@@ -15,7 +15,11 @@ import javax.swing.JPanel;
 
 public class SeleccionPanel extends JPanel {
 
-        private BufferedImage image;
+        /**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
+		private BufferedImage image;
         private Rectangle selection;
 
 
