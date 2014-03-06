@@ -21,6 +21,7 @@ public class RotatedPanel {
     }
  
     public static BufferedImage Rotar(BufferedImage image, double angle) {
+    	
         double sin = Math.abs(Math.sin(angle)), cos = Math.abs(Math.cos(angle));
         int w = image.getWidth(), h = image.getHeight();
         int neww = (int)Math.floor(w*cos+h*sin), newh = (int)Math.floor(h*cos+w*sin);

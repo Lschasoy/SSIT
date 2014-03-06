@@ -1,6 +1,9 @@
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.MouseEvent;
+import java.awt.event.MouseListener;
+import java.awt.event.MouseMotionListener;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
@@ -14,11 +17,20 @@ public class Ventana extends JFrame implements ActionListener{
 	private static final long serialVersionUID = 1L;
 
 	private JPanel Npanel, ImagActPanel, ImagFinalPanel, centralPanel;
-	private JButton seleccionar, girarIZQ, girarDCH, escalar, recortar, cargar, salvar, salir;
+	private JButton seleccionar, girarIZQ, girarDCH, ZoomPlus, ZoomMinus, recortar;
+	private JButton cargar, salvar, salir;
 
 	public  BufferedImage originalImage, finalImage;
 	private JFrame win2 = new JFrame();	
-	public  double degree = 45;  
+	public  double degree = 45;
+	
+	final ZoomPanel zoom = new ZoomPanel();
+	private float xScaleFactor = 1;
+	private float yScaleFactor = 1;
+	
+	Rectangle selection;
+    Point anchor;
+    
 
 
 	/*************************************************/
@@ -57,9 +69,13 @@ public class Ventana extends JFrame implements ActionListener{
 		seleccionar.setMaximumSize(seleccionar.getMaximumSize());
 
 
-		escalar = new JButton ("ZOOM");
-		escalar.addActionListener(this);
-		escalar.setMaximumSize(seleccionar.getMaximumSize());
+		ZoomPlus = new JButton ("ZOOM ++");
+		ZoomPlus.addActionListener(this);
+		ZoomPlus.setMaximumSize(seleccionar.getMaximumSize());
+		
+		ZoomMinus = new JButton ("ZOOM --");
+		ZoomMinus.addActionListener(this);
+		ZoomMinus.setMaximumSize(seleccionar.getMaximumSize());
 
 		girarIZQ = new JButton ("Girar IZQ");
 		girarIZQ.addActionListener(this);
@@ -75,7 +91,8 @@ public class Ventana extends JFrame implements ActionListener{
 		recortar.setMaximumSize(seleccionar.getMaximumSize());
 
 		Npanel.add(seleccionar);
-		Npanel.add(escalar);
+		Npanel.add(ZoomMinus);
+		Npanel.add(ZoomPlus);
 		Npanel.add(girarDCH);
 		Npanel.add(girarIZQ);
 		Npanel.add(recortar);
@@ -85,20 +102,45 @@ public class Ventana extends JFrame implements ActionListener{
 
 	/*************************************************/
 	public void actionPerformed(ActionEvent e) {
+		
 		  if( e.getSource() == seleccionar){
+			  System.out.println("Girar Imagen");
+					 			
+		  }
+		  if( e.getSource() == ZoomMinus){
+			  System.out.println("Zoom ++ Imagen");
+			  
+			      xScaleFactor -= 0.1;
+				  yScaleFactor -= 0.1;
 
-				 System.out.println("Seleccionar Imagen");
+				  ImagFinalPanel.removeAll();
+				  setVisible(true);
+				  
+				  finalImage = ZoomPanel.Zoom(originalImage, yScaleFactor, xScaleFactor);
+				  								
+				  
+				  ImageIcon ico = new ImageIcon(finalImage);
+				  JLabel label = new JLabel (ico);													
+				  ImagFinalPanel.add(label);
+				  setVisible(true);
+				  				  				 				  			 							 
 			  }
 		  
-			  if( e.getSource() == escalar){
-				  System.out.println("Escalar Imagen");		
-				  ZoomPanel zoom = new ZoomPanel(originalImage);
-				  
-				  win2.setPreferredSize(new Dimension(originalImage.getWidth() + 50,originalImage.getHeight() + 50));				 				  			  	
-				  win2.add(zoom);
-				  win2.pack();
-				  win2.setVisible(true);							 
-
+		  if( e.getSource() == ZoomPlus){
+			  System.out.println("Zoom ++ Imagen");
+			  
+			      xScaleFactor += 0.1;
+				  yScaleFactor += 0.1;
+				  	
+				  ImagFinalPanel.removeAll();
+				  finalImage = ZoomPanel.Zoom(originalImage, yScaleFactor, xScaleFactor );
+				  								
+				
+				  ImageIcon ico = new ImageIcon(finalImage);
+				  JLabel label = new JLabel (ico);													
+				  ImagFinalPanel.add(label);
+				  setVisible(true);
+				  				  				 				  			 							 
 			  }
 			  if( e.getSource() == girarIZQ){
 				  				  
@@ -111,8 +153,7 @@ public class Ventana extends JFrame implements ActionListener{
 				  ImagFinalPanel.removeAll();
 				  ImageIcon ico = new ImageIcon(finalImage);
 				  JLabel label = new JLabel (ico);													
-				  ImagFinalPanel.add(label);										             			      			   
-			      
+				  ImagFinalPanel.add(label);										             			      			   			      
 				  setVisible(true);
 				
 			  }
@@ -121,18 +162,13 @@ public class Ventana extends JFrame implements ActionListener{
 				  				  
 				  
 				  System.out.println("Girar Imagen");
-				  degree += 45;
-				
-				  RotatedPanel rot = new RotatedPanel();
-			
-				  finalImage = rot.Rotar(originalImage, degree);
-				  
+				  degree += 45;				
+				  RotatedPanel rot = new RotatedPanel();			
+				  finalImage = rot.Rotar(originalImage, degree);				  
 				  ImagFinalPanel.removeAll();													  
 				  ImageIcon ico = new ImageIcon(finalImage);
 				  JLabel label = new JLabel (ico);													
-				  ImagFinalPanel.add(label);			
-						              
-			      
+				  ImagFinalPanel.add(label);									             			      
 				  setVisible(true);				
 			  }
 			  
@@ -141,8 +177,12 @@ public class Ventana extends JFrame implements ActionListener{
 			  }
 			  if( e.getSource() == cargar){
 				    
+				    ImagActPanel.removeAll();
 				    Archivos arc = new Archivos();
 				    originalImage = arc.loadFile();
+				    // Aqui para cargar la imagen para los Algoritmo
+				    
+				    
 					ImageIcon ico = new ImageIcon(originalImage);				
 					JLabel label = new JLabel (ico);													
 					ImagActPanel.add(label);							
@@ -179,6 +219,5 @@ public class Ventana extends JFrame implements ActionListener{
 	    add(Panel_IZQ(), BorderLayout.SOUTH);
 	    add(centralPanel,BorderLayout.CENTER);
 
-	}
-	
+	}	
 }
