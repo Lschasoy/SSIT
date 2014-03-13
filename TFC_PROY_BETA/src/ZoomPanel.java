@@ -17,10 +17,7 @@ import javax.swing.JPanel;
   
 @SuppressWarnings("serial")
 public class ZoomPanel extends JPanel {
-	
-
- 
- 
+	 
 	  public static BufferedImage Zoom(BufferedImage originalImage, float xScaleFactor, float yScaleFactor) {
 		  
 		  int newW = (int) (originalImage.getWidth() * xScaleFactor);
