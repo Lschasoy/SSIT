@@ -6,28 +6,48 @@ import javax.swing.ImageIcon;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JButton;
+import javax.swing.JTextArea;
+
 import java.awt.BorderLayout;
+
 import javax.swing.JPanel;
+
 import java.awt.GridLayout;
 import java.awt.Color;
 import java.awt.event.ActionListener;
 import java.awt.event.ActionEvent;
 import java.awt.image.BufferedImage;
+
 import javax.swing.border.CompoundBorder;
 import javax.swing.border.BevelBorder;
+
 import java.awt.FlowLayout;
 import java.awt.Component;
+import javax.swing.JMenuBar;
+import javax.swing.JMenuItem;
+import javax.swing.JMenu;
+import javax.swing.JSeparator;
 
 
 public class Interfaz {
 
+	private String msg = "                 UNIVERSIDAD DE LA LAGUNA                             \n"
+			           + "   ESCUELA TECNICA SUPERIOR DE INGENIERIA INFORMATICA                 \n"
+			           + "   TRABAJO FIN DE GRADO - GRADO EN INGENIERIA INFORMATICA             \n"
+			           + "   TITULO: GUI para la ejecución de algoritmos de segmentación de imágenes  \n"
+			           + "   AUTOR : LEONARDO SIVERIO CHASOY                                    \n"
+			           + "   Verion beta: 1.0                                                   \n";
+	
+	
 	private JFrame miVentana;
 	private JPanel Npanel, ImagActPanel, ImagFinalPanel, centralPanel, panelSup;
 	private JButton seleccionar, girarIZQ, girarDCH, ZoomPlus, ZoomMinus, recortar;
-	private JButton cargar, salvar, salir;
 	public  BufferedImage originalImage, finalImage;
-	
+		
 	private float xScaleFactor = 1, yScaleFactor = 1, degree;
+	private JTextArea panelCMD;
+	
+
 
 	/**
 	 * Launch the application.
@@ -58,79 +78,125 @@ public class Interfaz {
 	private void initialize() {
 		miVentana = new JFrame();
 		miVentana.getContentPane().setBackground(Color.LIGHT_GRAY);
-		miVentana.setSize(1024, 480);
+		miVentana.setSize(1064, 700);
+				    
+		
+		miVentana.getContentPane().add(panelSup(), BorderLayout.NORTH);
+		miVentana.getContentPane().add(panelCentral(),BorderLayout.CENTER);								
+				
+	}
+	public JPanel panelCentral (){
 		
 		ImagActPanel = new JPanel();			
+		ImagActPanel.setBounds(250, 10, 790, 400);
 		ImagActPanel.setBorder(new BevelBorder(BevelBorder.LOWERED, Color.DARK_GRAY, null, null, null));
 		ImagActPanel.setBackground(Color.LIGHT_GRAY);
 		ImagActPanel.setAutoscrolls(true);
 		
+		panelCMD = new JTextArea(msg);
+		panelCMD.setLineWrap(true);
+		panelCMD.setColumns(10);
+		panelCMD.setRows(10);
+		panelCMD.setBounds(555, 415, 485, 180);
+		panelCMD.setBorder(new BevelBorder(BevelBorder.LOWERED, Color.DARK_GRAY, null, null, null));
+		panelCMD.setBackground(Color.LIGHT_GRAY);
+		
 		centralPanel = new JPanel();
-		centralPanel.setLayout(new GridLayout(1,2));
 
 		ImagFinalPanel =  new JPanel();
-		ImagFinalPanel.setBorder(new CompoundBorder(new BevelBorder(BevelBorder.LOWERED, new Color(128, 128, 128), null, null, null), null));
+		ImagFinalPanel.setBounds(250, 415, 300, 180);
+		ImagFinalPanel.setBorder(new BevelBorder(BevelBorder.LOWERED, Color.DARK_GRAY, null, null, null));
 		ImagFinalPanel.setBackground(Color.LIGHT_GRAY);
 		ImagFinalPanel.setAutoscrolls(true);
+		centralPanel.setLayout(null);
 		
 		centralPanel.add(ImagActPanel);					
-	    centralPanel.add(ImagFinalPanel); 
-	    
-	    panelSup = new JPanel();
-		panelSup.setLayout(new BoxLayout(panelSup, BoxLayout.Y_AXIS));
-		panelSup.setBorder(BorderFactory.createEmptyBorder(1, 1, 1, 1));
-		panelSup.setBackground(Color.white);
-		panelSup.add(panelMenu());
-		panelSup.add(panelTool());
+	    centralPanel.add(ImagFinalPanel);
+	    centralPanel.add(panelCMD);
 		
-	    
+		JPanel panelMenuImage = new JPanel();
+		panelMenuImage.setBounds(10, 415, 230, 180);
+		centralPanel.add(panelMenuImage);
 		
-		miVentana.getContentPane().add(panelSup, BorderLayout.NORTH);		
-		miVentana.getContentPane().add(centralPanel,BorderLayout.CENTER);
+		panelMenuImage.setBackground(Color.DARK_GRAY);
+		panelMenuImage.setLayout(new FlowLayout(FlowLayout.CENTER, 5, 5));
+		panelMenuImage.setBorder(new BevelBorder(BevelBorder.LOWERED, Color.DARK_GRAY, null, null, null));
+		centralPanel.add(panelIzq());
+		
+		return centralPanel;
+	}
+	public JPanel panelSup(){
+		
+		JPanel Spanel = new JPanel();
+		Spanel.setLayout(new BoxLayout(Spanel, BoxLayout.Y_AXIS));
+		Spanel.setBorder(new BevelBorder(BevelBorder.LOWERED, Color.DARK_GRAY, null, null, null));
+		Spanel.setBackground(Color.white);
+		Spanel.add(panelMenu());
+		
+		JSeparator separator = new JSeparator();
+		Spanel.add(separator);
+		Spanel.add(panelTool());
 				
+		return Spanel;
 	}
 	
+	public JPanel panelIzq(){
+		JPanel Ipanel = new JPanel();
+		Ipanel.setBackground(Color.LIGHT_GRAY);
+		Ipanel.setBounds(10, 10, 230, 400);
+		Ipanel.setLayout(new FlowLayout(FlowLayout.CENTER, 5, 5));
+		Ipanel.setBorder(new BevelBorder(BevelBorder.LOWERED, Color.DARK_GRAY, null, null, null));
+		return Ipanel;
+		
+	}	
 	/*************************************************/
-	public JPanel panelMenu(){
+	public JMenuBar panelMenu(){
 
-		JPanel Mpanel = new JPanel();
-		Mpanel.setAlignmentX(Component.LEFT_ALIGNMENT);
-		Mpanel.setLayout(new BoxLayout(Mpanel, BoxLayout.X_AXIS));
-		Mpanel.setBorder(BorderFactory.createEmptyBorder(2, 2, 5, 5));
-		Mpanel.setBackground(Color.LIGHT_GRAY);
-
-		cargar = new JButton("LOAD");
-		cargar.setAlignmentX(Component.RIGHT_ALIGNMENT);
-		cargar.addActionListener(new ActionListener() {
+		
+	
+		JMenuBar menuBar = new JMenuBar();
+		menuBar.setAlignmentX(Component.LEFT_ALIGNMENT);
+		
+		JMenu mnArchivos = new JMenu("Archivos");
+		mnArchivos.setBounds(0, 0, 20, 1064);
+		menuBar.add(mnArchivos);
+		//==================== Load Image ===================================
+		JMenuItem cargarImagen = new JMenuItem("Carga imagen");
+		cargarImagen.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				 ImagActPanel.removeAll();
+				    
+				    ImagActPanel.removeAll();
 				    Archivos arc = new Archivos();
 				    originalImage = arc.loadFile();
+				    msg = "$ > [load image] salida" + originalImage; 
+					panelCMD.setText(msg);
 				    mostrar(ImagActPanel, originalImage);				    				    
 					
 			}
 		});
-	    
-		cargar.setMaximumSize(cargar.getMaximumSize());
+		mnArchivos.add(cargarImagen);
+		//==================== Save Image ===================================
+		JMenuItem salvarImagen = new JMenuItem("Salvar imagen");
+		salvarImagen.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				 msg = "$ > [save image] salida" + originalImage; 
+				 panelCMD.setText(msg);   
+				    				    				    			
+			}
+		});
+		mnArchivos.add(salvarImagen);	
 
-
-		salvar = new JButton("SAVE");		
-		
-		salvar.setMaximumSize(salvar.getMaximumSize());
-
-		Mpanel.add(cargar);	
-		Mpanel.add(salvar);	
-
-		return Mpanel;
+		return menuBar;
 	}
 	/*************************************************/
 	public JPanel panelTool(){
 
 		Npanel = new JPanel();
+		Npanel.setAlignmentY(Component.TOP_ALIGNMENT);
 		Npanel.setAlignmentX(Component.LEFT_ALIGNMENT);
 		Npanel.setLayout(new BoxLayout(Npanel, BoxLayout.X_AXIS));
-		Npanel.setBorder(BorderFactory.createEmptyBorder(5, 5, 25, 25));
-		Npanel.setBackground(Color.LIGHT_GRAY);
+		Npanel.setBorder(BorderFactory.createEmptyBorder(5, 5, 5, 10));
+		Npanel.setBackground(Color.WHITE);
 
 		seleccionar = new JButton("Seleccionar");		
 		seleccionar.setMaximumSize(seleccionar.getMaximumSize());
@@ -142,9 +208,11 @@ public class Interfaz {
 			public void actionPerformed(ActionEvent e) {
 				xScaleFactor += 0.1;
 				yScaleFactor += 0.1;				  	
-				ImagFinalPanel.removeAll();
-				finalImage = ZoomPanel.Zoom(originalImage, yScaleFactor, xScaleFactor );
-				mostrar(ImagFinalPanel, finalImage);
+				ImagActPanel.removeAll();
+				finalImage = ZoomPanel.Zoom(originalImage, yScaleFactor, xScaleFactor );	
+				msg = "$ > [ZOOM ++] salida" + finalImage; 
+				panelCMD.setText(msg);
+				mostrar(ImagActPanel, finalImage);
 			}
 		});		
 		ZoomPlus.setMaximumSize(seleccionar.getMaximumSize());
@@ -155,9 +223,11 @@ public class Interfaz {
 			public void actionPerformed(ActionEvent e) {
 				  xScaleFactor -= 0.1;
 				  yScaleFactor -= 0.1;			
-				  ImagFinalPanel.removeAll();
+				  ImagActPanel.removeAll();
 				  finalImage = ZoomPanel.Zoom(originalImage, yScaleFactor, xScaleFactor);
-				  mostrar(ImagFinalPanel, finalImage);
+				  msg = "$ > [ZOOM --] salida" + finalImage; 
+				  panelCMD.setText(msg);
+				  mostrar(ImagActPanel, finalImage);
 			}
 		});		
 		ZoomMinus.setMaximumSize(seleccionar.getMaximumSize());
@@ -169,8 +239,10 @@ public class Interfaz {
 				 degree += 45;				 
 				 // RotatedPanel rot = new RotatedPanel();			
 				 finalImage = RotatedPanel.Rotar(originalImage, degree);
-				 ImagFinalPanel.removeAll();
-				 mostrar(ImagFinalPanel, finalImage);
+				 msg = "$ > [GIRAR IZQ] salida" + finalImage; 
+				 panelCMD.setText(msg);
+				 ImagActPanel.removeAll();
+				 mostrar(ImagActPanel, finalImage);
 			}
 		});			
 		girarIZQ.setMaximumSize(seleccionar.getMaximumSize());
@@ -182,8 +254,10 @@ public class Interfaz {
 				 degree -= 45;				 
 				 // RotatedPanel rot = new RotatedPanel();			
 				 finalImage = RotatedPanel.Rotar(originalImage, degree);
-				 ImagFinalPanel.removeAll();
-				 mostrar(ImagFinalPanel, finalImage);
+				 msg = "$ > [GIRAR DCH] salida" + finalImage; 
+				 panelCMD.setText(msg);
+				 ImagActPanel.removeAll();
+				 mostrar(ImagActPanel, finalImage);
 			}
 		});		
 		girarDCH.setMaximumSize(seleccionar.getMaximumSize());
@@ -203,6 +277,5 @@ public class Interfaz {
 		panel.add(label);							
 	    miVentana.setVisible(true);	
 	}
-	
 }
 
