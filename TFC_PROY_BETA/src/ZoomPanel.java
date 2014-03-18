@@ -35,6 +35,24 @@ public class ZoomPanel extends JPanel {
 		return result;
 	  }
 	  
+	  public static BufferedImage generarIcono(BufferedImage originalImage) {
+		  
+		  int newW = 60;
+		  int newH = 48;
+		  
+		  GraphicsConfiguration gc = getDefaultConfiguration();
+	      BufferedImage result = gc.createCompatibleImage(newW, newH, Transparency.TRANSLUCENT);
+	      Graphics2D g2 = result.createGraphics();
+	        
+		 
+		  g2.setRenderingHint(RenderingHints.KEY_INTERPOLATION, RenderingHints.VALUE_INTERPOLATION_BILINEAR);
+		  g2.clearRect(0, 0, newW, newH);
+		  g2.drawImage(originalImage, 0, 0, newW, newH, null);		  
+		  g2.dispose();
+		return result;
+		  
+	  }
+	  
 	  public static GraphicsConfiguration getDefaultConfiguration() {
 	        GraphicsEnvironment ge = GraphicsEnvironment.getLocalGraphicsEnvironment();
 	        GraphicsDevice gd = ge.getDefaultScreenDevice();

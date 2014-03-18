@@ -27,6 +27,15 @@ import javax.swing.JMenuBar;
 import javax.swing.JMenuItem;
 import javax.swing.JMenu;
 import javax.swing.JSeparator;
+import java.awt.Font;
+import javax.swing.JList;
+import javax.swing.AbstractListModel;
+import javax.swing.ListSelectionModel;
+import javax.swing.JSpinner;
+import javax.swing.SpinnerListModel;
+import javax.swing.JComboBox;
+import javax.swing.DefaultComboBoxModel;
+import java.awt.Toolkit;
 
 
 public class Interfaz {
@@ -40,13 +49,14 @@ public class Interfaz {
 	
 	
 	private JFrame miVentana;
-	private JPanel Npanel, ImagActPanel, ImagFinalPanel, centralPanel, panelSup;
+	private JPanel Npanel, ImagActPanel, panelHisto, centralPanel, panelMenuImage;
 	private JButton seleccionar, girarIZQ, girarDCH, ZoomPlus, ZoomMinus, recortar;
 	public  BufferedImage originalImage, finalImage;
 		
 	private float xScaleFactor = 1, yScaleFactor = 1, degree;
 	private JTextArea panelCMD;
-	
+	private Histograma histo;
+	private JTextArea textArea;
 
 
 	/**
@@ -77,6 +87,8 @@ public class Interfaz {
 	 */
 	private void initialize() {
 		miVentana = new JFrame();
+		miVentana.setIconImage(Toolkit.getDefaultToolkit().getImage("C:\\Users\\Leo\\git\\TFC_PRO\\TFC_PROY_BETA\\image\\icon.ico"));
+		miVentana.setTitle("TFG - sImage beta v.10");
 		miVentana.getContentPane().setBackground(Color.LIGHT_GRAY);
 		miVentana.setSize(1064, 700);
 				    
@@ -101,26 +113,29 @@ public class Interfaz {
 		panelCMD.setBorder(new BevelBorder(BevelBorder.LOWERED, Color.DARK_GRAY, null, null, null));
 		panelCMD.setBackground(Color.LIGHT_GRAY);
 		
-		centralPanel = new JPanel();
-
-		ImagFinalPanel =  new JPanel();
-		ImagFinalPanel.setBounds(250, 415, 300, 180);
-		ImagFinalPanel.setBorder(new BevelBorder(BevelBorder.LOWERED, Color.DARK_GRAY, null, null, null));
-		ImagFinalPanel.setBackground(Color.LIGHT_GRAY);
-		ImagFinalPanel.setAutoscrolls(true);
-		centralPanel.setLayout(null);
-		
-		centralPanel.add(ImagActPanel);					
-	    centralPanel.add(ImagFinalPanel);
-	    centralPanel.add(panelCMD);
-		
-		JPanel panelMenuImage = new JPanel();
+		panelMenuImage = new JPanel();		
 		panelMenuImage.setBounds(10, 415, 230, 180);
-		centralPanel.add(panelMenuImage);
-		
-		panelMenuImage.setBackground(Color.DARK_GRAY);
-		panelMenuImage.setLayout(new FlowLayout(FlowLayout.CENTER, 5, 5));
+		panelMenuImage.setBackground(Color.LIGHT_GRAY);
 		panelMenuImage.setBorder(new BevelBorder(BevelBorder.LOWERED, Color.DARK_GRAY, null, null, null));
+		panelMenuImage.setLayout(new FlowLayout(FlowLayout.LEFT, 5, 5));
+
+		panelHisto =  new JPanel();
+		panelHisto.setBounds(250, 415, 300, 180);
+		panelHisto.setBorder(new BevelBorder(BevelBorder.LOWERED, Color.DARK_GRAY, null, null, null));
+		panelHisto.setBackground(Color.LIGHT_GRAY);
+		panelHisto.setAutoscrolls(true);
+	
+		
+		centralPanel = new JPanel();
+		centralPanel.setLayout(null);
+		centralPanel.add(ImagActPanel);					
+	    centralPanel.add(panelHisto);
+	    centralPanel.add(panelCMD);
+	    centralPanel.add(panelMenuImage);
+	    
+		
+		
+	
 		centralPanel.add(panelIzq());
 		
 		return centralPanel;
@@ -144,8 +159,24 @@ public class Interfaz {
 		JPanel Ipanel = new JPanel();
 		Ipanel.setBackground(Color.LIGHT_GRAY);
 		Ipanel.setBounds(10, 10, 230, 400);
-		Ipanel.setLayout(new FlowLayout(FlowLayout.CENTER, 5, 5));
+		Ipanel.setLayout(new FlowLayout(FlowLayout.LEFT, 5, 5));
 		Ipanel.setBorder(new BevelBorder(BevelBorder.LOWERED, Color.DARK_GRAY, null, null, null));
+		
+		textArea = new JTextArea("Algortimos de segmentacion");
+		textArea.setBackground(Color.LIGHT_GRAY);
+		textArea.setFont(new Font("Lucida Fax", Font.PLAIN, 14));
+		Ipanel.add(textArea);
+		
+		JComboBox comboBox = new JComboBox();
+		comboBox.setModel(new DefaultComboBoxModel(new String[] {"Algoritmo_1", "Algoritmo_2", "Algoritmo_3", "Algoritmo_4"}));
+		comboBox.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent arg0) {
+				
+			}
+		});
+		
+		Ipanel.add(comboBox);
+						
 		return Ipanel;
 		
 	}	
@@ -168,9 +199,19 @@ public class Interfaz {
 				    ImagActPanel.removeAll();
 				    Archivos arc = new Archivos();
 				    originalImage = arc.loadFile();
-				    msg = "$ > [load image] salida" + originalImage; 
-					panelCMD.setText(msg);
-				    mostrar(ImagActPanel, originalImage);				    				    
+				    msg = "$ > [load image] salida" + originalImage; 					
+				    mostrar(ImagActPanel, originalImage);	
+				    
+				    histo = new Histograma();
+				    finalImage = histo.generarGrafica(originalImage);
+				    msg += "$ > [load image] Generando Histograma";
+				    mostrar(panelHisto, finalImage);
+				    
+				    finalImage = ZoomPanel.generarIcono(originalImage);
+				    mostrar(panelMenuImage, finalImage);
+				    msg += "$ > [load image] Generando Icono";
+				    
+				    panelCMD.setText(msg);
 					
 			}
 		});
@@ -213,6 +254,10 @@ public class Interfaz {
 				msg = "$ > [ZOOM ++] salida" + finalImage; 
 				panelCMD.setText(msg);
 				mostrar(ImagActPanel, finalImage);
+				
+				histo = new Histograma();
+			    finalImage = histo.generarGrafica(originalImage);
+			    mostrar(panelHisto, finalImage);
 			}
 		});		
 		ZoomPlus.setMaximumSize(seleccionar.getMaximumSize());
@@ -228,6 +273,10 @@ public class Interfaz {
 				  msg = "$ > [ZOOM --] salida" + finalImage; 
 				  panelCMD.setText(msg);
 				  mostrar(ImagActPanel, finalImage);
+				  
+				  histo = new Histograma();
+				  finalImage = histo.generarGrafica(originalImage);
+				  mostrar(panelHisto, finalImage);
 			}
 		});		
 		ZoomMinus.setMaximumSize(seleccionar.getMaximumSize());
