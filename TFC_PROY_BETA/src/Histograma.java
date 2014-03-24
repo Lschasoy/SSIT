@@ -76,13 +76,13 @@ public class Histograma{
  // ===============================================================
     public  BufferedImage grafica(BufferedImage image) {
        
-            int newW = 280, newH = 160;
+            int newW = 280, newH = 150;
     	    GraphicsConfiguration gc = getDefaultConfiguration();
             BufferedImage result = gc.createCompatibleImage(newW, newH, Transparency.TRANSLUCENT);
             Graphics2D g2 = result.createGraphics();
             
             g2.setColor(Color.LIGHT_GRAY);
-            g2.fillRect(5, 5, newW, newH);
+            g2.fillRect(5, 15, newW, newH);
             g2.setStroke(new BasicStroke(2));
             int xInterval = (int) ((double)newW / ((double)SIZE+1));
 

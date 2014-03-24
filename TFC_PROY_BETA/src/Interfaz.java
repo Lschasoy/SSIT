@@ -20,14 +20,18 @@ import java.awt.image.BufferedImage;
 
 import javax.swing.border.CompoundBorder;
 import javax.swing.border.BevelBorder;
+import javax.swing.table.TableCellRenderer;
 
 import java.awt.FlowLayout;
 import java.awt.Component;
+
 import javax.swing.JMenuBar;
 import javax.swing.JMenuItem;
 import javax.swing.JMenu;
 import javax.swing.JSeparator;
+
 import java.awt.Font;
+
 import javax.swing.JList;
 import javax.swing.AbstractListModel;
 import javax.swing.ListSelectionModel;
@@ -35,7 +39,16 @@ import javax.swing.JSpinner;
 import javax.swing.SpinnerListModel;
 import javax.swing.JComboBox;
 import javax.swing.DefaultComboBoxModel;
+
 import java.awt.Toolkit;
+
+import javax.swing.SwingConstants;
+
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
+
+import javax.swing.JTable;
+import javax.swing.table.DefaultTableModel;
 
 
 public class Interfaz {
@@ -49,19 +62,19 @@ public class Interfaz {
 	
 	
 	private JFrame miVentana;
-	private JPanel Npanel, ImagActPanel, panelHisto, centralPanel, panelMenuImage;
-	private JButton seleccionar, girarIZQ, girarDCH, ZoomPlus, ZoomMinus, recortar;
+	private JPanel Npanel, ImagActPanel, panelHisto, centralPanel;	
 	public  BufferedImage originalImage, finalImage;
 		
 	private float xScaleFactor = 1, yScaleFactor = 1, degree;
 	private JTextArea panelCMD;
 	private Histograma histo;
-	private JTextArea textArea;
-
-
-	/**
-	 * Launch the application.
-	 */
+	private JTable tablaMenuImage;
+	
+	
+	private MyTableModel modelo = new MyTableModel();
+	private Tools tools = new Tools();
+	
+	/******************* MAIN *****************************/	 
 	public static void main(String[] args) {
 		EventQueue.invokeLater(new Runnable() {
 			public void run() {
@@ -75,9 +88,7 @@ public class Interfaz {
 		});
 	}
 
-	/**
-	 * Create the application.
-	 */
+	/** Create the application. */
 	public Interfaz() {
 		initialize();
 	}
@@ -86,8 +97,7 @@ public class Interfaz {
 	 * Initialize the contents of the frame.
 	 */
 	private void initialize() {
-		miVentana = new JFrame();
-		miVentana.setIconImage(Toolkit.getDefaultToolkit().getImage("C:\\Users\\Leo\\git\\TFC_PRO\\TFC_PROY_BETA\\image\\icon.ico"));
+		miVentana = new JFrame();		
 		miVentana.setTitle("TFG - sImage beta v.10");
 		miVentana.getContentPane().setBackground(Color.LIGHT_GRAY);
 		miVentana.setSize(1064, 700);
@@ -96,6 +106,49 @@ public class Interfaz {
 		miVentana.getContentPane().add(panelSup(), BorderLayout.NORTH);
 		miVentana.getContentPane().add(panelCentral(),BorderLayout.CENTER);								
 				
+	}
+	
+	public JPanel panelMenuImage (){
+		
+		 JPanel pMenuImage = new JPanel();		
+		 pMenuImage.setBounds(10, 415, 230, 180);
+		 pMenuImage.setBackground(Color.LIGHT_GRAY);
+		 pMenuImage.setBorder(new BevelBorder(BevelBorder.LOWERED, Color.DARK_GRAY, null, null, null));
+		 pMenuImage.setLayout(new FlowLayout(FlowLayout.LEFT, 5, 5));
+		 
+		 // Inicializacion Table Model
+		 String [] nombreColumnas = {"Imagen", "Image", "Imagen"};
+		 Object [][] datosFila = {{null,null,null},{null,null,null}, {null,null,null}};
+		
+		 tablaMenuImage = new JTable();
+		 tablaMenuImage.setBorder(null);
+		 tablaMenuImage.setBackground(Color.LIGHT_GRAY);
+		 
+		 modelo.setDataVector(datosFila, nombreColumnas);
+		 tablaMenuImage.setModel(modelo);
+		 		 
+		/* tablaMenuImage.getColumnModel().getColumn(0).setCellRenderer(new ImagenMenu());	
+		 tablaMenuImage.getColumnModel().getColumn(1).setCellRenderer(new ImagenMenu());
+		 tablaMenuImage.getColumnModel().getColumn(2).setCellRenderer(new ImagenMenu()); */
+		 tablaMenuImage.setRowHeight(60);
+		 
+		 
+		
+		    		    
+		 tablaMenuImage.addMouseListener(new java.awt.event.MouseAdapter() {
+		 @Override
+		     public void mouseClicked(java.awt.event.MouseEvent evt) {
+		  		int row = tablaMenuImage.rowAtPoint(evt.getPoint());
+		    	int col = tablaMenuImage.columnAtPoint(evt.getPoint());
+		    		
+		    		msg = "\n$ > [ImageMenu] : image [" + row + col +"]" ; 
+					panelCMD.setText(msg);
+		    		
+		    	}
+		    });
+		 pMenuImage.add(tablaMenuImage);
+		 
+		return pMenuImage;
 	}
 	public JPanel panelCentral (){
 		
@@ -113,30 +166,26 @@ public class Interfaz {
 		panelCMD.setBorder(new BevelBorder(BevelBorder.LOWERED, Color.DARK_GRAY, null, null, null));
 		panelCMD.setBackground(Color.LIGHT_GRAY);
 		
-		panelMenuImage = new JPanel();		
-		panelMenuImage.setBounds(10, 415, 230, 180);
-		panelMenuImage.setBackground(Color.LIGHT_GRAY);
-		panelMenuImage.setBorder(new BevelBorder(BevelBorder.LOWERED, Color.DARK_GRAY, null, null, null));
-		panelMenuImage.setLayout(new FlowLayout(FlowLayout.LEFT, 5, 5));
+		
 
 		panelHisto =  new JPanel();
 		panelHisto.setBounds(250, 415, 300, 180);
 		panelHisto.setBorder(new BevelBorder(BevelBorder.LOWERED, Color.DARK_GRAY, null, null, null));
 		panelHisto.setBackground(Color.LIGHT_GRAY);
 		panelHisto.setAutoscrolls(true);
-	
+		 JLabel lblHistogramaRgb = new JLabel("Histograma RGB");
+		    panelHisto.add(lblHistogramaRgb);
 		
 		centralPanel = new JPanel();
 		centralPanel.setLayout(null);
+		
+	   // =============== Panel de la parte central ===================================
 		centralPanel.add(ImagActPanel);					
 	    centralPanel.add(panelHisto);
-	    centralPanel.add(panelCMD);
-	    centralPanel.add(panelMenuImage);
 	    
-		
-		
-	
-		centralPanel.add(panelIzq());
+	    centralPanel.add(panelCMD);
+	    centralPanel.add(panelMenuImage());	    						   	   	    
+		centralPanel.add(panelIzq());		
 		
 		return centralPanel;
 	}
@@ -162,15 +211,16 @@ public class Interfaz {
 		Ipanel.setLayout(new FlowLayout(FlowLayout.LEFT, 5, 5));
 		Ipanel.setBorder(new BevelBorder(BevelBorder.LOWERED, Color.DARK_GRAY, null, null, null));
 		
-		textArea = new JTextArea("Algortimos de segmentacion");
-		textArea.setBackground(Color.LIGHT_GRAY);
-		textArea.setFont(new Font("Lucida Fax", Font.PLAIN, 14));
-		Ipanel.add(textArea);
+	    JLabel lblAlgo = new JLabel("Algoritmos de Segmentacion");
+		Ipanel.add(lblAlgo);
 		
-		JComboBox comboBox = new JComboBox();
+		final JComboBox comboBox = new JComboBox();
 		comboBox.setModel(new DefaultComboBoxModel(new String[] {"Algoritmo_1", "Algoritmo_2", "Algoritmo_3", "Algoritmo_4"}));
 		comboBox.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent arg0) {
+				
+				msg += "\n$ > [Selector de Algoritmo] : Algoritmo" + (comboBox.getSelectedIndex() + 1); 
+				panelCMD.setText(msg);				
 				
 			}
 		});
@@ -182,9 +232,7 @@ public class Interfaz {
 	}	
 	/*************************************************/
 	public JMenuBar panelMenu(){
-
 		
-	
 		JMenuBar menuBar = new JMenuBar();
 		menuBar.setAlignmentX(Component.LEFT_ALIGNMENT);
 		
@@ -196,10 +244,14 @@ public class Interfaz {
 		cargarImagen.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				    
-				    ImagActPanel.removeAll();
+				   
 				    Archivos arc = new Archivos();
-				    originalImage = arc.loadFile();
-				    msg = "$ > [load image] salida" + originalImage; 					
+				    originalImage = arc.loadFile();				   
+				    msg = "$ > [load image]: Name" + arc.getImageName();
+				    msg += "\n$ > [return]:" + originalImage;
+				    
+				    
+				    ImagActPanel.removeAll();
 				    mostrar(ImagActPanel, originalImage);	
 				    
 				    histo = new Histograma();
@@ -207,11 +259,10 @@ public class Interfaz {
 				    msg += "$ > [load image] Generando Histograma";
 				    mostrar(panelHisto, finalImage);
 				    
-				    finalImage = ZoomPanel.generarIcono(originalImage);
-				    mostrar(panelMenuImage, finalImage);
-				    msg += "$ > [load image] Generando Icono";
-				    
-				    panelCMD.setText(msg);
+				    modelo.setValueAt("TFC_PROY_BETA\\imagen"+arc.getImageName(), 1, 1 );        
+				    tablaMenuImage.repaint();
+				    msg += "$ > [load image] Generando Icono";				 			    
+				    panelCMD.setText(msg);				    				   
 					
 			}
 		});
@@ -220,12 +271,25 @@ public class Interfaz {
 		JMenuItem salvarImagen = new JMenuItem("Salvar imagen");
 		salvarImagen.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
+				 
+				 Archivos arc = new Archivos();
+			     arc.saveFile();
+				
 				 msg = "$ > [save image] salida" + originalImage; 
 				 panelCMD.setText(msg);   
 				    				    				    			
 			}
 		});
-		mnArchivos.add(salvarImagen);	
+		mnArchivos.add(salvarImagen);
+		
+	//==================== EXIT ===================================
+		JMenuItem itemExit = new JMenuItem("Exit");
+		itemExit.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				System.exit(0);			    			
+			}
+		});
+		mnArchivos.add(itemExit);
 
 		return menuBar;
 	}
@@ -239,18 +303,18 @@ public class Interfaz {
 		Npanel.setBorder(BorderFactory.createEmptyBorder(5, 5, 5, 10));
 		Npanel.setBackground(Color.WHITE);
 
-		seleccionar = new JButton("Seleccionar");		
+		JButton seleccionar = new JButton("Seleccionar");		
 		seleccionar.setMaximumSize(seleccionar.getMaximumSize());
 		Npanel.add(seleccionar);
 
 		//==================== ZOOM ++ ===================================
-		ZoomPlus = new JButton ("ZOOM ++");
+		JButton ZoomPlus = new JButton ("ZOOM ++");
 		ZoomPlus.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				xScaleFactor += 0.1;
 				yScaleFactor += 0.1;				  	
 				ImagActPanel.removeAll();
-				finalImage = ZoomPanel.Zoom(originalImage, yScaleFactor, xScaleFactor );	
+				finalImage = Tools.Zoom(originalImage, yScaleFactor, xScaleFactor );	
 				msg = "$ > [ZOOM ++] salida" + finalImage; 
 				panelCMD.setText(msg);
 				mostrar(ImagActPanel, finalImage);
@@ -263,13 +327,13 @@ public class Interfaz {
 		ZoomPlus.setMaximumSize(seleccionar.getMaximumSize());
 		Npanel.add(ZoomPlus);
 		//==================== ZOOM -- =================================== 
-		ZoomMinus = new JButton ("ZOOM --");
+		JButton ZoomMinus = new JButton ("ZOOM --");
 		ZoomMinus.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				  xScaleFactor -= 0.1;
 				  yScaleFactor -= 0.1;			
 				  ImagActPanel.removeAll();
-				  finalImage = ZoomPanel.Zoom(originalImage, yScaleFactor, xScaleFactor);
+				  finalImage = Tools.Zoom(originalImage, yScaleFactor, xScaleFactor);
 				  msg = "$ > [ZOOM --] salida" + finalImage; 
 				  panelCMD.setText(msg);
 				  mostrar(ImagActPanel, finalImage);
@@ -282,12 +346,12 @@ public class Interfaz {
 		ZoomMinus.setMaximumSize(seleccionar.getMaximumSize());
 		Npanel.add(ZoomMinus);
 		//==================== GIRAR IZQ =================================== 
-		girarIZQ = new JButton ("Girar IZQ");
+		JButton girarIZQ = new JButton ("Girar IZQ");
 		girarIZQ.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent arg0) {
 				 degree += 45;				 
 				 // RotatedPanel rot = new RotatedPanel();			
-				 finalImage = RotatedPanel.Rotar(originalImage, degree);
+				 finalImage = Tools.Rotar(originalImage, degree);
 				 msg = "$ > [GIRAR IZQ] salida" + finalImage; 
 				 panelCMD.setText(msg);
 				 ImagActPanel.removeAll();
@@ -297,12 +361,12 @@ public class Interfaz {
 		girarIZQ.setMaximumSize(seleccionar.getMaximumSize());
 		Npanel.add(girarIZQ);
         // ==================== GIRAR DCH ===================================
-		girarDCH = new JButton ("Girar DCH");
+		JButton girarDCH = new JButton ("Girar DCH");
 		girarDCH.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent arg0) {
 				 degree -= 45;				 
 				 // RotatedPanel rot = new RotatedPanel();			
-				 finalImage = RotatedPanel.Rotar(originalImage, degree);
+				 finalImage = Tools.Rotar(originalImage, degree);
 				 msg = "$ > [GIRAR DCH] salida" + finalImage; 
 				 panelCMD.setText(msg);
 				 ImagActPanel.removeAll();
@@ -312,7 +376,7 @@ public class Interfaz {
 		girarDCH.setMaximumSize(seleccionar.getMaximumSize());
 		Npanel.add(girarDCH);
 		
-		recortar = new JButton ("Recortar");		
+		JButton recortar = new JButton ("Recortar");		
 		recortar.setMaximumSize(seleccionar.getMaximumSize());		
 		Npanel.add(recortar);
 
