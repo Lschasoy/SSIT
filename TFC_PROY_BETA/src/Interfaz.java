@@ -6,18 +6,21 @@ import javax.swing.ImageIcon;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JButton;
+import javax.swing.JProgressBar;
 import javax.swing.JTextArea;
 
 import java.awt.BorderLayout;
 
 import javax.swing.JPanel;
 
+import java.awt.Container;
 import java.awt.GridLayout;
 import java.awt.Color;
 import java.awt.event.ActionListener;
 import java.awt.event.ActionEvent;
 import java.awt.image.BufferedImage;
 
+import javax.swing.border.Border;
 import javax.swing.border.CompoundBorder;
 import javax.swing.border.BevelBorder;
 import javax.swing.table.TableCellRenderer;
@@ -46,6 +49,7 @@ import javax.swing.SwingConstants;
 
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+import java.io.IOException;
 
 import javax.swing.JTable;
 import javax.swing.table.DefaultTableModel;
@@ -73,6 +77,7 @@ public class Interfaz {
 	
 	private MyTableModel modelo = new MyTableModel();
 	private Tools tools = new Tools();
+	private Archivos arc = new Archivos();
 	
 	/******************* MAIN *****************************/	 
 	public static void main(String[] args) {
@@ -98,7 +103,7 @@ public class Interfaz {
 	 */
 	private void initialize() {
 		miVentana = new JFrame();		
-		miVentana.setTitle("TFG - sImage beta v.10");
+		miVentana.setTitle("TFG - sImage beta v.2.0");
 		miVentana.getContentPane().setBackground(Color.LIGHT_GRAY);
 		miVentana.setSize(1064, 700);
 				    
@@ -127,13 +132,11 @@ public class Interfaz {
 		 modelo.setDataVector(datosFila, nombreColumnas);
 		 tablaMenuImage.setModel(modelo);
 		 		 
-		/* tablaMenuImage.getColumnModel().getColumn(0).setCellRenderer(new ImagenMenu());	
-		 tablaMenuImage.getColumnModel().getColumn(1).setCellRenderer(new ImagenMenu());
-		 tablaMenuImage.getColumnModel().getColumn(2).setCellRenderer(new ImagenMenu()); */
+	     tablaMenuImage.getColumnModel().getColumn(0).setCellRenderer(new ImageRenderer());	
+		 tablaMenuImage.getColumnModel().getColumn(1).setCellRenderer(new ImageRenderer());
+		 tablaMenuImage.getColumnModel().getColumn(2).setCellRenderer(new ImageRenderer()); 
 		 tablaMenuImage.setRowHeight(60);
-		 
-		 
-		
+		 		 		
 		    		    
 		 tablaMenuImage.addMouseListener(new java.awt.event.MouseAdapter() {
 		 @Override
@@ -141,8 +144,15 @@ public class Interfaz {
 		  		int row = tablaMenuImage.rowAtPoint(evt.getPoint());
 		    	int col = tablaMenuImage.columnAtPoint(evt.getPoint());
 		    		
-		    		msg = "\n$ > [ImageMenu] : image [" + row + col +"]" ; 
+		    		msg = "\n$ > [ImageMenu] : Seleccionado image [" + row + col +"]" ; 
 					panelCMD.setText(msg);
+					try {
+						mostrar(ImagActPanel,arc.loadImage(row, col, tablaMenuImage,  modelo));
+					} catch (IOException e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+					}
+					
 		    		
 		    	}
 		    });
@@ -243,28 +253,19 @@ public class Interfaz {
 		JMenuItem cargarImagen = new JMenuItem("Carga imagen");
 		cargarImagen.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
+				    				   				  				  
 				    
-				   
-				    Archivos arc = new Archivos();
-				    originalImage = arc.loadFile();				   
+				    originalImage = arc.loadFile(tablaMenuImage, modelo);				   
 				    msg = "$ > [load image]: Name" + arc.getImageName();
-				    msg += "\n$ > [return]:" + originalImage;
-				    
-				    
-				    ImagActPanel.removeAll();
+				    msg += "\n$ > [return]:" + originalImage;				    				    
+				    				    				    							    
 				    mostrar(ImagActPanel, originalImage);	
 				    
 				    histo = new Histograma();
 				    finalImage = histo.generarGrafica(originalImage);
 				    msg += "$ > [load image] Generando Histograma";
 				    mostrar(panelHisto, finalImage);
-				    				    
-				    
-				 //   modelo.setValueAt("TFC_PROY_BETA\\imagen"+arc.getImageName(), 1, 1 );        
-				    modelo.setValueAt(Tools.generarIcono(originalImage), 1, 1 );
-				    tablaMenuImage.repaint();
-				    msg += "$ > [load image] Generando Icono";				 			    
-				    panelCMD.setText(msg);				    				   
+				    				    				            				  			  
 					
 			}
 		});
@@ -387,6 +388,9 @@ public class Interfaz {
 	
 	private void mostrar(JPanel panel, BufferedImage image){
 		
+		panel.removeAll();
+		panel.repaint();
+				
 		ImageIcon ico = new ImageIcon(image);				
 		JLabel label = new JLabel (ico);													
 		panel.add(label);							

@@ -1,5 +1,4 @@
 import java.awt.Component;
-import java.awt.image.BufferedImage;
 import java.io.File;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -13,12 +12,10 @@ import javax.swing.table.DefaultTableCellRenderer;
  * @web http://www.jc-mouse.net/
  * @author Mouse
  */
-public class ImagenMenu extends DefaultTableCellRenderer{
+public class ImageRenderer extends DefaultTableCellRenderer{
 
   private JLabel lb = new JLabel();
-  //imagen que se muestra cuando la celda esta vacia
-  private ImageIcon icon = new ImageIcon( getClass().getResource("default.png"), "Imagen por Defecto");
-    //para contener las imagenes que se vayan cargando 
+  private ImageIcon icon = new ImageIcon( getClass().getResource("default.png"), "Imagen por Defecto"); 
   private Map iconos = new HashMap() ;
   
 
