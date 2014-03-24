@@ -258,8 +258,10 @@ public class Interfaz {
 				    finalImage = histo.generarGrafica(originalImage);
 				    msg += "$ > [load image] Generando Histograma";
 				    mostrar(panelHisto, finalImage);
+				    				    
 				    
-				    modelo.setValueAt("TFC_PROY_BETA\\imagen"+arc.getImageName(), 1, 1 );        
+				 //   modelo.setValueAt("TFC_PROY_BETA\\imagen"+arc.getImageName(), 1, 1 );        
+				    modelo.setValueAt(Tools.generarIcono(originalImage), 1, 1 );
 				    tablaMenuImage.repaint();
 				    msg += "$ > [load image] Generando Icono";				 			    
 				    panelCMD.setText(msg);				    				   
