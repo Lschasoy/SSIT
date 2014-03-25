@@ -6,6 +6,7 @@ import javax.swing.ImageIcon;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JButton;
+import javax.swing.JOptionPane;
 import javax.swing.JProgressBar;
 import javax.swing.JTextArea;
 
@@ -14,11 +15,14 @@ import java.awt.BorderLayout;
 import javax.swing.JPanel;
 
 
+
 import java.awt.Color;
 import java.awt.event.ActionListener;
 import java.awt.event.ActionEvent;
 import java.awt.image.BufferedImage;
+
 import javax.swing.border.BevelBorder;
+
 
 
 import java.awt.FlowLayout;
@@ -30,8 +34,11 @@ import javax.swing.JMenu;
 import javax.swing.JSeparator;
 import javax.swing.JComboBox;
 import javax.swing.DefaultComboBoxModel;
+
 import java.io.IOException;
+
 import javax.swing.JTable;
+
 import java.awt.Font;
 
 
@@ -43,11 +50,11 @@ public class Interfaz {
 			           + "   TRABAJO FIN DE GRADO - GRADO EN INGENIERIA INFORMATICA    \n"
 			           + "   TITULO: GUI para operaciones de segmentación de imágenes  \n"
 			           + "   AUTOR : LEONARDO SIVERIO CHASOY                           \n"
-			           + "   Verion beta: 1.0                                          \n";
+			           + "   Verion beta: 3.0                                          \n";
 	
 	
 	private JFrame miVentana;
-	private JPanel Npanel, ImagActPanel, panelHisto, centralPanel;
+	private JPanel Npanel, ImagActPanel, centralPanel;
 	private JPanel canalR, canalG, canalB, canalX, canalY;
 	
 	public  BufferedImage originalImage, finalImage;
@@ -92,45 +99,36 @@ public class Interfaz {
 				    
 		
 		miVentana.getContentPane().add(panelSup(), BorderLayout.NORTH);
-		miVentana.getContentPane().add(panelCentral(),BorderLayout.CENTER);								
-				
+		miVentana.getContentPane().add(panelCentral(),BorderLayout.CENTER);											
 	}
 	
-public JPanel panelDch (){
+public void panelDch (){
 		
-		JPanel pDCH = new JPanel();
 		
-		pDCH.setBounds(985, 10, 254, 595);
-		pDCH.setBorder(new BevelBorder(BevelBorder.LOWERED, Color.DARK_GRAY, null, null, null));
-		pDCH.setBackground(Color.LIGHT_GRAY);
-		pDCH.setLayout(null);
 		
 		canalR = new JPanel();
-		canalR.setBounds(10, 10, 235, 185);
+		canalR.setBounds(985, 10, 250, 190);
 		canalR.setBorder(new BevelBorder(BevelBorder.LOWERED, Color.DARK_GRAY, null, null, null));
 		canalR.setBackground(Color.LIGHT_GRAY);
 		
 		canalG = new JPanel();
-		canalG.setBounds(10, 205, 235, 185);
+		canalG.setBounds(985, 210, 250, 190);
 		canalG.setBorder(new BevelBorder(BevelBorder.LOWERED, Color.DARK_GRAY, null, null, null));
 		canalG.setBackground(Color.LIGHT_GRAY);
 		
 		canalB = new JPanel();
-		canalB.setBounds(10, 400, 235, 185);
-		canalB.setBorder(new BevelBorder(BevelBorder.LOWERED, Color.DARK_GRAY, null, null, null));
+		canalB.setBounds(985, 415, 250, 190);
+		canalB.setBorder(new BevelBorder(BevelBorder.LOWERED, new Color(64, 64, 64), null, null, null));
 		canalB.setBackground(Color.LIGHT_GRAY);
-		pDCH.setLayout(null);
 		
-		pDCH.add(canalR); pDCH.add(canalG); pDCH.add(canalB);
 		
-		return pDCH;
-		
+		centralPanel.add(canalR); centralPanel.add(canalG); centralPanel.add(canalB);		
 	}
 	
 	public JPanel panelMenuImage (){
 		
 		 JPanel pMenuImage = new JPanel();		
-		 pMenuImage.setBounds(10, 415, 235, 190);
+		 pMenuImage.setBounds(10, 215, 235, 190);
 		 pMenuImage.setBackground(Color.LIGHT_GRAY);
 		 pMenuImage.setBorder(new BevelBorder(BevelBorder.LOWERED, Color.DARK_GRAY, null, null, null));
 		 pMenuImage.setLayout(new FlowLayout(FlowLayout.LEFT, 5, 5));
@@ -174,10 +172,28 @@ public JPanel panelDch (){
 		 
 		return pMenuImage;
 	}
+	public void panelCanalXY(){
+		
+        
+		canalX =  new JPanel();
+		canalX.setBounds(390, 415, 285, 190);
+		canalX.setBorder(new BevelBorder(BevelBorder.LOWERED, Color.DARK_GRAY, null, null, null));
+		canalX.setBackground(Color.LIGHT_GRAY);
+		canalX.setAutoscrolls(true);
+		centralPanel.add(canalX);
+		
+		canalY = new JPanel();
+		canalY.setBounds(685, 415, 290, 190);
+		canalY.setBorder(new BevelBorder(BevelBorder.LOWERED, Color.DARK_GRAY, null, null, null));
+		canalY.setBackground(Color.LIGHT_GRAY);
+		canalY.setAutoscrolls(true);		
+		centralPanel.add(canalY);
+		
+	}
 	public JPanel panelCentral (){
 		
 		ImagActPanel = new JPanel();			
-		ImagActPanel.setBounds(255, 10, 720, 400);
+		ImagActPanel.setBounds(255, 10, 720, 394);
 		ImagActPanel.setBorder(new BevelBorder(BevelBorder.LOWERED, Color.DARK_GRAY, null, null, null));
 		ImagActPanel.setBackground(Color.LIGHT_GRAY);
 		ImagActPanel.setAutoscrolls(true);
@@ -187,31 +203,21 @@ public JPanel panelDch (){
 		panelCMD.setLineWrap(true);
 		panelCMD.setColumns(10);
 		panelCMD.setRows(10);
-		panelCMD.setBounds(560, 415, 415, 190);
+		panelCMD.setBounds(10, 415, 370, 190);
 		panelCMD.setBorder(new BevelBorder(BevelBorder.LOWERED, Color.DARK_GRAY, null, null, null));
 		panelCMD.setBackground(Color.LIGHT_GRAY);
 		
 		
-
-		panelHisto =  new JPanel();
-		panelHisto.setBounds(255, 415, 300, 190);
-		panelHisto.setBorder(new BevelBorder(BevelBorder.LOWERED, Color.DARK_GRAY, null, null, null));
-		panelHisto.setBackground(Color.LIGHT_GRAY);
-		panelHisto.setAutoscrolls(true);
-		 JLabel lblHistogramaRgb = new JLabel("Histograma RGB");
-		    panelHisto.add(lblHistogramaRgb);
+		// =============== Panel de la parte central ===================================
 		
 		centralPanel = new JPanel();
-		centralPanel.setLayout(null);
-		
-	   // =============== Panel de la parte central ===================================
-		centralPanel.add(ImagActPanel);					
-	    centralPanel.add(panelHisto);
-	    
+		centralPanel.setLayout(null);	   
+		centralPanel.add(ImagActPanel);						    
 	    centralPanel.add(panelCMD);
 	    centralPanel.add(panelMenuImage());	    						   	   	    
 		centralPanel.add(panelIzq());	
-		centralPanel.add(panelDch());
+		panelDch();
+		panelCanalXY();
 		
 		return centralPanel;
 	}
@@ -233,7 +239,7 @@ public JPanel panelDch (){
 	public JPanel panelIzq(){
 		JPanel Ipanel = new JPanel();
 		Ipanel.setBackground(Color.LIGHT_GRAY);
-		Ipanel.setBounds(10, 10, 235, 400);
+		Ipanel.setBounds(10, 10, 235, 200);
 		Ipanel.setLayout(new FlowLayout(FlowLayout.LEFT, 5, 5));
 		Ipanel.setBorder(new BevelBorder(BevelBorder.LOWERED, Color.DARK_GRAY, null, null, null));
 		
@@ -276,10 +282,7 @@ public JPanel panelDch (){
 				    msg += "\n$ > [return]:" + originalImage;				    				    
 				    				    				    							    
 				    mostrar(ImagActPanel, originalImage);	
-				    
-				   
-				    				    				            				  			  
-					
+							   				    				    				            				  			  			
 			}
 		});
 		mnArchivos.add(cargarImagen);
@@ -399,8 +402,47 @@ public JPanel panelDch (){
 				
 		ImageIcon ico = new ImageIcon(image);				
 		JLabel label = new JLabel (ico);													
-		panel.add(label);							
+		panel.add(label);		
+		
+		try {
+			Graficar (image);
+		}catch (Exception e) {
+	        JOptionPane.showMessageDialog(null, "No se pudo cargar la imagen", "Error", JOptionPane.ERROR_MESSAGE);
+	    }
+		
 	    miVentana.setVisible(true);	
+	}
+	
+	private void Graficar ( BufferedImage image){
+				 
+	        //CREAMOS EL HISTOGRAMAS
+	        Histograma ObjHistograma=new Histograma();
+	        int[][] histograma=ObjHistograma.histograma(image);
+	        //DIBUJAMOS LOS HISTOGRAMAS
+	        DibujarGrafica ObjDibujaHisto=new DibujarGrafica();
+	        for (int i = 0; i < 5; i++) {
+	            //extraemos un canal del histograma 
+	            int[] histogramaCanal=new int[256];
+	            System.arraycopy(histograma[i], 0, histogramaCanal, 0, histograma[i].length);
+	            //Dibujamos en el panel
+	            switch(i){
+	                case 0:
+	                    ObjDibujaHisto.crearHistograma(histogramaCanal, canalR, Color.red);
+	                    break;
+	                case 1:
+	                    ObjDibujaHisto.crearHistograma(histogramaCanal, canalG, Color.green);
+	                    break;
+	                case 2:
+	                    ObjDibujaHisto.crearHistograma(histogramaCanal, canalB, Color.blue);
+	                    break;
+	                case 3:
+	                    ObjDibujaHisto.crearHistograma(histogramaCanal, canalX, Color.black);
+	                    break;
+	                case 4:
+	                    ObjDibujaHisto.crearHistograma(histogramaCanal, canalY, Color.gray);
+	                    break;
+	            }
+	        }
 	}
 }
 
