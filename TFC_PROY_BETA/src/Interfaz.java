@@ -54,7 +54,7 @@ public class Interfaz {
 		
 	private float xScaleFactor = 1, yScaleFactor = 1, degree;
 	private JTextArea panelCMD;
-	private Histograma histo;
+	
 	private JTable tablaMenuImage;
 	
 	
@@ -277,10 +277,7 @@ public JPanel panelDch (){
 				    				    				    							    
 				    mostrar(ImagActPanel, originalImage);	
 				    
-				    histo = new Histograma();
-				    finalImage = histo.generarGrafica(originalImage);
-				    msg += "$ > [load image] Generando Histograma";
-				    mostrar(panelHisto, finalImage);
+				   
 				    				    				            				  			  
 					
 			}
@@ -337,10 +334,7 @@ public JPanel panelDch (){
 				msg = "$ > [ZOOM ++] salida" + finalImage; 
 				panelCMD.setText(msg);
 				mostrar(ImagActPanel, finalImage);
-				
-				histo = new Histograma();
-			    finalImage = histo.generarGrafica(originalImage);
-			    mostrar(panelHisto, finalImage);
+						
 			}
 		});		
 		ZoomPlus.setMaximumSize(seleccionar.getMaximumSize());
@@ -355,11 +349,7 @@ public JPanel panelDch (){
 				  finalImage = Tools.Zoom(originalImage, yScaleFactor, xScaleFactor);
 				  msg = "$ > [ZOOM --] salida" + finalImage; 
 				  panelCMD.setText(msg);
-				  mostrar(ImagActPanel, finalImage);
-				  
-				  histo = new Histograma();
-				  finalImage = histo.generarGrafica(originalImage);
-				  mostrar(panelHisto, finalImage);
+				  mostrar(ImagActPanel, finalImage);				  			
 			}
 		});		
 		ZoomMinus.setMaximumSize(seleccionar.getMaximumSize());
