@@ -8,14 +8,12 @@ import javax.swing.ImageIcon;
 import javax.swing.JLabel;
 import javax.swing.JTable;
 import javax.swing.table.DefaultTableCellRenderer;
-/**
- * @web http://www.jc-mouse.net/
- * @author Mouse
- */
+
+
 public class ImageRenderer extends DefaultTableCellRenderer{
 
   private JLabel lb = new JLabel();
-  private ImageIcon icon = new ImageIcon( getClass().getResource("default.png"), "Imagen por Defecto"); 
+  private ImageIcon icon = new ImageIcon(); 
   private Map iconos = new HashMap() ;
   
 

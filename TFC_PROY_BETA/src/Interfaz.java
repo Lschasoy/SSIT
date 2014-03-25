@@ -13,17 +13,13 @@ import java.awt.BorderLayout;
 
 import javax.swing.JPanel;
 
-import java.awt.Container;
-import java.awt.GridLayout;
+
 import java.awt.Color;
 import java.awt.event.ActionListener;
 import java.awt.event.ActionEvent;
 import java.awt.image.BufferedImage;
-
-import javax.swing.border.Border;
-import javax.swing.border.CompoundBorder;
 import javax.swing.border.BevelBorder;
-import javax.swing.table.TableCellRenderer;
+
 
 import java.awt.FlowLayout;
 import java.awt.Component;
@@ -32,41 +28,28 @@ import javax.swing.JMenuBar;
 import javax.swing.JMenuItem;
 import javax.swing.JMenu;
 import javax.swing.JSeparator;
-
-import java.awt.Font;
-
-import javax.swing.JList;
-import javax.swing.AbstractListModel;
-import javax.swing.ListSelectionModel;
-import javax.swing.JSpinner;
-import javax.swing.SpinnerListModel;
 import javax.swing.JComboBox;
 import javax.swing.DefaultComboBoxModel;
-
-import java.awt.Toolkit;
-
-import javax.swing.SwingConstants;
-
-import java.awt.event.MouseAdapter;
-import java.awt.event.MouseEvent;
 import java.io.IOException;
-
 import javax.swing.JTable;
-import javax.swing.table.DefaultTableModel;
+import java.awt.Font;
+
 
 
 public class Interfaz {
 
-	private String msg = "                 UNIVERSIDAD DE LA LAGUNA                             \n"
-			           + "   ESCUELA TECNICA SUPERIOR DE INGENIERIA INFORMATICA                 \n"
-			           + "   TRABAJO FIN DE GRADO - GRADO EN INGENIERIA INFORMATICA             \n"
-			           + "   TITULO: GUI para la ejecución de algoritmos de segmentación de imágenes  \n"
-			           + "   AUTOR : LEONARDO SIVERIO CHASOY                                    \n"
-			           + "   Verion beta: 1.0                                                   \n";
+	private String msg = "                 UNIVERSIDAD DE LA LAGUNA                    \n"
+			           + "   ESCUELA TECNICA SUPERIOR DE INGENIERIA INFORMATICA        \n"
+			           + "   TRABAJO FIN DE GRADO - GRADO EN INGENIERIA INFORMATICA    \n"
+			           + "   TITULO: GUI para operaciones de segmentación de imágenes  \n"
+			           + "   AUTOR : LEONARDO SIVERIO CHASOY                           \n"
+			           + "   Verion beta: 1.0                                          \n";
 	
 	
 	private JFrame miVentana;
-	private JPanel Npanel, ImagActPanel, panelHisto, centralPanel;	
+	private JPanel Npanel, ImagActPanel, panelHisto, centralPanel;
+	private JPanel canalR, canalG, canalB, canalX, canalY;
+	
 	public  BufferedImage originalImage, finalImage;
 		
 	private float xScaleFactor = 1, yScaleFactor = 1, degree;
@@ -105,7 +88,7 @@ public class Interfaz {
 		miVentana = new JFrame();		
 		miVentana.setTitle("TFG - sImage beta v.2.0");
 		miVentana.getContentPane().setBackground(Color.LIGHT_GRAY);
-		miVentana.setSize(1064, 700);
+		miVentana.setSize(1264, 720);
 				    
 		
 		miVentana.getContentPane().add(panelSup(), BorderLayout.NORTH);
@@ -113,10 +96,41 @@ public class Interfaz {
 				
 	}
 	
+public JPanel panelDch (){
+		
+		JPanel pDCH = new JPanel();
+		
+		pDCH.setBounds(985, 10, 254, 595);
+		pDCH.setBorder(new BevelBorder(BevelBorder.LOWERED, Color.DARK_GRAY, null, null, null));
+		pDCH.setBackground(Color.LIGHT_GRAY);
+		pDCH.setLayout(null);
+		
+		canalR = new JPanel();
+		canalR.setBounds(10, 10, 235, 185);
+		canalR.setBorder(new BevelBorder(BevelBorder.LOWERED, Color.DARK_GRAY, null, null, null));
+		canalR.setBackground(Color.LIGHT_GRAY);
+		
+		canalG = new JPanel();
+		canalG.setBounds(10, 205, 235, 185);
+		canalG.setBorder(new BevelBorder(BevelBorder.LOWERED, Color.DARK_GRAY, null, null, null));
+		canalG.setBackground(Color.LIGHT_GRAY);
+		
+		canalB = new JPanel();
+		canalB.setBounds(10, 400, 235, 185);
+		canalB.setBorder(new BevelBorder(BevelBorder.LOWERED, Color.DARK_GRAY, null, null, null));
+		canalB.setBackground(Color.LIGHT_GRAY);
+		pDCH.setLayout(null);
+		
+		pDCH.add(canalR); pDCH.add(canalG); pDCH.add(canalB);
+		
+		return pDCH;
+		
+	}
+	
 	public JPanel panelMenuImage (){
 		
 		 JPanel pMenuImage = new JPanel();		
-		 pMenuImage.setBounds(10, 415, 230, 180);
+		 pMenuImage.setBounds(10, 415, 235, 190);
 		 pMenuImage.setBackground(Color.LIGHT_GRAY);
 		 pMenuImage.setBorder(new BevelBorder(BevelBorder.LOWERED, Color.DARK_GRAY, null, null, null));
 		 pMenuImage.setLayout(new FlowLayout(FlowLayout.LEFT, 5, 5));
@@ -163,23 +177,24 @@ public class Interfaz {
 	public JPanel panelCentral (){
 		
 		ImagActPanel = new JPanel();			
-		ImagActPanel.setBounds(250, 10, 790, 400);
+		ImagActPanel.setBounds(255, 10, 720, 400);
 		ImagActPanel.setBorder(new BevelBorder(BevelBorder.LOWERED, Color.DARK_GRAY, null, null, null));
 		ImagActPanel.setBackground(Color.LIGHT_GRAY);
 		ImagActPanel.setAutoscrolls(true);
 		
 		panelCMD = new JTextArea(msg);
+		panelCMD.setFont(new Font("Consolas", Font.PLAIN, 11));
 		panelCMD.setLineWrap(true);
 		panelCMD.setColumns(10);
 		panelCMD.setRows(10);
-		panelCMD.setBounds(555, 415, 485, 180);
+		panelCMD.setBounds(560, 415, 415, 190);
 		panelCMD.setBorder(new BevelBorder(BevelBorder.LOWERED, Color.DARK_GRAY, null, null, null));
 		panelCMD.setBackground(Color.LIGHT_GRAY);
 		
 		
 
 		panelHisto =  new JPanel();
-		panelHisto.setBounds(250, 415, 300, 180);
+		panelHisto.setBounds(255, 415, 300, 190);
 		panelHisto.setBorder(new BevelBorder(BevelBorder.LOWERED, Color.DARK_GRAY, null, null, null));
 		panelHisto.setBackground(Color.LIGHT_GRAY);
 		panelHisto.setAutoscrolls(true);
@@ -195,7 +210,8 @@ public class Interfaz {
 	    
 	    centralPanel.add(panelCMD);
 	    centralPanel.add(panelMenuImage());	    						   	   	    
-		centralPanel.add(panelIzq());		
+		centralPanel.add(panelIzq());	
+		centralPanel.add(panelDch());
 		
 		return centralPanel;
 	}
@@ -217,7 +233,7 @@ public class Interfaz {
 	public JPanel panelIzq(){
 		JPanel Ipanel = new JPanel();
 		Ipanel.setBackground(Color.LIGHT_GRAY);
-		Ipanel.setBounds(10, 10, 230, 400);
+		Ipanel.setBounds(10, 10, 235, 400);
 		Ipanel.setLayout(new FlowLayout(FlowLayout.LEFT, 5, 5));
 		Ipanel.setBorder(new BevelBorder(BevelBorder.LOWERED, Color.DARK_GRAY, null, null, null));
 		
