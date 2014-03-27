@@ -13,13 +13,12 @@ public class Archivos {
 	private JFileChooser fc;
 	private String nameImage;
 	
+//======================================================================================================================
+	public void setImageName (String nameI){ nameImage = nameI;}	
+	public String getImageName  ()         { return nameImage; }
+	public JFileChooser getFile ()         {return fc;}
 	
-	public void setImageName (String nameI){
-		nameImage = nameI;
-	}
-	
-	public String getImageName () { return nameImage; }
-	public JFileChooser getFile () {return fc;}
+//======================================================================================================================
 	
 	public BufferedImage loadImage(int row, int col, JTable tablaMenuImage, MyTableModel modelo) throws IOException{
 		
@@ -37,7 +36,7 @@ public class Archivos {
 	    return null;
 	}
 
-//=================================================================================	
+//======================================================================================================================	
 	public BufferedImage loadFile(JTable tablaMenuImage, MyTableModel modelo){
 		
 	
