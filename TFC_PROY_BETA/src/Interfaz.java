@@ -7,17 +7,10 @@ import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JButton;
 import javax.swing.JOptionPane;
-import javax.swing.JProgressBar;
+
 import javax.swing.JTextArea;
-
 import java.awt.BorderLayout;
-
 import javax.swing.JPanel;
-
-
-
-
-
 
 import java.awt.Color;
 import java.awt.event.ActionListener;
@@ -26,48 +19,30 @@ import java.awt.image.BufferedImage;
 
 import javax.swing.border.BevelBorder;
 
-
-
-
-
-
-import java.awt.Dimension;
 import java.awt.FlowLayout;
 import java.awt.Component;
+import java.awt.GridLayout;
 
 import javax.swing.JMenuBar;
 import javax.swing.JMenuItem;
 import javax.swing.JMenu;
 import javax.swing.JSeparator;
-import javax.swing.JComboBox;
-import javax.swing.DefaultComboBoxModel;
 
 import java.io.IOException;
-import java.util.Vector;
-
 import javax.swing.JTable;
 
-import java.awt.Font;
 
 import javax.swing.JScrollPane;
-import javax.swing.border.LineBorder;
 import javax.swing.ScrollPaneConstants;
 import javax.swing.UIManager;
-import javax.swing.border.EtchedBorder;
+
+
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 
 
 
 public class Interfaz {
-
-	private String msg = "                 UNIVERSIDAD DE LA LAGUNA                    \n"
-			           + "   ESCUELA TECNICA SUPERIOR DE INGENIERIA INFORMATICA        \n"
-			           + "   TRABAJO FIN DE GRADO - GRADO EN INGENIERIA INFORMATICA    \n"
-			           + "   TITULO: GUI para operaciones de segmentación de imágenes  \n"
-			           + "   AUTOR : LEONARDO SIVERIO CHASOY                           \n"
-			           + "   Verion beta: 3.0                                          \n";
-	
 	
 	private JFrame miVentana;
 	private JPanel Npanel, ImagActPanel, centralPanel, Ipanel;
@@ -81,9 +56,9 @@ public class Interfaz {
 	private JTable tablaMenuImage;
 	
 	
-	private MyTableModel modelo = new MyTableModel();
-	private Tools tools = new Tools();
-	private Archivos arc = new Archivos();
+	private MyTableModel modelo;
+	private Mensajes msgs;
+	private Archivos arc;
 	
 	 
     private Histograma ObjHistograma;
@@ -95,6 +70,7 @@ public class Interfaz {
 		EventQueue.invokeLater(new Runnable() {
 			public void run() {
 				try {
+					UIManager.setLookAndFeel("com.sun.java.swing.plaf.nimbus.NimbusLookAndFeel");
 					Interfaz window = new Interfaz();
 					window.miVentana.setVisible(true);
 				} catch (Exception e) {
@@ -113,24 +89,23 @@ public class Interfaz {
 	 * Initialize the contents of the frame.
 	 */
 	private void initialize() {
+		
+		
 		miVentana = new JFrame();		
 		miVentana.setTitle("TFG - sImage beta v.3.0");
 		miVentana.getContentPane().setBackground(Color.LIGHT_GRAY);
 		miVentana.setSize(1264, 720);
+		
+		msgs = new Mensajes();
+		modelo = new MyTableModel();
+		arc = new Archivos();
 				    
 		
 		miVentana.getContentPane().add(panelSup(), BorderLayout.NORTH);
 		miVentana.getContentPane().add(panelCentral(),BorderLayout.CENTER);											
 	}
 	
-	public void initPanel(int x, int y, int tamX,int tamY, JPanel panel_In, JPanel panel_Out){
-		
-		panel_In.setBounds(x, y, tamX, tamY);
-		panel_In.setBorder(new BevelBorder(BevelBorder.LOWERED, Color.DARK_GRAY, null, null, null));
-		panel_In.setBackground(Color.LIGHT_GRAY);
-		
-		panel_Out.add(panel_In);
-	}
+
 	
 	
 	public JPanel panelMenuImage (){
@@ -164,8 +139,8 @@ public class Interfaz {
 		  		int row = tablaMenuImage.rowAtPoint(evt.getPoint());
 		    	int col = tablaMenuImage.columnAtPoint(evt.getPoint());
 		    		
-		    		msg = "\n$ > [ImageMenu] : Seleccionado image [" + row + col +"]" ; 
-					panelCMD.setText(msg);
+		    		//msg = "\n$ > [ImageMenu] : Seleccionado image [" + row + col +"]" ; 
+					//panelCMD.setText(msg);
 					try {
 						mostrar(ImagActPanel,arc.loadImage(row, col, tablaMenuImage,  modelo));
 					} catch (IOException e) {
@@ -185,6 +160,12 @@ public class Interfaz {
 
 	public JPanel panelCentral (){
 		
+	//  Panel de la parte central 
+		
+	    centralPanel = new JPanel();
+	    centralPanel.setLayout(null);
+		
+	    // === Imagen Central ===
 		ImagActPanel = new JPanel();						
 		ImagActPanel.setBackground(Color.WHITE);
 		ImagActPanel.setBorder(UIManager.getBorder("Button.border"));
@@ -198,25 +179,17 @@ public class Interfaz {
 		scroll.setVerticalScrollBarPolicy(ScrollPaneConstants.VERTICAL_SCROLLBAR_ALWAYS);
 		scroll.setHorizontalScrollBarPolicy(ScrollPaneConstants.HORIZONTAL_SCROLLBAR_ALWAYS);
 		scroll.setBounds(0, 0, 720, 394);		
-		pScroll.add(scroll);
+		pScroll.add(scroll);				
 		
 		
-		// =============== Panel de la parte central ===================================
-		
-		centralPanel = new JPanel();
-		centralPanel.setLayout(null);	   
 		centralPanel.add(pScroll);			
 		
-		panelCMD = new JTextArea(msg);
-		panelCMD.setBounds(10, 415, 370, 190);
-	    panelCMD.setFont(new Font("Consolas", Font.PLAIN, 11));
-	    panelCMD.setLineWrap(true);
-	    panelCMD.setColumns(10);
-	    panelCMD.setRows(10);
-	    panelCMD.setBorder(new BevelBorder(BevelBorder.LOWERED, Color.DARK_GRAY, null, null, null));
-	    panelCMD.setBackground(Color.LIGHT_GRAY);
-	    centralPanel.add(panelCMD);
+		//===  Inicializar Commnad Line ===
+		panelCMD = new JTextArea();		
+	    centralPanel.add(msgs.initMsg(panelCMD));
 	      
+		Ipanel = new JPanel();
+		initPanel(10, 10, 235, 200, Ipanel, centralPanel);
 	    
 	    centralPanel.add(panelMenuImage());	    						   	   	    		
 		
@@ -232,9 +205,9 @@ public class Interfaz {
 		canalY = new JPanel();
 		initPanel(685, 415, 290, 190, canalY, centralPanel);
 		
-		Ipanel = new JPanel();
-		initPanel(10, 10, 235, 200, Ipanel, centralPanel);
-		
+		//=== Funciones de los canales 
+		panelIzq();
+			
 		
 		return centralPanel;
 	}
@@ -258,24 +231,49 @@ public class Interfaz {
 	
 	public void panelIzq(){
 	    
-	    JLabel lblAlgo = new JLabel("Algoritmos de Segmentacion");
-		Ipanel.add(lblAlgo);
+	    GridLayout gl_pCanales = new GridLayout(2,2);
+	    gl_pCanales.setHgap(2);
+	    JPanel pCanales = new JPanel(gl_pCanales);
+	    				
+			
+		 JButton iCanalR = new JButton("Red");
+		 iCanalR.addMouseListener(new MouseAdapter() {
+	 	    	@Override
+	 	    	public void mouseClicked(MouseEvent arg0) { 	    		
+	 	    		PopWindows popUp = new PopWindows();
+	 	    	    popUp.gCanalR(originalImage); 	    	     	    	
+	 	    	}
+	 	 });
+		pCanales.add(iCanalR);
 		
-		final JComboBox comboBox = new JComboBox();
-		comboBox.setModel(new DefaultComboBoxModel(new String[] {"Algoritmo_1", "Algoritmo_2", "Algoritmo_3", "Algoritmo_4"}));
-		comboBox.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent arg0) {
-				
-				msg += "\n$ > [Selector de Algoritmo] : Algoritmo" + (comboBox.getSelectedIndex() + 1); 
-				panelCMD.setText(msg);				
-				
-			}
-		});
+		JButton iCanalG = new JButton("Green");
+	    pCanales.add(iCanalG);
 		
-		Ipanel.add(comboBox);					
+	    JButton iCanalB = new JButton("Blue");
+ 	    pCanales.add(iCanalB);
+ 	    
+ 	    JButton iCanalX = new JButton("Black"); 	    
+	    pCanales.add(iCanalX);
+	    
+	    JButton iCanalY = new JButton("Gray");
+	    iCanalY.addMouseListener(new MouseAdapter() {
+ 	    	@Override
+ 	    	public void mouseClicked(MouseEvent arg0) { 	    		
+ 	    		PopWindows popUp = new PopWindows();
+ 	    	    popUp.gCanalY(originalImage); 	    	     	    	
+ 	    	}
+ 	    });
+ 	    pCanales.add(iCanalY);
+	
+		Ipanel.add(pCanales);					
+		
+		JLabel lblCanales = new JLabel("   Canales");
+		lblCanales.setEnabled(false);
+		pCanales.add(lblCanales);
 		
 	}	
-	/*************************************************/
+	
+	 
 	public JMenuBar panelMenu(){
 		
 		JMenuBar menuBar = new JMenuBar();
@@ -288,12 +286,9 @@ public class Interfaz {
 		JMenuItem cargarImagen = new JMenuItem("Carga imagen");
 		cargarImagen.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				    				   				  				  
-				    
-				    originalImage = arc.loadFile(tablaMenuImage, modelo);				   
-				    msg = "$ > [load image]: Name" + arc.getImageName();
-				    msg += "\n$ > [return]:" + originalImage;				    				    
-				    				    				    							    
+				    				   				  				  				    
+				    originalImage = arc.loadFile(tablaMenuImage, modelo);
+				    panelCMD.setText(msgs.msgOperacion(0,arc.getImageName(), originalImage.toString()));
 				    mostrar(ImagActPanel, originalImage);	
 							   				    				    				            				  			  			
 			}
@@ -306,10 +301,7 @@ public class Interfaz {
 				 
 				 Archivos arc = new Archivos();
 			     arc.saveFile();
-				
-				 msg = "$ > [save image] salida" + originalImage; 
-				 panelCMD.setText(msg);   
-				    				    				    			
+			     panelCMD.setText(msgs.msgOperacion(1,arc.getImageName(), originalImage.toString()));				    				    				    			
 			}
 		});
 		mnArchivos.add(salvarImagen);
@@ -323,36 +315,6 @@ public class Interfaz {
 		});
 		mnArchivos.add(itemExit);
 		
-		JMenu mnCanales = new JMenu("Canales");
-		menuBar.add(mnCanales);
-		
-		JMenuItem iCanalR = new JMenuItem("Canal Red");
-		iCanalR.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent e) {
-				    				   				  				  
-				 msg = "$ > [Canal Red] salida" + histograma; 
-				 panelCMD.setText(msg); 	
-				 
-				 				 
-				ImageIcon ico = new ImageIcon(originalImage.getScaledInstance(0, 0, 0));				
-				JLabel label = new JLabel (ico);
-				ImagActPanel.add(label);
-				
-				miVentana.setVisible(true);	
-				
-							   				    				    				            				  			  			
-			}
-		});
-		mnCanales.add(iCanalR);
-		
-		JMenuItem iCanalG = new JMenuItem("Canal Green");
-		mnCanales.add(iCanalG);
-		
-		JMenuItem iCanalB = new JMenuItem("Canal Blue");
-		mnCanales.add(iCanalB);
-		
-		
-
 		return menuBar;
 	}
 	/*************************************************/
@@ -375,10 +337,9 @@ public class Interfaz {
 			public void actionPerformed(ActionEvent e) {
 				xScaleFactor += 0.1;
 				yScaleFactor += 0.1;				  	
-				ImagActPanel.removeAll();
+				
 				finalImage = Tools.Zoom(originalImage, yScaleFactor, xScaleFactor );	
-				msg = "$ > [ZOOM ++] salida" + finalImage; 
-				panelCMD.setText(msg);
+				panelCMD.setText(msgs.msgOperacion(2,arc.getImageName(), finalImage.toString()));
 				mostrar(ImagActPanel, finalImage);
 						
 			}
@@ -391,10 +352,9 @@ public class Interfaz {
 			public void actionPerformed(ActionEvent e) {
 				  xScaleFactor -= 0.1;
 				  yScaleFactor -= 0.1;			
-				  ImagActPanel.removeAll();
-				  finalImage = Tools.Zoom(originalImage, yScaleFactor, xScaleFactor);
-				  msg = "$ > [ZOOM --] salida" + finalImage; 
-				  panelCMD.setText(msg);
+				  
+				  finalImage = Tools.Zoom(originalImage, yScaleFactor, xScaleFactor );
+				  panelCMD.setText(msgs.msgOperacion(3,arc.getImageName(), finalImage.toString()));
 				  mostrar(ImagActPanel, finalImage);				  			
 			}
 		});		
@@ -407,9 +367,8 @@ public class Interfaz {
 				 degree += 45;				 
 				 // RotatedPanel rot = new RotatedPanel();			
 				 finalImage = Tools.Rotar(originalImage, degree);
-				 msg = "$ > [GIRAR IZQ] salida" + finalImage; 
-				 panelCMD.setText(msg);
-				 ImagActPanel.removeAll();
+				 panelCMD.setText(msgs.msgOperacion(4,arc.getImageName(), finalImage.toString()));
+				
 				 mostrar(ImagActPanel, finalImage);
 			}
 		});			
@@ -422,9 +381,7 @@ public class Interfaz {
 				 degree -= 45;				 
 				 // RotatedPanel rot = new RotatedPanel();			
 				 finalImage = Tools.Rotar(originalImage, degree);
-				 msg = "$ > [GIRAR DCH] salida" + finalImage; 
-				 panelCMD.setText(msg);
-				 ImagActPanel.removeAll();
+				 panelCMD.setText(msgs.msgOperacion(5,arc.getImageName(), finalImage.toString()));				
 				 mostrar(ImagActPanel, finalImage);
 			}
 		});		
@@ -489,6 +446,15 @@ public class Interfaz {
 	                    break;
 	            }
 	        }
+	}
+//========================================================================================================	
+	public void initPanel(int x, int y, int tamX,int tamY, JPanel panel_In, JPanel panel_Out){
+		
+		panel_In.setBounds(x, y, tamX, tamY);
+		panel_In.setBorder(new BevelBorder(BevelBorder.LOWERED, Color.DARK_GRAY, null, null, null));
+		panel_In.setBackground(Color.LIGHT_GRAY);
+		
+		panel_Out.add(panel_In);
 	}
 }
 
