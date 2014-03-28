@@ -247,9 +247,23 @@ public class Interfaz {
 		pCanales.add(iCanalR);
 		
 		JButton iCanalG = new JButton("Green");
+		iCanalG.addMouseListener(new MouseAdapter() {
+	 	    	@Override
+	 	    	public void mouseClicked(MouseEvent arg0) { 	    		
+	 	    		PopWindows popUp = new PopWindows();
+	 	    	    popUp.gCanalG(originalImage); 	    	     	    	
+	 	    	}
+	 	});
 	    pCanales.add(iCanalG);
 		
 	    JButton iCanalB = new JButton("Blue");
+	    iCanalB.addMouseListener(new MouseAdapter() {
+ 	    	@Override
+ 	    	public void mouseClicked(MouseEvent arg0) { 	    		
+ 	    		PopWindows popUp = new PopWindows();
+ 	    	    popUp.gCanalG(originalImage); 	    	     	    	
+ 	    	}
+  	    });
  	    pCanales.add(iCanalB);
  	    
  	    JButton iCanalX = new JButton("Black"); 	    

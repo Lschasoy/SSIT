@@ -105,7 +105,7 @@ public class PopWindows {
 				    	int r = c.getRed();
 				    	int g = c.getGreen();
 				    	int b = c.getBlue();
-				    	salida.setRGB(x, y, new Color(g, b, r).getRGB());
+				    	salida.setRGB(x, y, new Color(r, b, g).getRGB());
 				    }	
 			 }	    
 							
@@ -122,7 +122,7 @@ public class PopWindows {
 	 public final void gCanalY(BufferedImage image){
 		 
 			
-		  BufferedImage salida = new BufferedImage(image.getWidth(), image.getHeight(),image.getType());;					   
+		  BufferedImage salida = new BufferedImage(image.getWidth(), image.getHeight(),image.getType());					   
 				
 		   for (int x=0; x <  image.getWidth(); x++){
 				for (int y=0;y < image.getHeight(); y++){
@@ -134,6 +134,58 @@ public class PopWindows {
 					salida.setRGB(x, y, new Color(med,med,med).getRGB());
 				}
 			}
+							
+		mostrar(iPanel, salida);
+		
+		
+        histograma=ObjHistograma.histograma(image);  		
+        //extraemos un canal del histograma 
+	    int[] histogramaCanal=new int[256];
+	    System.arraycopy(histograma[yCanal], 0, histogramaCanal, 0, histograma[yCanal].length);
+	    //Dibujamos en el panel
+	   	ObjDibujaHisto.crearHistograma(histogramaCanal, gPanel, Color.black, image);
+		      		        		  		        		  		 		 
+	 }
+	 //====================================================================================================
+	 public final void gCanalG(BufferedImage image){
+		 
+		 BufferedImage salida = new BufferedImage(image.getWidth(), image.getHeight(),image.getType());;
+		 
+		 for (int x = 0; x < image.getWidth(); x++) {
+			    for (int y = 0; y < image.getHeight(); y++) {
+			    	Color c = new Color(image.getRGB(x, y));
+			    	int r = c.getRed();
+			    	int g = c.getGreen();
+			    	int b = c.getBlue();
+			    	salida.setRGB(x, y, new Color(g, b, r).getRGB());
+			    }	
+		 }	    		
+							
+		mostrar(iPanel, salida);
+		
+		
+        histograma=ObjHistograma.histograma(image);  		
+        //extraemos un canal del histograma 
+	    int[] histogramaCanal=new int[256];
+	    System.arraycopy(histograma[yCanal], 0, histogramaCanal, 0, histograma[yCanal].length);
+	    //Dibujamos en el panel
+	   	ObjDibujaHisto.crearHistograma(histogramaCanal, gPanel, Color.black, image);
+		      		        		  		        		  		 		 
+	 }
+	 //====================================================================================================
+	 public final void gCanalB(BufferedImage image){
+		 
+		 BufferedImage salida = new BufferedImage(image.getWidth(), image.getHeight(),image.getType());;
+		 
+		 for (int x = 0; x < image.getWidth(); x++) {
+			    for (int y = 0; y < image.getHeight(); y++) {
+			    	Color c = new Color(image.getRGB(x, y));
+			    	int r = c.getRed();
+			    	int g = c.getGreen();
+			    	int b = c.getBlue();
+			    	salida.setRGB(x, y, new Color(b, g, r).getRGB());
+			    }	
+		 }	    		
 							
 		mostrar(iPanel, salida);
 		
