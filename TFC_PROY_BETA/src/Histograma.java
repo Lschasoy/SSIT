@@ -39,13 +39,14 @@ import java.awt.image.BufferedImage;
                 
                 //Sumamos una unidad en la fila roja [0], 
                 //en la columna del color rojo obtenido
-                histogramaReturn[0][colorAuxiliar.getRed()]+=1;               
+                histogramaReturn[0][colorAuxiliar.getRed()]+=1;              
                 histogramaReturn[1][colorAuxiliar.getGreen()]+=1;
                 histogramaReturn[2][colorAuxiliar.getBlue()]+=1;
                 histogramaReturn[3][colorAuxiliar.getAlpha()]+=1;
                 histogramaReturn[4][calcularMedia(colorAuxiliar)]+=1;
-            }         
+            }            
         }
+        
         return histogramaReturn;
     }
 }

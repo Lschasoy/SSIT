@@ -234,8 +234,7 @@ public class Interfaz {
 	    GridLayout gl_pCanales = new GridLayout(2,2);
 	    gl_pCanales.setHgap(2);
 	    JPanel pCanales = new JPanel(gl_pCanales);
-	    				
-			
+	  //================ BOTON  R ===================================  							
 		 JButton iCanalR = new JButton("Red");
 		 iCanalR.addMouseListener(new MouseAdapter() {
 	 	    	@Override
@@ -245,7 +244,7 @@ public class Interfaz {
 	 	    	}
 	 	 });
 		pCanales.add(iCanalR);
-		
+	 //================ BOTON  G ===================================	
 		JButton iCanalG = new JButton("Green");
 		iCanalG.addMouseListener(new MouseAdapter() {
 	 	    	@Override
@@ -255,20 +254,27 @@ public class Interfaz {
 	 	    	}
 	 	});
 	    pCanales.add(iCanalG);
-		
+	 //================ BOTON B  ===================================	
 	    JButton iCanalB = new JButton("Blue");
 	    iCanalB.addMouseListener(new MouseAdapter() {
  	    	@Override
  	    	public void mouseClicked(MouseEvent arg0) { 	    		
  	    		PopWindows popUp = new PopWindows();
- 	    	    popUp.gCanalG(originalImage); 	    	     	    	
+ 	    	    popUp.gCanalB(originalImage); 	    	     	    	
  	    	}
   	    });
  	    pCanales.add(iCanalB);
- 	    
- 	    JButton iCanalX = new JButton("Black"); 	    
+ 	 //================ BOTON X ===================================
+ 	    JButton iCanalX = new JButton("Black"); 	
+ 	    iCanalX.addMouseListener(new MouseAdapter() {
+	    	@Override
+	    	public void mouseClicked(MouseEvent arg0) { 	    		
+	    		PopWindows popUp = new PopWindows();
+	    	    popUp.gCanalX(originalImage); 	    	     	    	
+	    	}
+	    });
 	    pCanales.add(iCanalX);
-	    
+	    //================ BOTON Y ===================================
 	    JButton iCanalY = new JButton("Gray");
 	    iCanalY.addMouseListener(new MouseAdapter() {
  	    	@Override
@@ -417,7 +423,7 @@ public class Interfaz {
 		ImageIcon ico = new ImageIcon(image);				
 		JLabel label = new JLabel (ico);													
 		panel.add(label);		
-		
+	    // ***** Generar las graficas **** 	
 		try {
 			Graficar (image);
 		}catch (Exception e) {
