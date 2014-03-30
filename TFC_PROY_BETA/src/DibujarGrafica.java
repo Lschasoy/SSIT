@@ -11,6 +11,7 @@ import org.jfree.chart.ChartMouseEvent;
 import org.jfree.chart.ChartMouseListener;
 import org.jfree.chart.ChartPanel;
 import org.jfree.chart.JFreeChart;
+import org.jfree.chart.event.ChartChangeListener;
 import org.jfree.chart.plot.CategoryPlot;
 import org.jfree.chart.plot.PlotOrientation;
 import org.jfree.chart.renderer.category.BarRenderer;
@@ -33,7 +34,11 @@ public class DibujarGrafica {
          
         }
         //Creamos el chart
-        JFreeChart chart = ChartFactory.createBarChart("Frecuencia ", null, null,dataset, PlotOrientation.VERTICAL, true, true, false);
+        final JFreeChart chart = ChartFactory.createBarChart("Frecuencia ", null, null,dataset, PlotOrientation.VERTICAL, true, true, false);
+                    
+        ChartPanel panel = new ChartPanel (chart); // --> lsch
+		
+		
         //Modificamos el diseño del chart
         CategoryPlot plot = (CategoryPlot) chart.getPlot();
         BarRenderer renderer = (BarRenderer) plot.getRenderer();
@@ -45,12 +50,28 @@ public class DibujarGrafica {
         jPanelHistograma.removeAll();
         jPanelHistograma.repaint();
         jPanelHistograma.setLayout(new java.awt.BorderLayout());
-        jPanelHistograma.add(new ChartPanel(chart));
+        jPanelHistograma.add(panel); //-- > lsch
+        
+        panel.addChartMouseListener(new ChartMouseListener(){
+            public void chartMouseClicked(ChartMouseEvent e){
+            	int x = e.getTrigger().getX();
+                int y = e.getTrigger().getY();
+
+                System.out.println("X :" + x + " Y : " + y); 
+            	
+            }
+
+			@Override
+			public void chartMouseMoved(ChartMouseEvent arg0) {
+				// TODO Auto-generated method stub
+				System.out.println("Moved ");
+				
+			}
+        });   
+        
         jPanelHistograma.validate();
         
     }
-  /*  ChartPanel panel=new ChartPanel(ChartFactory.createTimeSeriesChart("Memory usage", "Time", "Size", m_data, true, true, false)));
-    panel.addChartMouseListener(new ChartMouseListener(){
-        void chartMouseClicked(ChartMouseEvent e){*/
+ 
 
 }
