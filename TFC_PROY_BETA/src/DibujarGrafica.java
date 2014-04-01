@@ -5,6 +5,7 @@ import javax.swing.ImageIcon;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
+import javax.swing.JTextArea;
 
 import org.jfree.chart.ChartFactory;
 import org.jfree.chart.ChartMouseEvent;
@@ -25,12 +26,17 @@ public class DibujarGrafica {
      * @param jPanelHistograma JPanel donde el histograma será dibujado
      * @param colorBarras color de cuál será dibujado el histograma
      */
-    public void crearHistograma(int[] histograma,JPanel jPanelHistograma,Color colorBarras, BufferedImage image) {
+	
+	
+    public void crearHistograma(int[] histograma,JPanel jpHisto,Color colorBarras, final BufferedImage image, final JPanel jpImagen, final JTextArea cmdLine) {
+    	
+    	 cmdLine.setText("\n$ > [Crear histograma]: name: " + histograma + '\n');
+    	 
         //Creamos el dataSet y añadimos el histograma
-        DefaultCategoryDataset dataset = new DefaultCategoryDataset();
-        String serie = "Numero de píxels";
+        final DefaultCategoryDataset dataset = new DefaultCategoryDataset();
+        String serie = "Píxeles nº ";
         for (int i = 0; i < histograma.length; i++){
-            dataset.addValue(histograma[i], serie, "" + i);
+            dataset.addValue(histograma[i], serie, "[" + i +"] ");
          
         }
         //Creamos el chart
@@ -47,31 +53,50 @@ public class DibujarGrafica {
         
         
         chart.setBackgroundPaint(new Color(214, 217, 223)); 
-        jPanelHistograma.removeAll();
-        jPanelHistograma.repaint();
-        jPanelHistograma.setLayout(new java.awt.BorderLayout());
-        jPanelHistograma.add(panel); //-- > lsch
+        jpHisto.removeAll();
+        jpHisto.repaint();
+        jpHisto.setLayout(new java.awt.BorderLayout());
+        jpHisto.add(panel); //-- > lsch
+        
+        final double Tolerancia = 50; // Tolerancia   
         
         panel.addChartMouseListener(new ChartMouseListener(){
             public void chartMouseClicked(ChartMouseEvent e){
             	int x = e.getTrigger().getX();
                 int y = e.getTrigger().getY();
-
-                System.out.println("X :" + x + " Y : " + y); 
-            	
+                Color c1 = new Color(image.getRGB(x, y));
+                                                             
+                String msg = "Coordenada X:" + x + "Y:" +y + " Tolerancia: " + Tolerancia;
+                msg += " [Color] = "+ c1.getRGB() + '\n';
+                cmdLine.append(msg); 
+                
+                for (int u = 0; u < image.getWidth(); u++){
+                	for (int v = 0; v < image.getHeight(); v++){
+                		
+                		Color c2 = new Color(image.getRGB(u, v));
+                	    double d = Math.sqrt(Math.pow((c1.getRed() -c2.getRed()),2) +
+                	    		          Math.pow((c1.getGreen() -c2.getGreen()),2) +
+                	    		          Math.pow((c1.getBlue() -c2.getBlue()),2));
+                	    
+                	        if ( d <= Tolerancia){                 	        
+	                	        image.setRGB(u, v, new Color(25,25,25).getRGB());
+	                	        jpImagen.repaint();
+                	        }                	       
+                	}   
+                }
+                           	
             }
 
 			@Override
 			public void chartMouseMoved(ChartMouseEvent arg0) {
 				// TODO Auto-generated method stub
-				System.out.println("Moved ");
+				//System.out.println("Moved ");
 				
 			}
         });   
         
-        jPanelHistograma.validate();
+        jpHisto.validate();
         
     }
- 
-
+    
 }

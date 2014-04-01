@@ -132,7 +132,7 @@ public class PopWindows {
 	    System.arraycopy(histograma[rCanal], 0, histogramaCanal, 0, histograma[rCanal].length);
 	    cmd.append(histograma[rCanal].toString() + '\n');
 	    //Dibujamos en el panel
-	    ObjDibujaHisto.crearHistograma(histogramaCanal, gPanel, Color.red, salida);
+	    ObjDibujaHisto.crearHistograma(histogramaCanal, gPanel, Color.red, salida, iPanel, cmd);
 	    
 	    
 	 }
@@ -159,7 +159,7 @@ public class PopWindows {
 	    int[] histogramaCanal=new int[256];
 	    System.arraycopy(histograma[gCanal], 0, histogramaCanal, 0, histograma[gCanal].length);
 	    //Dibujamos en el panel
-	   	ObjDibujaHisto.crearHistograma(histogramaCanal, gPanel, Color.green, salida);
+	   	ObjDibujaHisto.crearHistograma(histogramaCanal, gPanel, Color.green, salida, iPanel, cmd);
 		      		        		  		        		  		 		 
 	 }
 	 //====================================================================================================
@@ -184,7 +184,7 @@ public class PopWindows {
 	    int[] histogramaCanal=new int[256];
 	    System.arraycopy(histograma[bCanal], 0, histogramaCanal, 0, histograma[bCanal].length);
 	    //Dibujamos en el panel
-	   	ObjDibujaHisto.crearHistograma(histogramaCanal, gPanel, Color.blue, salida);
+	   	ObjDibujaHisto.crearHistograma(histogramaCanal, gPanel, Color.blue, salida, iPanel, cmd);
 		      		        		  		        		  		 		 
 	 }
 	 //====================================================================================================
@@ -213,12 +213,14 @@ public class PopWindows {
 	    int[] histogramaCanal=new int[256];
 	    System.arraycopy(histograma[xCanal], 0, histogramaCanal, 0, histograma[xCanal].length);
 	    //Dibujamos en el panel
-	   	ObjDibujaHisto.crearHistograma(histogramaCanal, gPanel, Color.black, salida);
+	   	ObjDibujaHisto.crearHistograma(histogramaCanal, gPanel, Color.black, salida, iPanel, cmd);
 	   	
 	   	  
 	 }
 
-	 //====================================================================================================
+	 /*  Name:gCanalY
+	  *  Descrip: Calculamos la media 
+	  *  Return: image   */
 	 public final void gCanalY(BufferedImage image){
 		 
 			
@@ -243,7 +245,7 @@ public class PopWindows {
 	    int[] histogramaCanal=new int[256];
 	    System.arraycopy(histograma[yCanal], 0, histogramaCanal, 0, histograma[yCanal].length);
 	    //Dibujamos en el panel
-	   	ObjDibujaHisto.crearHistograma(histogramaCanal, gPanel, Color.gray, salida);
+	   	ObjDibujaHisto.crearHistograma(histogramaCanal, gPanel, Color.gray, salida, iPanel, cmd);
 		      		        		  		        		  		 		 
 	 }
 

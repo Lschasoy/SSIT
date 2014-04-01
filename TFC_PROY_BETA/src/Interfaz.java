@@ -7,9 +7,10 @@ import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JButton;
 import javax.swing.JOptionPane;
-
 import javax.swing.JTextArea;
+
 import java.awt.BorderLayout;
+
 import javax.swing.JPanel;
 
 import java.awt.Color;
@@ -29,6 +30,8 @@ import javax.swing.JMenu;
 import javax.swing.JSeparator;
 
 import java.io.IOException;
+import java.util.Vector;
+
 import javax.swing.JTable;
 
 
@@ -37,18 +40,22 @@ import javax.swing.ScrollPaneConstants;
 import javax.swing.UIManager;
 
 
+
+
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+
+import javax.swing.SwingConstants;
 
 
 
 public class Interfaz {
 	
 	private JFrame miVentana;
-	private JPanel Npanel, ImagActPanel, centralPanel, Ipanel;
-	private JPanel canalR, canalG, canalB, canalX, canalY;
+	private JPanel actPanel, centralPanel, Ipanel, Spanel, canalR, canalG, canalB, canalX, canalY;
 	
 	public  BufferedImage originalImage, finalImage;
+
 		
 	private float xScaleFactor = 1, yScaleFactor = 1, degree;
 	private JTextArea panelCMD;
@@ -98,14 +105,13 @@ public class Interfaz {
 		
 		msgs = new Mensajes();
 		modelo = new MyTableModel();
-		arc = new Archivos();
-				    
+		arc = new Archivos();				   
 		
 		miVentana.getContentPane().add(panelSup(), BorderLayout.NORTH);
 		miVentana.getContentPane().add(panelCentral(),BorderLayout.CENTER);											
+		
+		
 	}
-	
-
 	
 	
 	public JPanel panelMenuImage (){
@@ -142,10 +148,9 @@ public class Interfaz {
 		    		//msg = "\n$ > [ImageMenu] : Seleccionado image [" + row + col +"]" ; 
 					//panelCMD.setText(msg);
 					try {
-						mostrar(ImagActPanel,arc.loadImage(row, col, tablaMenuImage,  modelo));
+						mostrar(actPanel,arc.loadImage(row, col, tablaMenuImage,  modelo));
 					} catch (IOException e) {
-						// TODO Auto-generated catch block
-						e.printStackTrace();
+						JOptionPane.showMessageDialog(null, "[Error] No Image", "Error", JOptionPane.ERROR_MESSAGE);
 					}
 					
 		    		
@@ -166,32 +171,44 @@ public class Interfaz {
 	    centralPanel.setLayout(null);
 		
 	    // === Imagen Central ===
-		ImagActPanel = new JPanel();						
-		ImagActPanel.setBackground(Color.WHITE);
-		ImagActPanel.setBorder(UIManager.getBorder("Button.border"));
+		actPanel = new JPanel();						
+		actPanel.setBackground(Color.WHITE);
+		actPanel.setBorder(UIManager.getBorder("Button.border"));
 		
 		
 		final JPanel pScroll = new JPanel();
 		pScroll.setBounds(255, 10, 720, 394);			
 		pScroll.setLayout(null);
 	    
-		final JScrollPane scroll = new JScrollPane(ImagActPanel);
+		final JScrollPane scroll = new JScrollPane(actPanel);
 		scroll.setVerticalScrollBarPolicy(ScrollPaneConstants.VERTICAL_SCROLLBAR_ALWAYS);
 		scroll.setHorizontalScrollBarPolicy(ScrollPaneConstants.HORIZONTAL_SCROLLBAR_ALWAYS);
 		scroll.setBounds(0, 0, 720, 394);		
 		pScroll.add(scroll);				
 		
+		centralPanel.add(pScroll);	
+	
 		
-		centralPanel.add(pScroll);			
+		
 		
 		//===  Inicializar Commnad Line ===
 		panelCMD = new JTextArea();		
 	    centralPanel.add(msgs.initMsg(panelCMD));
+	    
+	    // ======= Menu de Algoritmos =============================
 	      
 		Ipanel = new JPanel();
-		initPanel(10, 10, 235, 200, Ipanel, centralPanel);
+		initPanel(10, 20, 235, 180, Ipanel, centralPanel);
+		
+		JLabel lblAlgortimoDeSegmentacion = new JLabel("Algortimo de segmentacion");
+		lblAlgortimoDeSegmentacion.setBounds(10, 6, 180, 14);
+		centralPanel.add(lblAlgortimoDeSegmentacion);
 	    
-	    centralPanel.add(panelMenuImage());	    						   	   	    		
+	    centralPanel.add(panelMenuImage());	
+		
+		JLabel lblMenuDeImagenes = new JLabel("Menu de Imagenes");
+		lblMenuDeImagenes.setBounds(10, 202, 150, 14);
+		centralPanel.add(lblMenuDeImagenes);
 		
 		/****** Inicializar canales *************/
 		canalR = new JPanel();
@@ -204,9 +221,7 @@ public class Interfaz {
 		initPanel(390, 415, 285, 190, canalX, centralPanel);		
 		canalY = new JPanel();
 		initPanel(685, 415, 290, 190, canalY, centralPanel);
-		
-		//=== Funciones de los canales 
-		panelIzq();
+
 			
 		
 		return centralPanel;
@@ -215,141 +230,41 @@ public class Interfaz {
 
 	public JPanel panelSup(){
 		
-		JPanel Spanel = new JPanel();
-		Spanel.setLayout(new BoxLayout(Spanel, BoxLayout.Y_AXIS));
+		Spanel = new JPanel();
+		Spanel.setLayout(new BoxLayout(Spanel, BoxLayout.X_AXIS));
 		Spanel.setBorder(new BevelBorder(BevelBorder.LOWERED, Color.DARK_GRAY, null, null, null));
 		Spanel.setBackground(Color.white);
-		Spanel.add(panelMenu());
 		
-	
-		JSeparator separator = new JSeparator();
-		Spanel.add(separator);
-		Spanel.add(panelTool());
-				
-		return Spanel;
-	}
-	
-	public void panelIzq(){
-	    
-	    GridLayout gl_pCanales = new GridLayout(2,2);
-	    gl_pCanales.setHgap(2);
-	    JPanel pCanales = new JPanel(gl_pCanales);
-	  //================ BOTON  R ===================================  							
-		 JButton iCanalR = new JButton("Red");
-		 iCanalR.addMouseListener(new MouseAdapter() {
-	 	    	@Override
-	 	    	public void mouseClicked(MouseEvent arg0) { 	    		
-	 	    		PopWindows popUp = new PopWindows();
-	 	    	    popUp.gCanalR(originalImage); 	    	     	    	
-	 	    	}
-	 	 });
-		pCanales.add(iCanalR);
-	 //================ BOTON  G ===================================	
-		JButton iCanalG = new JButton("Green");
-		iCanalG.addMouseListener(new MouseAdapter() {
-	 	    	@Override
-	 	    	public void mouseClicked(MouseEvent arg0) { 	    		
-	 	    		PopWindows popUp = new PopWindows();
-	 	    	    popUp.gCanalG(originalImage); 	    	     	    	
-	 	    	}
-	 	});
-	    pCanales.add(iCanalG);
-	 //================ BOTON B  ===================================	
-	    JButton iCanalB = new JButton("Blue");
-	    iCanalB.addMouseListener(new MouseAdapter() {
- 	    	@Override
- 	    	public void mouseClicked(MouseEvent arg0) { 	    		
- 	    		PopWindows popUp = new PopWindows();
- 	    	    popUp.gCanalB(originalImage); 	    	     	    	
- 	    	}
-  	    });
- 	    pCanales.add(iCanalB);
- 	 //================ BOTON X ===================================
- 	    JButton iCanalX = new JButton("Black"); 	
- 	    iCanalX.addMouseListener(new MouseAdapter() {
-	    	@Override
-	    	public void mouseClicked(MouseEvent arg0) { 	    		
-	    		PopWindows popUp = new PopWindows();
-	    	    popUp.gCanalX(originalImage); 	    	     	    	
-	    	}
-	    });
-	    pCanales.add(iCanalX);
-	    //================ BOTON Y ===================================
-	    JButton iCanalY = new JButton("Gray");
-	    iCanalY.addMouseListener(new MouseAdapter() {
- 	    	@Override
- 	    	public void mouseClicked(MouseEvent arg0) { 	    		
- 	    		PopWindows popUp = new PopWindows();
- 	    	    popUp.gCanalY(originalImage); 	    	     	    	
- 	    	}
- 	    });
- 	    pCanales.add(iCanalY);
-	
-		Ipanel.add(pCanales);					
-		
-		JLabel lblCanales = new JLabel("   Canales");
-		lblCanales.setEnabled(false);
-		pCanales.add(lblCanales);
-		
-	}	
-	
-	 
-	public JMenuBar panelMenu(){
-		
-		JMenuBar menuBar = new JMenuBar();
-		menuBar.setAlignmentX(Component.LEFT_ALIGNMENT);
-		
-		JMenu mnArchivos = new JMenu("Archivos");
-		mnArchivos.setBounds(0, 0, 20, 10);
-		menuBar.add(mnArchivos);
+		JLabel lblMenu = new JLabel(" Menu ");
+		Spanel.add(lblMenu);
 		//==================== Load Image ===================================
-		JMenuItem cargarImagen = new JMenuItem("Carga imagen");
+		JButton cargarImagen = new JButton("Load Image");
 		cargarImagen.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				    				   				  				  				    
 				    originalImage = arc.loadFile(tablaMenuImage, modelo);
-				    panelCMD.setText(msgs.msgOperacion(0,arc.getImageName(), originalImage.toString()));
-				    mostrar(ImagActPanel, originalImage);	
+				    mostrar(actPanel, originalImage);					    
+				    panelCMD.setText(msgs.msgOperacion(0,arc.getImageName(), originalImage));
+				    
+				  
 							   				    				    				            				  			  			
 			}
 		});
-		mnArchivos.add(cargarImagen);
+		Spanel.add(cargarImagen);
+		
+	
+		
 		//==================== Save Image ===================================
-		JMenuItem salvarImagen = new JMenuItem("Salvar imagen");
+		JButton salvarImagen = new JButton("Save Image");
 		salvarImagen.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				 
 				 Archivos arc = new Archivos();
 			     arc.saveFile();
-			     panelCMD.setText(msgs.msgOperacion(1,arc.getImageName(), originalImage.toString()));				    				    				    			
+			     panelCMD.setText(msgs.msgOperacion(1,arc.getImageName(), originalImage));				    				    				    			
 			}
 		});
-		mnArchivos.add(salvarImagen);
-		
-	//==================== EXIT ===================================
-		JMenuItem itemExit = new JMenuItem("Exit");
-		itemExit.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent e) {
-				System.exit(0);			    			
-			}
-		});
-		mnArchivos.add(itemExit);
-		
-		return menuBar;
-	}
-	/*************************************************/
-	public JPanel panelTool(){
-
-		Npanel = new JPanel();
-		Npanel.setAlignmentY(Component.TOP_ALIGNMENT);
-		Npanel.setAlignmentX(Component.LEFT_ALIGNMENT);
-		Npanel.setLayout(new BoxLayout(Npanel, BoxLayout.X_AXIS));
-		Npanel.setBorder(BorderFactory.createEmptyBorder(5, 5, 5, 10));
-		Npanel.setBackground(Color.WHITE);
-
-		JButton seleccionar = new JButton("Seleccionar");		
-		seleccionar.setMaximumSize(seleccionar.getMaximumSize());
-		Npanel.add(seleccionar);
+		Spanel.add(salvarImagen);
 
 		//==================== ZOOM ++ ===================================
 		JButton ZoomPlus = new JButton ("ZOOM ++");
@@ -359,13 +274,16 @@ public class Interfaz {
 				yScaleFactor += 0.1;				  	
 				
 				finalImage = Tools.Zoom(originalImage, yScaleFactor, xScaleFactor );	
-				panelCMD.setText(msgs.msgOperacion(2,arc.getImageName(), finalImage.toString()));
-				mostrar(ImagActPanel, finalImage);
+				panelCMD.setText(msgs.msgOperacion(2,arc.getImageName(), finalImage));
+				mostrar(actPanel, finalImage);
 						
 			}
 		});		
-		ZoomPlus.setMaximumSize(seleccionar.getMaximumSize());
-		Npanel.add(ZoomPlus);
+		
+		JLabel lblTools = new JLabel(" Tools");
+		Spanel.add(lblTools);
+		
+		Spanel.add(ZoomPlus);
 		//==================== ZOOM -- =================================== 
 		JButton ZoomMinus = new JButton ("ZOOM --");
 		ZoomMinus.addActionListener(new ActionListener() {
@@ -374,12 +292,12 @@ public class Interfaz {
 				  yScaleFactor -= 0.1;			
 				  
 				  finalImage = Tools.Zoom(originalImage, yScaleFactor, xScaleFactor );
-				  panelCMD.setText(msgs.msgOperacion(3,arc.getImageName(), finalImage.toString()));
-				  mostrar(ImagActPanel, finalImage);				  			
+				  panelCMD.setText(msgs.msgOperacion(3,arc.getImageName(), finalImage));
+				  mostrar(actPanel, finalImage);				  			
 			}
 		});		
-		ZoomMinus.setMaximumSize(seleccionar.getMaximumSize());
-		Npanel.add(ZoomMinus);
+		
+		Spanel.add(ZoomMinus);
 		//==================== GIRAR IZQ =================================== 
 		JButton girarIZQ = new JButton ("Girar IZQ");
 		girarIZQ.addActionListener(new ActionListener() {
@@ -387,13 +305,13 @@ public class Interfaz {
 				 degree += 45;				 
 				 // RotatedPanel rot = new RotatedPanel();			
 				 finalImage = Tools.Rotar(originalImage, degree);
-				 panelCMD.setText(msgs.msgOperacion(4,arc.getImageName(), finalImage.toString()));
+				 panelCMD.setText(msgs.msgOperacion(4,arc.getImageName(), finalImage));
 				
-				 mostrar(ImagActPanel, finalImage);
+				 mostrar(actPanel, finalImage);
 			}
 		});			
-		girarIZQ.setMaximumSize(seleccionar.getMaximumSize());
-		Npanel.add(girarIZQ);
+		
+		Spanel.add(girarIZQ);
         // ==================== GIRAR DCH ===================================
 		JButton girarDCH = new JButton ("Girar DCH");
 		girarDCH.addActionListener(new ActionListener() {
@@ -401,18 +319,93 @@ public class Interfaz {
 				 degree -= 45;				 
 				 // RotatedPanel rot = new RotatedPanel();			
 				 finalImage = Tools.Rotar(originalImage, degree);
-				 panelCMD.setText(msgs.msgOperacion(5,arc.getImageName(), finalImage.toString()));				
-				 mostrar(ImagActPanel, finalImage);
+				 panelCMD.setText(msgs.msgOperacion(5,arc.getImageName(), finalImage));				
+				 mostrar(actPanel, finalImage);
 			}
 		});		
-		girarDCH.setMaximumSize(seleccionar.getMaximumSize());
-		Npanel.add(girarDCH);
 		
-		JButton recortar = new JButton ("Recortar");		
-		recortar.setMaximumSize(seleccionar.getMaximumSize());		
-		Npanel.add(recortar);
-
-		return Npanel;
+		Spanel.add(girarDCH);
+		
+		JLabel lblBack = new JLabel(" Editar");
+		Spanel.add(lblBack);
+		
+		//==================== DESHACER =================================== 
+		JButton desHacer = new JButton ("Deshacer");
+		desHacer.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent arg0) {
+				
+				panelCMD.setText(msgs.msgOperacion(6,arc.getImageName(), originalImage));	
+			  
+			}
+		});			
+		
+		Spanel.add(desHacer);
+        // ==================== DESHACER TODO ===================================
+		JButton goTo = new JButton ("Deshacer todo");
+		goTo.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent arg0) {
+				panelCMD.setText(msgs.msgOperacion(7,arc.getImageName(), originalImage));
+				 
+			}
+		});
+		Spanel.add(goTo);	
+		
+		// =================== Filtros ====================================
+		JLabel lblCanales = new JLabel(" Filtros ");
+		Spanel.add(lblCanales);
+		
+	  //================ BOTON  R ===================================  							
+		 JButton iCanalR = new JButton("Red");
+		 iCanalR.addMouseListener(new MouseAdapter() {
+	 	    	@Override
+	 	    	public void mouseClicked(MouseEvent arg0) { 	    		
+	 	    		PopWindows popUp = new PopWindows();
+	 	    	    popUp.gCanalR(originalImage); 	    	     	    	
+	 	    	}
+	 	 });
+		Spanel.add(iCanalR);
+	 //================ BOTON  G ===================================	
+		JButton iCanalG = new JButton("Green");
+		iCanalG.addMouseListener(new MouseAdapter() {
+	 	    	@Override
+	 	    	public void mouseClicked(MouseEvent arg0) { 	    		
+	 	    		PopWindows popUp = new PopWindows();
+	 	    	    popUp.gCanalG(originalImage); 	    	     	    	
+	 	    	}
+	 	});
+		Spanel.add(iCanalG);
+	 //================ BOTON B  ===================================	
+	    JButton iCanalB = new JButton("Blue");
+	    iCanalB.addMouseListener(new MouseAdapter() {
+ 	    	@Override
+ 	    	public void mouseClicked(MouseEvent arg0) { 	    		
+ 	    		PopWindows popUp = new PopWindows();
+ 	    	    popUp.gCanalB(originalImage); 	    	     	    	
+ 	    	}
+  	    });
+	    Spanel.add(iCanalB);
+ 	 //================ BOTON X ===================================
+ 	    JButton iCanalX = new JButton("Black"); 	
+ 	    iCanalX.addMouseListener(new MouseAdapter() {
+	    	@Override
+	    	public void mouseClicked(MouseEvent arg0) { 	    		
+	    		PopWindows popUp = new PopWindows();
+	    	    popUp.gCanalX(originalImage); 	    	     	    	
+	    	}
+	    });
+ 	   Spanel.add(iCanalX);
+	    //================ BOTON Y ===================================
+	    JButton iCanalY = new JButton("Gray");
+	    iCanalY.addMouseListener(new MouseAdapter() {
+ 	    	@Override
+ 	    	public void mouseClicked(MouseEvent arg0) { 	    		
+ 	    		PopWindows popUp = new PopWindows();
+ 	    	    popUp.gCanalY(originalImage); 	    	     	    	
+ 	    	}
+ 	    });
+	    Spanel.add(iCanalY);
+	
+		return Spanel;
 	}
 	
 	private void mostrar(JPanel panel, BufferedImage image){
@@ -434,8 +427,7 @@ public class Interfaz {
 	}
 	
 	private void Graficar ( BufferedImage image){
-		
-						
+								
 		//CREAMOS EL HISTOGRAMAS
         ObjHistograma=new Histograma();
         histograma=ObjHistograma.histograma(image);
@@ -449,20 +441,19 @@ public class Interfaz {
 	            //Dibujamos en el panel
 	            switch(i){
 	                case 0:
-	                    ObjDibujaHisto.crearHistograma(histogramaCanal, canalR, Color.red, image);	 
-	                   
+	                    ObjDibujaHisto.crearHistograma(histogramaCanal, canalR, Color.red, image, actPanel, panelCMD);	                    
 	                    break;
 	                case 1:
-	                    ObjDibujaHisto.crearHistograma(histogramaCanal, canalG, Color.green, image);
+	                    ObjDibujaHisto.crearHistograma(histogramaCanal, canalG, Color.green, image, actPanel, panelCMD);
 	                    break;
 	                case 2:
-	                    ObjDibujaHisto.crearHistograma(histogramaCanal, canalB, Color.blue, image);
+	                    ObjDibujaHisto.crearHistograma(histogramaCanal, canalB, Color.blue, image, actPanel, panelCMD);
 	                    break;
 	                case 3:
-	                    ObjDibujaHisto.crearHistograma(histogramaCanal, canalX, Color.black, image);
+	                    ObjDibujaHisto.crearHistograma(histogramaCanal, canalX, Color.black, image, actPanel, panelCMD);
 	                    break;
 	                case 4:
-	                    ObjDibujaHisto.crearHistograma(histogramaCanal, canalY, Color.gray, image);
+	                    ObjDibujaHisto.crearHistograma(histogramaCanal, canalY, Color.gray, image, actPanel, panelCMD);
 	                    break;
 	            }
 	        }
@@ -476,5 +467,7 @@ public class Interfaz {
 		
 		panel_Out.add(panel_In);
 	}
+	
+
 }
 
