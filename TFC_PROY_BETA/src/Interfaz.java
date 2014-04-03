@@ -244,10 +244,7 @@ public class Interfaz {
 				    				   				  				  				    
 				    originalImage = arc.loadFile(tablaMenuImage, modelo);
 				    mostrar(actPanel, originalImage);					    
-				    panelCMD.setText(msgs.msgOperacion(0,arc.getImageName(), originalImage));
-				    
-				  
-							   				    				    				            				  			  			
+				    panelCMD.setText(msgs.msgOperacion(0,arc.getImageName(), originalImage));				    				 							   				    				    				            				  			  	
 			}
 		});
 		Spanel.add(cargarImagen);

@@ -26,7 +26,8 @@ public class DibujarGrafica {
      * @param jPanelHistograma JPanel donde el histograma será dibujado
      * @param colorBarras color de cuál será dibujado el histograma
      */
-	
+
+	private String msg;
 	
     public void crearHistograma(int[] histograma,JPanel jpHisto,Color colorBarras, final BufferedImage image, final JPanel jpImagen, final JTextArea cmdLine) {
     	
@@ -64,27 +65,37 @@ public class DibujarGrafica {
             public void chartMouseClicked(ChartMouseEvent e){
             	int x = e.getTrigger().getX();
                 int y = e.getTrigger().getY();
+            
                 Color c1 = new Color(image.getRGB(x, y));
-                                                             
-                String msg = "Coordenada X:" + x + "Y:" +y + " Tolerancia: " + Tolerancia;
-                msg += " [Color] = "+ c1.getRGB() + '\n';
+                BufferedImage tmp = clona(image);
+                
+            	
+                msg = "\n$ > Coordenada X:" + x + "Y:" +y + " Tolerancia: " + Tolerancia;
+                msg += "\n$ > [Color] = R: " + c1.getRed() + " B: " + c1.getBlue() + " G: "+ c1.getGreen()  + '\n';
                 cmdLine.append(msg); 
                 
                 for (int u = 0; u < image.getWidth(); u++){
                 	for (int v = 0; v < image.getHeight(); v++){
                 		
                 		Color c2 = new Color(image.getRGB(u, v));
-                	    double d = Math.sqrt(Math.pow((c1.getRed() -c2.getRed()),2) +
-                	    		          Math.pow((c1.getGreen() -c2.getGreen()),2) +
-                	    		          Math.pow((c1.getBlue() -c2.getBlue()),2));
+                		
+                	    double d = Math.sqrt(Math.pow((c1.getRed() -  c2.getRed()),2) +
+                	    		          Math.pow((c1.getGreen() - c2.getGreen()),2) +
+                	    		          Math.pow((c1.getBlue() - c2.getBlue()),2));
                 	    
-                	        if ( d <= Tolerancia){                 	        
-	                	        image.setRGB(u, v, new Color(25,25,25).getRGB());
-	                	        jpImagen.repaint();
-                	        }                	       
+                	        if ( d <= Tolerancia){// Pintar en color                 	        
+	                	        image.setRGB(u, v, new Color(c2.getRed(),c2.getBlue(),c2.getGreen()).getRGB());
+	                	        
+                	        }   else{ // Colocar en grises
+                	        	int med=(c2.getRed()+c2.getGreen()+c2.getBlue())/3;
+            					//Almacena el color en la imagen destino
+            					image.setRGB(u, v, new Color(med,med,med).getRGB());
+                	        }
+                	        jpImagen.repaint();     
                 	}   
+                	
                 }
-                           	
+                 	
             }
 
 			@Override
@@ -94,9 +105,16 @@ public class DibujarGrafica {
 				
 			}
         });   
+         
+        jpHisto.validate();        
         
-        jpHisto.validate();
-        
+    }
+
+  //==========================================================================================================        
+    public static BufferedImage clona(BufferedImage imagen){
+    	BufferedImage copia = new BufferedImage (imagen.getWidth(),imagen.getHeight(),imagen.getType());
+    	copia.setData(imagen.getData());
+    	return copia;
     }
     
 }
