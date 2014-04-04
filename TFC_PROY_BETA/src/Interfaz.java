@@ -71,6 +71,8 @@ public class Interfaz {
     private Histograma ObjHistograma;
     private int[][] histograma;
     private DibujarGrafica ObjDibujaHisto;
+    private PopWindows popUp;
+        
 	
 	/******************* MAIN *****************************/	 
 	public static void main(String[] args) {
@@ -85,10 +87,15 @@ public class Interfaz {
 				}
 			}
 		});
+		System.gc();
 	}
 
 	/** Create the application. */
 	public Interfaz() {
+		msgs = new Mensajes();
+		modelo = new MyTableModel();
+		arc = new Archivos();
+		
 		initialize();
 	}
 
@@ -96,16 +103,12 @@ public class Interfaz {
 	 * Initialize the contents of the frame.
 	 */
 	private void initialize() {
-		
-		
+				
 		miVentana = new JFrame();		
-		miVentana.setTitle("TFG - sImage beta v.3.0");
+		miVentana.setTitle(msgs.getVersion());
 		miVentana.getContentPane().setBackground(Color.LIGHT_GRAY);
 		miVentana.setSize(1264, 720);
-		
-		msgs = new Mensajes();
-		modelo = new MyTableModel();
-		arc = new Archivos();				   
+				
 		
 		miVentana.getContentPane().add(panelSup(), BorderLayout.NORTH);
 		miVentana.getContentPane().add(panelCentral(),BorderLayout.CENTER);											
@@ -123,7 +126,7 @@ public class Interfaz {
 		 pMenuImage.setLayout(new FlowLayout(FlowLayout.LEFT, 5, 5));
 		 
 		 // Inicializacion Table Model
-		 String [] nombreColumnas = {"Imagen", "Image", "Imagen"};
+		 String [] nombreColumnas = {"image", "image", "image"};
 		 Object [][] datosFila = {{null,null,null},{null,null,null}, {null,null,null}};
 		
 		 tablaMenuImage = new JTable();
@@ -242,7 +245,7 @@ public class Interfaz {
 		cargarImagen.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				    				   				  				  				    
-				    originalImage = arc.loadFile(tablaMenuImage, modelo);
+				    originalImage = arc.loadFile(tablaMenuImage, modelo);				   				   
 				    mostrar(actPanel, originalImage);					    
 				    panelCMD.setText(msgs.msgOperacion(0,arc.getImageName(), originalImage));				    				 							   				    				    				            				  			  	
 			}
@@ -331,8 +334,16 @@ public class Interfaz {
 		desHacer.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent arg0) {
 				
-				panelCMD.setText(msgs.msgOperacion(6,arc.getImageName(), originalImage));	
-			  
+				try {
+					originalImage =  arc.loadImage(0, 0, tablaMenuImage, modelo);
+					mostrar(actPanel, originalImage);
+				} catch (IOException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+				String msg = "Pos X" + arc.getX() + "Pos Y" + arc.getY(); 
+				panelCMD.setText(msgs.msgOperacion(6,msg, originalImage));	
+				
 			}
 		});			
 		
@@ -341,6 +352,13 @@ public class Interfaz {
 		JButton goTo = new JButton ("Deshacer todo");
 		goTo.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent arg0) {
+				try {
+					originalImage =  arc.loadImage(0, 0, tablaMenuImage, modelo);
+					mostrar(actPanel, originalImage);
+				} catch (IOException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
 				panelCMD.setText(msgs.msgOperacion(7,arc.getImageName(), originalImage));
 				 
 			}
@@ -355,8 +373,8 @@ public class Interfaz {
 		 JButton iCanalR = new JButton("Red");
 		 iCanalR.addMouseListener(new MouseAdapter() {
 	 	    	@Override
-	 	    	public void mouseClicked(MouseEvent arg0) { 	    		
-	 	    		PopWindows popUp = new PopWindows();
+	 	    	public void mouseClicked(MouseEvent arg0) { 
+	 	    		popUp = new PopWindows(tablaMenuImage,  modelo);
 	 	    	    popUp.gCanalR(originalImage); 	    	     	    	
 	 	    	}
 	 	 });
@@ -365,8 +383,8 @@ public class Interfaz {
 		JButton iCanalG = new JButton("Green");
 		iCanalG.addMouseListener(new MouseAdapter() {
 	 	    	@Override
-	 	    	public void mouseClicked(MouseEvent arg0) { 	    		
-	 	    		PopWindows popUp = new PopWindows();
+	 	    	public void mouseClicked(MouseEvent arg0) { 
+	 	    		popUp = new PopWindows(tablaMenuImage,  modelo);
 	 	    	    popUp.gCanalG(originalImage); 	    	     	    	
 	 	    	}
 	 	});
@@ -375,8 +393,8 @@ public class Interfaz {
 	    JButton iCanalB = new JButton("Blue");
 	    iCanalB.addMouseListener(new MouseAdapter() {
  	    	@Override
- 	    	public void mouseClicked(MouseEvent arg0) { 	    		
- 	    		PopWindows popUp = new PopWindows();
+ 	    	public void mouseClicked(MouseEvent arg0) { 
+ 	    		popUp = new PopWindows(tablaMenuImage,  modelo);
  	    	    popUp.gCanalB(originalImage); 	    	     	    	
  	    	}
   	    });
@@ -385,8 +403,8 @@ public class Interfaz {
  	    JButton iCanalX = new JButton("Black"); 	
  	    iCanalX.addMouseListener(new MouseAdapter() {
 	    	@Override
-	    	public void mouseClicked(MouseEvent arg0) { 	    		
-	    		PopWindows popUp = new PopWindows();
+	    	public void mouseClicked(MouseEvent arg0) { 	
+	    		popUp = new PopWindows(tablaMenuImage,  modelo);
 	    	    popUp.gCanalX(originalImage); 	    	     	    	
 	    	}
 	    });
@@ -396,7 +414,7 @@ public class Interfaz {
 	    iCanalY.addMouseListener(new MouseAdapter() {
  	    	@Override
  	    	public void mouseClicked(MouseEvent arg0) { 	    		
- 	    		PopWindows popUp = new PopWindows();
+ 	    		popUp = new PopWindows(tablaMenuImage,  modelo);
  	    	    popUp.gCanalY(originalImage); 	    	     	    	
  	    	}
  	    });
@@ -447,7 +465,7 @@ public class Interfaz {
 	                    ObjDibujaHisto.crearHistograma(histogramaCanal, canalB, Color.blue, image, actPanel, panelCMD);
 	                    break;
 	                case 3:
-	                    ObjDibujaHisto.crearHistograma(histogramaCanal, canalX, Color.black, image, actPanel, panelCMD);
+	                   // ObjDibujaHisto.crearHistograma(histogramaCanal, canalX, Color.black, image, actPanel, panelCMD);
 	                    break;
 	                case 4:
 	                    ObjDibujaHisto.crearHistograma(histogramaCanal, canalY, Color.gray, image, actPanel, panelCMD);

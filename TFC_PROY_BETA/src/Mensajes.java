@@ -20,7 +20,7 @@ public class Mensajes {
 	}
 	
 	public String getVersion(){
-		return msg = "$ > Version beta 3.1";
+		return msg = "$ > TFG - sImage beta v.4.0";
 				
 	}
 	

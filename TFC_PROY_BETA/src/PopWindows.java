@@ -2,23 +2,29 @@ import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.image.BufferedImage;
 
+import javax.imageio.ImageIO;
 import javax.swing.ImageIcon;
+import javax.swing.JButton;
+import javax.swing.JFileChooser;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
+import javax.swing.JTable;
 import javax.swing.JTextArea;
 import javax.swing.ScrollPaneConstants;
 import javax.swing.UIManager;
 import javax.swing.border.BevelBorder;
 
-import java.awt.FlowLayout;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.Font;
+import java.io.File;
+import java.io.IOException;
 
 
-public class PopWindows {
+public class PopWindows extends Interfaz{
 	
 	static final int rCanal = 0, gCanal = 1, bCanal = 2, xCanal = 3, yCanal = 4;
 	
@@ -32,8 +38,14 @@ public class PopWindows {
     private int[][] histograma;
     private DibujarGrafica ObjDibujaHisto;
     
+    private JTable tablaMenuImage;
+    private MyTableModel modelo;
+    
 	/** Pop Windows **/
-   	public PopWindows() {
+   	public PopWindows(JTable tmImage, MyTableModel modImage) {
+   		
+   		tablaMenuImage = tmImage;
+   		modelo = modImage;
    		
    		try {
    			UIManager.setLookAndFeel("com.sun.java.swing.plaf.nimbus.NimbusLookAndFeel");
@@ -53,40 +65,117 @@ public class PopWindows {
 		win2.setTitle("TFG - sImage beta v.3.0");
 		win2.getContentPane().setBackground(Color.LIGHT_GRAY);
 	
-		win2.setSize(800, 416);
+		win2.setSize(850, 450);
 		win2.setResizable(false);
 		 
 		cPanel = new JPanel();
 		cPanel.setLayout(null);
 		
 		cPanel.add(imagePanel());
-		cPanel.add(histoPanel());
-										
-		win2.getContentPane().add(cPanel,BorderLayout.CENTER);
+		cPanel.add(histoPanel());		
+		cPanel.add(cmdPanel());
+		cPanel.add(toolPanel());
 		
-		cmd = new JTextArea("$ > Command Line \n");
-		cmd.setFont(new Font("Consolas", Font.PLAIN, 12));
-		cmd.setEditable(false);
-		cmd.setBorder(new BevelBorder(BevelBorder.LOWERED, Color.DARK_GRAY, null, null, null));
-		cmd.setBackground(Color.LIGHT_GRAY);
-		cmd.setBounds(550, 202, 234, 175);
-		cPanel.add(cmd);
+		win2.getContentPane().add(cPanel,BorderLayout.CENTER);
 		
 					
 	}
+   	public boolean insertar (){
+   		
+	JFileChooser fc = new JFileChooser();
+	File fileToSave = null;
+	boolean ok = false;
+	
+	fc.setDialogTitle("Specify a file to save");   
+		 
+	int userSelection = fc.showSaveDialog(fc);
+		 
+	if (userSelection == JFileChooser.APPROVE_OPTION) {
+		   fileToSave = fc.getSelectedFile();
+		  
+	}
+   		
+   	 int f = modelo.getRowCount();//cantidad de filas
+	 int c = modelo.getColumnCount();//cantidad de columnas
+	 
+	 //recorre todo el TableModel buscando una celda vacia para agregar la imagen
+	 for ( int i=0; i<f;i++ ){
+	       for( int j=0; j<c; j++ ) {
+	           if( modelo.getValueAt(i, j) == null ) {
+	        	   
+	               modelo.setValueAt( fileToSave.getAbsolutePath() , i, j );        
+	               tablaMenuImage.repaint();
+	               win2.dispose();
+	               return ok;	               
+	           }
+	        }
+	  //} Ojo -> falta comprobar cuando no hay espacio.
+	  		                      
+      }
+   	  return ok;	
+   		
+   	} // fin  de insertar
+   	
+   	public JPanel toolPanel(){
+   		
+   		JPanel botones = new JPanel();
+   		botones.setBounds(600, 360, 235, 90);
+   		
+   		JButton salir = new JButton("SALIR");
+   		salir.addMouseListener(new MouseAdapter() {
+   			@Override
+   			public void mouseClicked(MouseEvent arg0) {
+   			       int result = JOptionPane.showConfirmDialog(null, "Desea salir", "Aceptar",JOptionPane.YES_NO_OPTION,JOptionPane.QUESTION_MESSAGE);
+   			       if(result == JOptionPane.YES_OPTION){
+   			    	 win2.dispose();
+   			       }       
+   			}
+   		});
+   		botones.add(salir);
+   		
+   		JButton salvar = new JButton("SALVAR");
+   		salvar.addMouseListener(new MouseAdapter() {
+   			@Override
+   			public void mouseClicked(MouseEvent arg0) {
+   			       int result = JOptionPane.showConfirmDialog(null, "Desea Salvar", "Aceptar",JOptionPane.YES_NO_OPTION,JOptionPane.QUESTION_MESSAGE);
+   			       if(result == JOptionPane.YES_OPTION){
+   			    	  insertar ();
+   			       }       
+   			}
+   		});
+   		botones.add(salvar);
+   		
+   		
+   		return botones;
+   	}
+   	
+   	public final JScrollPane cmdPanel (){
+   		
+   		cmd = new JTextArea("$ > Command Line \n");
+		cmd.setFont(new Font("Consolas", Font.PLAIN, 12));
+		cmd.setEditable(false);
+		
+		final JScrollPane scroll = new JScrollPane(cmd);	
+		scroll.setBounds(600, 170, 235, 180);
+		
+		scroll.setVerticalScrollBarPolicy(ScrollPaneConstants.VERTICAL_SCROLLBAR_ALWAYS);
+		scroll.setHorizontalScrollBarPolicy(ScrollPaneConstants.HORIZONTAL_SCROLLBAR_ALWAYS);
+   		
+   		return scroll;
+   	}
    	
    	public JPanel histoPanel(){
    		
    		gPanel = new JPanel();		
-   		
-   		gPanel.setSize(234, 185);
-   		gPanel.setLocation(550, 5);
+   		gPanel.setBounds(600, 5, 235, 160);
 		gPanel.setBackground(Color.LIGHT_GRAY);
 		gPanel.setBorder(new BevelBorder(BevelBorder.LOWERED, Color.DARK_GRAY, null, null, null));
 
 		return gPanel;
    		
    	}
+
+   	
    	public JPanel imagePanel(){
    		
    		iPanel = new JPanel();
@@ -94,13 +183,13 @@ public class PopWindows {
 		
 		
 		final JPanel pScroll = new JPanel();
-		pScroll.setBounds(5, 5, 540, 372);			
+		pScroll.setBounds(5, 5, 580, 420);			
 		pScroll.setLayout(null);
 	    
 		final JScrollPane scroll = new JScrollPane(iPanel);	
 		scroll.setVerticalScrollBarPolicy(ScrollPaneConstants.VERTICAL_SCROLLBAR_ALWAYS);
 		scroll.setHorizontalScrollBarPolicy(ScrollPaneConstants.HORIZONTAL_SCROLLBAR_ALWAYS);
-		scroll.setBounds(5, 5, 520, 356);		
+		scroll.setBounds(5, 5, 575, 410);		
 		pScroll.add(scroll);				
 	
 		return pScroll; 
@@ -119,7 +208,7 @@ public class PopWindows {
 			    	int r = c.getRed();
 			    	int g = c.getGreen();
 			    	int b = c.getBlue();
-			    	salida.setRGB(x, y, new Color(r, 255 - g, 255 -b).getRGB());	               				    
+			    	salida.setRGB(x, y, new Color(r, r, r).getRGB());	               				    
 			    }	
 		 }	    
 		cmd.append(salida.toString() + '\n');				
@@ -147,7 +236,7 @@ public class PopWindows {
 			    	int r = c.getRed();
 			    	int g = c.getGreen();
 			    	int b = c.getBlue();
-			    	salida.setRGB(x, y, new Color(255-r, g, 255-b).getRGB());
+			    	salida.setRGB(x, y, new Color(g, g, g).getRGB());
 			    }	
 		 }	    		
 							
@@ -173,7 +262,7 @@ public class PopWindows {
 			    	int r = c.getRed();
 			    	int g = c.getGreen();
 			    	int b = c.getBlue();
-			    	salida.setRGB(x, y, new Color(255 -r, 255 -g, b).getRGB());	
+			    	salida.setRGB(x, y, new Color(b, b, b).getRGB());	
 			    }	
 		 }	    		
 							

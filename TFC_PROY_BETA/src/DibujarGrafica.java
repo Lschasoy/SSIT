@@ -59,7 +59,7 @@ public class DibujarGrafica {
         jpHisto.setLayout(new java.awt.BorderLayout());
         jpHisto.add(panel); //-- > lsch
         
-        final double Tolerancia = 50; // Tolerancia   
+        
         
         panel.addChartMouseListener(new ChartMouseListener(){
             public void chartMouseClicked(ChartMouseEvent e){
@@ -70,7 +70,7 @@ public class DibujarGrafica {
                 BufferedImage tmp = clona(image);
                 
             	
-                msg = "\n$ > Coordenada X:" + x + "Y:" +y + " Tolerancia: " + Tolerancia;
+                msg = "\n$ > Coordenada X:" + x + "Y:" + y ;
                 msg += "\n$ > [Color] = R: " + c1.getRed() + " B: " + c1.getBlue() + " G: "+ c1.getGreen()  + '\n';
                 cmdLine.append(msg); 
                 
@@ -79,15 +79,12 @@ public class DibujarGrafica {
                 		
                 		Color c2 = new Color(image.getRGB(u, v));
                 		
-                	    double d = Math.sqrt(Math.pow((c1.getRed() -  c2.getRed()),2) +
-                	    		          Math.pow((c1.getGreen() - c2.getGreen()),2) +
-                	    		          Math.pow((c1.getBlue() - c2.getBlue()),2));
-                	    
-                	        if ( d <= Tolerancia){// Pintar en color                 	        
-	                	        image.setRGB(u, v, new Color(c2.getRed(),c2.getBlue(),c2.getGreen()).getRGB());
+                	                    	    
+                	        if ( c1.getRGB() == c2.getRGB()){// Pintar en color                 	        
+	                	        image.setRGB(u, v, new Color(0,255,0).getRGB()); // Pintar de verde
 	                	        
                 	        }   else{ // Colocar en grises
-                	        	int med=(c2.getRed()+c2.getGreen()+c2.getBlue())/3;
+                	        	int med= (int) Math.round((c2.getRed()+c2.getGreen()+c2.getBlue())/3);
             					//Almacena el color en la imagen destino
             					image.setRGB(u, v, new Color(med,med,med).getRGB());
                 	        }
