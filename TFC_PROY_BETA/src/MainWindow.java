@@ -1,6 +1,6 @@
+
 import java.awt.EventQueue;
 
-import javax.swing.BorderFactory;
 import javax.swing.BoxLayout;
 import javax.swing.ImageIcon;
 import javax.swing.JFrame;
@@ -21,16 +21,7 @@ import java.awt.image.BufferedImage;
 import javax.swing.border.BevelBorder;
 
 import java.awt.FlowLayout;
-import java.awt.Component;
-import java.awt.GridLayout;
-
-import javax.swing.JMenuBar;
-import javax.swing.JMenuItem;
-import javax.swing.JMenu;
-import javax.swing.JSeparator;
-
 import java.io.IOException;
-import java.util.Vector;
 
 import javax.swing.JTable;
 
@@ -39,27 +30,21 @@ import javax.swing.JScrollPane;
 import javax.swing.ScrollPaneConstants;
 import javax.swing.UIManager;
 
-
-
-
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 
-import javax.swing.SwingConstants;
 
-
-
-public class Interfaz {
+public class MainWindow {
 	
 	private JFrame miVentana;
-	private JPanel actPanel, centralPanel, Ipanel, Spanel, canalR, canalG, canalB, canalX, canalY;
+	private ImagePanel actPanel;
+	private JPanel centralPanel, Ipanel, Spanel, canalR, canalG, canalB, canalX, canalY;
 	
 	public  BufferedImage originalImage, finalImage;
-
+    public  Image oImage;  
 		
 	private float xScaleFactor = 1, yScaleFactor = 1, degree;
 	private JTextArea panelCMD;
-	
 	private JTable tablaMenuImage;
 	
 	
@@ -80,65 +65,57 @@ public class Interfaz {
 			public void run() {
 				try {
 					UIManager.setLookAndFeel("com.sun.java.swing.plaf.nimbus.NimbusLookAndFeel");
-					Interfaz window = new Interfaz();
+					MainWindow window = new MainWindow();
 					window.miVentana.setVisible(true);
 				} catch (Exception e) {
 					e.printStackTrace();
 				}
 			}
 		});
-		System.gc();
+		System.gc(); // -> Elimina los objetos creados,para que no queden sombies
 	}
 
 	/** Create the application. */
-	public Interfaz() {
+	public MainWindow() {
+		
 		msgs = new Mensajes();
 		modelo = new MyTableModel();
 		arc = new Archivos();
 		
-		initialize();
-	}
-
-	/**
-	 * Initialize the contents of the frame.
-	 */
-	private void initialize() {
-				
+		ImagePanel.setRoiListener(); // --> Importar ImagenPanel 
+		
+	// ===============> Inicializar wind <=============================	
 		miVentana = new JFrame();		
 		miVentana.setTitle(msgs.getVersion());
 		miVentana.getContentPane().setBackground(Color.LIGHT_GRAY);
-		miVentana.setSize(1264, 720);
-				
-		
+		miVentana.setSize(1250, 650);
+	// ================> Inicializar ventanas <=========================			
 		miVentana.getContentPane().add(panelSup(), BorderLayout.NORTH);
-		miVentana.getContentPane().add(panelCentral(),BorderLayout.CENTER);											
-		
-		
+		miVentana.getContentPane().add(panelCentral(),BorderLayout.CENTER);	
 	}
+
 	
 	
 	public JPanel panelMenuImage (){
 		
-		 JPanel pMenuImage = new JPanel();		
-		 pMenuImage.setBounds(10, 215, 235, 190);
-		 pMenuImage.setBackground(Color.LIGHT_GRAY);
-		 pMenuImage.setBorder(new BevelBorder(BevelBorder.LOWERED, Color.DARK_GRAY, null, null, null));
-		 pMenuImage.setLayout(new FlowLayout(FlowLayout.LEFT, 5, 5));
+		 JPanel pMenuImage = new JPanel();				 
+		 pMenuImage.setBounds(720, 495, 500, 110);
+		 		
+		 
 		 
 		 // Inicializacion Table Model
-		 String [] nombreColumnas = {"image", "image", "image"};
-		 Object [][] datosFila = {{null,null,null},{null,null,null}, {null,null,null}};
+		 String [] nombreColumnas = {"image", "image", "image","image", "image", "image","image"};
+		 Object [][] datosFila = {{null,null,null, null,null,null,null}};
 		
-		 tablaMenuImage = new JTable();
-		 tablaMenuImage.setBorder(null);
-		 tablaMenuImage.setBackground(Color.LIGHT_GRAY);
+		 tablaMenuImage = new JTable();		 
 		 
 		 modelo.setDataVector(datosFila, nombreColumnas);
 		 tablaMenuImage.setModel(modelo);
+		 tablaMenuImage.setBorder(new BevelBorder(BevelBorder.LOWERED, Color.DARK_GRAY, null, null, null));
 		 		 
-	     tablaMenuImage.getColumnModel().getColumn(0).setCellRenderer(new ImageRenderer());	
-		 tablaMenuImage.getColumnModel().getColumn(1).setCellRenderer(new ImageRenderer());
-		 tablaMenuImage.getColumnModel().getColumn(2).setCellRenderer(new ImageRenderer()); 
+	     for (int i = 0; i < 7; i++)
+	    	 tablaMenuImage.getColumnModel().getColumn(i).setCellRenderer(new ImageRenderer());	
+		  
 		 tablaMenuImage.setRowHeight(60);
 		 		 		
 		    		    
@@ -151,7 +128,8 @@ public class Interfaz {
 		    		//msg = "\n$ > [ImageMenu] : Seleccionado image [" + row + col +"]" ; 
 					//panelCMD.setText(msg);
 					try {
-						mostrar(actPanel,arc.loadImage(row, col, tablaMenuImage,  modelo));
+						oImage = arc.loadImage(row, col, tablaMenuImage,  modelo);
+						actPanel.repaint();
 					} catch (IOException e) {
 						JOptionPane.showMessageDialog(null, "[Error] No Image", "Error", JOptionPane.ERROR_MESSAGE);
 					}
@@ -168,64 +146,42 @@ public class Interfaz {
 
 	public JPanel panelCentral (){
 		
-	//  Panel de la parte central 
-		
+	    //====> Panel de la parte central <=============================== 		
 	    centralPanel = new JPanel();
 	    centralPanel.setLayout(null);
 		
-	    // === Imagen Central ===
-		actPanel = new JPanel();						
-		actPanel.setBackground(Color.WHITE);
-		actPanel.setBorder(UIManager.getBorder("Button.border"));
+	    //=========> Imagen Central <===========
 		
-		
-		final JPanel pScroll = new JPanel();
-		pScroll.setBounds(255, 10, 720, 394);			
-		pScroll.setLayout(null);
-	    
-		final JScrollPane scroll = new JScrollPane(actPanel);
-		scroll.setVerticalScrollBarPolicy(ScrollPaneConstants.VERTICAL_SCROLLBAR_ALWAYS);
-		scroll.setHorizontalScrollBarPolicy(ScrollPaneConstants.HORIZONTAL_SCROLLBAR_ALWAYS);
-		scroll.setBounds(0, 0, 720, 394);		
-		pScroll.add(scroll);				
-		
-		centralPanel.add(pScroll);	
-	
-		
-		
+			
 		
 		//===  Inicializar Commnad Line ===
-		panelCMD = new JTextArea();		
+		panelCMD = new JTextArea();				
 	    centralPanel.add(msgs.initMsg(panelCMD));
 	    
 	    // ======= Menu de Algoritmos =============================
 	      
 		Ipanel = new JPanel();
-		initPanel(10, 20, 235, 180, Ipanel, centralPanel);
+		//initPanel(1110, 415, 130, 180, Ipanel, centralPanel);
 		
 		JLabel lblAlgortimoDeSegmentacion = new JLabel("Algortimo de segmentacion");
-		lblAlgortimoDeSegmentacion.setBounds(10, 6, 180, 14);
-		centralPanel.add(lblAlgortimoDeSegmentacion);
+		lblAlgortimoDeSegmentacion.setBounds(700, 410, 130, 14);
+		//centralPanel.add(lblAlgortimoDeSegmentacion);
 	    
 	    centralPanel.add(panelMenuImage());	
 		
-		JLabel lblMenuDeImagenes = new JLabel("Menu de Imagenes");
-		lblMenuDeImagenes.setBounds(10, 202, 150, 14);
-		centralPanel.add(lblMenuDeImagenes);
 		
 		/****** Inicializar canales *************/
 		canalR = new JPanel();
-		initPanel(985, 10, 250, 190, canalR, centralPanel );				
+		initPanel(970, 5, 250, 145, canalR, centralPanel );				
 		canalG = new JPanel();
-		initPanel(985, 210, 250, 190, canalG, centralPanel);		
+		initPanel(970, 150, 250, 145, canalG, centralPanel);		
 		canalB = new JPanel();
-		initPanel(985, 415, 250, 190, canalB, centralPanel);		
-		canalX =  new JPanel();
-		initPanel(390, 415, 285, 190, canalX, centralPanel);		
+		initPanel(720, 5, 250, 145, canalB, centralPanel);		
+		// canalX =  new JPanel(); --> No se usaba "Canal Alfa "
+		// initPanel(390, 415, 285, 140, canalX, centralPanel);	
+		
 		canalY = new JPanel();
-		initPanel(685, 415, 290, 190, canalY, centralPanel);
-
-			
+		initPanel(720, 150, 250, 145, canalY, centralPanel);
 		
 		return centralPanel;
 	}
@@ -244,10 +200,24 @@ public class Interfaz {
 		JButton cargarImagen = new JButton("Load Image");
 		cargarImagen.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				    				   				  				  				    
-				    originalImage = arc.loadFile(tablaMenuImage, modelo);				   				   
-				    mostrar(actPanel, originalImage);					    
-				    panelCMD.setText(msgs.msgOperacion(0,arc.getImageName(), originalImage));				    				 							   				    				    				            				  			  	
+												    				   				  				  				   
+				    oImage = arc.loadFile(tablaMenuImage, modelo);
+				    actPanel = new ImagePanel(oImage);						
+
+					final JPanel pScroll = new JPanel();
+					pScroll.setBounds(10, 10, 700, 500);			
+					pScroll.setLayout(null);
+				    
+					final JScrollPane scroll = new JScrollPane(actPanel);
+					scroll.setVerticalScrollBarPolicy(ScrollPaneConstants.VERTICAL_SCROLLBAR_ALWAYS);
+					scroll.setHorizontalScrollBarPolicy(ScrollPaneConstants.HORIZONTAL_SCROLLBAR_ALWAYS);
+					scroll.setBounds(0, 0, 700, 500);		
+					pScroll.add(scroll);
+												
+					centralPanel.add(pScroll);				
+				    
+				  //  mostrar(actPanel, originalImage);					    
+				  //  panelCMD.setText(msgs.msgOperacion(0,arc.getImageName(), originalImage));				    				 							   				    				    				            				  			  	
 			}
 		});
 		Spanel.add(cargarImagen);
@@ -335,7 +305,7 @@ public class Interfaz {
 			public void actionPerformed(ActionEvent arg0) {
 				
 				try {
-					originalImage =  arc.loadImage(0, 0, tablaMenuImage, modelo);
+				    oImage =  arc.loadImage(0, 0, tablaMenuImage, modelo);
 					mostrar(actPanel, originalImage);
 				} catch (IOException e) {
 					// TODO Auto-generated catch block
@@ -353,7 +323,7 @@ public class Interfaz {
 		goTo.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent arg0) {
 				try {
-					originalImage =  arc.loadImage(0, 0, tablaMenuImage, modelo);
+				    oImage = arc.loadImage(0, 0, tablaMenuImage, modelo);
 					mostrar(actPanel, originalImage);
 				} catch (IOException e) {
 					// TODO Auto-generated catch block
@@ -432,11 +402,11 @@ public class Interfaz {
 		JLabel label = new JLabel (ico);													
 		panel.add(label);		
 	    // ***** Generar las graficas **** 	
-		try {
+	/*	try {
 			Graficar (image);
 		}catch (Exception e) {
 	        JOptionPane.showMessageDialog(null, "No se pudo cargar la imagen", "Error", JOptionPane.ERROR_MESSAGE);
-	    }
+	    } */
 		
 	    miVentana.setVisible(true);	
 	}
@@ -481,8 +451,5 @@ public class Interfaz {
 		panel_In.setBackground(Color.LIGHT_GRAY);
 		
 		panel_Out.add(panel_In);
-	}
-	
-
+	}	
 }
-

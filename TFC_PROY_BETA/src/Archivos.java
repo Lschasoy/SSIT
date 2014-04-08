@@ -1,3 +1,4 @@
+import java.awt.Toolkit;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
@@ -23,33 +24,34 @@ public class Archivos {
 	public int getY() {return coordY;}
 //======================================================================================================================
 	
-	public BufferedImage loadImage(int row, int col, JTable tablaMenuImage, MyTableModel modelo) throws IOException{
+	public Image loadImage(int row, int col, JTable tablaMenuImage, MyTableModel modelo) throws IOException{
 		
-		
+		Image returnImg;
 		if ( row >= 0 && col >= 0 ) 
 		{   
 		//si celda contiene imagen
 		   if( modelo.getValueAt(row, col) != null ){
 		      //obtiene la ruta que corresponde a la celda donde se hizo el clic
 		      File imagen = new File( modelo.getValueAt(row, col).toString() );
-	       	 
-		      return ImageIO.read(imagen);		
+		      returnImg = new Image(imagen, "", ImageIO.read(imagen), true); 
+		      return returnImg;		
 		    }                             
         }
 	    return null;
 	}
 
 //======================================================================================================================	
-	public BufferedImage loadFile(JTable tablaMenuImage, MyTableModel modelo){
+	public Image loadFile(JTable tablaMenuImage, MyTableModel modelo){
 		
+		 Image returnImg;
 	
 		 fc = new JFileChooser();
 		 int returnVal = fc.showOpenDialog(fc);
          if (returnVal == JFileChooser.APPROVE_OPTION){
         	 File imagen = fc.getSelectedFile();
-        	 setImageName(imagen.getName());
         	 
         	 
+        	 setImageName(imagen.getName());        	 
         	 
         	 try {
         		 int fila = modelo.getRowCount();//cantidad de filas
@@ -65,8 +67,10 @@ public class Archivos {
         		               modelo.setValueAt( imagen.getAbsolutePath() , i, j );   
         		               
         		               tablaMenuImage.repaint();
+        		               returnImg = new Image(imagen, "null", ImageIO.read(imagen), ok);        		               
         		               ok = false;
-        		               return ImageIO.read(imagen);
+        		               
+        		               return returnImg;
         		           }
         		        }
         		  }

@@ -10,11 +10,10 @@ public class Mensajes {
 	private String msg;
 	
 	public String getWelcome (){
-		 return msg = "\n\n                 UNIVERSIDAD DE LA LAGUNA                \n"
-		           + "   ESCUELA TECNICA SUPERIOR DE INGENIERIA INFORMATICA        \n"
-		           + "   TRABAJO FIN DE GRADO - GRADO EN INGENIERIA INFORMATICA    \n"
-		           + "   TITULO: GUI para operaciones de segmentación de imágenes  \n"
-		           + "   AUTOR : LEONARDO SIVERIO CHASOY                           \n";
+		 return msg = "\n\n  UNIVERSIDAD DE LA LAGUNA           \n"
+		           + "   E.T.S DE INGENIERIA INFORMATICA        \n"
+		           + "   TFG - GRADO EN INGENIERIA INFORMATICA  \n"		           
+		           + "   AUTOR : LEONARDO SIVERIO CHASOY        \n";
 		        
 		
 	}
@@ -27,14 +26,13 @@ public class Mensajes {
 	public JTextArea initMsg(JTextArea panelCMD){
 		
 		
-		panelCMD.setBounds(10, 415, 370, 190);
+		panelCMD.setBounds(720, 295, 500, 200);
 		panelCMD.setText(getWelcome() +"\n   "+ getVersion());
 	    panelCMD.setFont(new Font("Consolas", Font.PLAIN, 11));
+	    panelCMD.setBorder(new BevelBorder(BevelBorder.LOWERED, Color.DARK_GRAY, null, null, null));
 	    panelCMD.setLineWrap(true);
 	    panelCMD.setColumns(10);
 	    panelCMD.setRows(10);
-	    panelCMD.setBorder(new BevelBorder(BevelBorder.LOWERED, Color.DARK_GRAY, null, null, null));
-	    panelCMD.setBackground(Color.LIGHT_GRAY);
 	    
 	    return panelCMD;
 	}

@@ -2,7 +2,6 @@ import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.image.BufferedImage;
 
-import javax.imageio.ImageIO;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JFileChooser;
@@ -21,10 +20,10 @@ import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.Font;
 import java.io.File;
-import java.io.IOException;
 
 
-public class PopWindows extends Interfaz{
+
+public class PopWindows{
 	
 	static final int rCanal = 0, gCanal = 1, bCanal = 2, xCanal = 3, yCanal = 4;
 	
@@ -205,9 +204,7 @@ public class PopWindows extends Interfaz{
 		 for (int x = 0; x < image.getWidth(); x++) {
 			    for (int y = 0; y < image.getHeight(); y++) {
 			    	Color c = new Color(image.getRGB(x, y));				    		
-			    	int r = c.getRed();
-			    	int g = c.getGreen();
-			    	int b = c.getBlue();
+			    	int r = c.getRed();			    	
 			    	salida.setRGB(x, y, new Color(r, r, r).getRGB());	               				    
 			    }	
 		 }	    
@@ -232,10 +229,8 @@ public class PopWindows extends Interfaz{
 		 
 		 for (int x = 0; x < image.getWidth(); x++) {
 			    for (int y = 0; y < image.getHeight(); y++) {
-			    	Color c = new Color(image.getRGB(x, y));
-			    	int r = c.getRed();
-			    	int g = c.getGreen();
-			    	int b = c.getBlue();
+			    	Color c = new Color(image.getRGB(x, y));			    	
+			    	int g = c.getGreen();			    	
 			    	salida.setRGB(x, y, new Color(g, g, g).getRGB());
 			    }	
 		 }	    		
@@ -258,9 +253,7 @@ public class PopWindows extends Interfaz{
 		 
 		 for (int x = 0; x < image.getWidth(); x++) {
 			    for (int y = 0; y < image.getHeight(); y++) {
-			    	Color c = new Color(image.getRGB(x, y));
-			    	int r = c.getRed();
-			    	int g = c.getGreen();
+			    	Color c = new Color(image.getRGB(x, y));			    	
 			    	int b = c.getBlue();
 			    	salida.setRGB(x, y, new Color(b, b, b).getRGB());	
 			    }	
