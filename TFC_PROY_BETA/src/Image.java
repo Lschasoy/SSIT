@@ -15,6 +15,10 @@ public class Image {
 	private ImageInfo info;
 	private long pixelsOut;
 	
+	public  BufferedImage toBufferedImage() {
+        return img;
+	}
+	
 	public Image(File file, String prefijo, BufferedImage img, boolean saved) {
 		
 		System.err.print("Error Const Image");

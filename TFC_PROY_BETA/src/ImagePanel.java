@@ -42,8 +42,7 @@ public class ImagePanel extends JPanel implements MouseListener, MouseMotionList
 	
 	public ImagePanel(Image image) {
 		
-		if (image != null){
-		
+		if (image != null){		
 			this.image = image;
 			this.img = image.img;
 			imgSize = new Dimension(img.getWidth(null) + border * 2 + 1, img.getHeight(null) + border * 2 + 1);

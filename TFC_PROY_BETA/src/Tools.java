@@ -62,8 +62,7 @@ public class Tools extends JPanel {
 		  g2.drawImage(originalImage, 0, 0, newW, newH, null);		  
 		  g2.dispose();
 		return result;
-	  }
-	  
+	  }	  	 
 // =================== Default Configuracion  ==================================================================
 	  
 	  public static GraphicsConfiguration getDefaultConfiguration() {
@@ -78,17 +77,17 @@ public class Tools extends JPanel {
 	    // This example defines a method that does this.
 	 
 	    // This method returns a buffered image with the contents of an image
-	    public static BufferedImage toBufferedImage(Image image) {
-	        if (image instanceof BufferedImage) {
-	            return (BufferedImage)image;
+	    public static BufferedImage toBufferedImage(Image img) {
+	        if (img instanceof BufferedImage) {
+	            return (BufferedImage)img;
 	        }
 	 
 	        // This code ensures that all the pixels in the image are loaded
-	        image = new ImageIcon(image).getImage();
+	        img = new ImageIcon(img).getImage();
 	 
 	        // Determine if the image has transparent pixels; for this method's
 	        // implementation, see e661 Determining If an Image Has Transparent Pixels
-	        boolean hasAlpha = hasAlpha(image);
+	        boolean hasAlpha = hasAlpha(img);
 	 
 	        // Create a buffered image with a format that's compatible with the screen
 	        BufferedImage bimage = null;
@@ -104,7 +103,7 @@ public class Tools extends JPanel {
 	            GraphicsDevice gs = ge.getDefaultScreenDevice();
 	            GraphicsConfiguration gc = gs.getDefaultConfiguration();
 	            bimage = gc.createCompatibleImage(
-	                image.getWidth(null), image.getHeight(null), transparency);
+	                img.getWidth(null), img.getHeight(null), transparency);
 	        } catch (HeadlessException e) {
 	            // The system does not have a screen
 	        }
@@ -115,14 +114,14 @@ public class Tools extends JPanel {
 	            if (hasAlpha) {
 	                type = BufferedImage.TYPE_INT_ARGB;
 	            }
-	            bimage = new BufferedImage(image.getWidth(null), image.getHeight(null), type);
+	            bimage = new BufferedImage(img.getWidth(null), img.getHeight(null), type);
 	        }
 	 
 	        // Copy image to buffered image
 	        Graphics g = bimage.createGraphics();
 	 
 	        // Paint the image onto the buffered image
-	        g.drawImage(image, 0, 0, null);
+	        g.drawImage(img, 0, 0, null);
 	        g.dispose();
 	 
 	        return bimage;
@@ -148,6 +147,6 @@ public class Tools extends JPanel {
 	        // Get the image's color model
 	        ColorModel cm = pg.getColorModel();
 	        return cm.hasAlpha();
-	    }     
+	    }	
  
 }
