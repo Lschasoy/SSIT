@@ -25,6 +25,8 @@ public class ImagePanel extends JPanel implements MouseListener, MouseMotionList
 	Point begin = null;
 	Point end = null;
 	boolean roiPainted = false;
+	
+	public ImagePanel(){}
 
 	public static Listener listener = Listener.ROI;
 	
@@ -78,7 +80,7 @@ public class ImagePanel extends JPanel implements MouseListener, MouseMotionList
 			g.setColor(Color.WHITE);
 			g.drawLine(begin.x, begin.y, end.x, end.y);
 		}
-		//MainWindow.showInfo();
+		MainWindow.showInfo();
 	}
 
 	public Point getCoordinate(int x, int y) {

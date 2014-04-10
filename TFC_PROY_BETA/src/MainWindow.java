@@ -2,7 +2,6 @@
 import java.awt.EventQueue;
 
 import javax.swing.BoxLayout;
-import javax.swing.ImageIcon;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JButton;
@@ -20,12 +19,10 @@ import java.awt.image.BufferedImage;
 
 import javax.swing.border.BevelBorder;
 
-import java.awt.FlowLayout;
+import java.io.File;
 import java.io.IOException;
 
 import javax.swing.JTable;
-
-
 import javax.swing.JScrollPane;
 import javax.swing.ScrollPaneConstants;
 import javax.swing.UIManager;
@@ -37,19 +34,21 @@ import java.awt.event.MouseEvent;
 public class MainWindow {
 	
 	private JFrame miVentana;
-	private ImagePanel actPanel;
-	private JPanel centralPanel, Ipanel, Spanel, canalR, canalG, canalB, canalX, canalY;
+//	private ImagePanel actPanel;
+	private JPanel centralPanel,  Spanel, canalR, canalG, canalB,  canalY;
 	
 	public  BufferedImage originalImage, finalImage;
-    public  Image oImage;  
+    public static  Image oImage;  
+    public  ImagePanel actPanel;
 		
 	private float xScaleFactor = 1, yScaleFactor = 1, degree;
 	private JTextArea panelCMD;
+	private static JTextArea panelInfo;
 	private JTable tablaMenuImage;
 	
 	
 	private MyTableModel modelo;
-	private Mensajes msgs;
+	private static Mensajes msgs;
 	private Archivos arc;
 	
 	 
@@ -99,10 +98,8 @@ public class MainWindow {
 	public JPanel panelMenuImage (){
 		
 		 JPanel pMenuImage = new JPanel();				 
-		 pMenuImage.setBounds(720, 495, 500, 110);
-		 		
-		 
-		 
+		 pMenuImage.setBounds(720, 505, 500, 110);
+		 				 		 
 		 // Inicializacion Table Model
 		 String [] nombreColumnas = {"image", "image", "image","image", "image", "image","image"};
 		 Object [][] datosFila = {{null,null,null, null,null,null,null}};
@@ -114,8 +111,7 @@ public class MainWindow {
 		 tablaMenuImage.setBorder(new BevelBorder(BevelBorder.LOWERED, Color.DARK_GRAY, null, null, null));
 		 		 
 	     for (int i = 0; i < 7; i++)
-	    	 tablaMenuImage.getColumnModel().getColumn(i).setCellRenderer(new ImageRenderer());	
-		  
+	    	 tablaMenuImage.getColumnModel().getColumn(i).setCellRenderer(new ImageRenderer());			  
 		 tablaMenuImage.setRowHeight(60);
 		 		 		
 		    		    
@@ -141,32 +137,40 @@ public class MainWindow {
 		 
 		return pMenuImage;
 	}
-
-	
-
+    //=====================================================================
+	public static void showInfo(){
+		panelInfo.append(msgs.showInfo(oImage));	
+	}
 	public JPanel panelCentral (){
 		
 	    //====> Panel de la parte central <=============================== 		
 	    centralPanel = new JPanel();
 	    centralPanel.setLayout(null);
+	    
+	    actPanel = new ImagePanel();
+    	
+		final JPanel pScroll = new JPanel();
+		pScroll.setBounds(10, 10, 700, 500);			
+		pScroll.setLayout(null);
+	    
+		final JScrollPane scroll = new JScrollPane(actPanel);
+		scroll.setVerticalScrollBarPolicy(ScrollPaneConstants.VERTICAL_SCROLLBAR_ALWAYS);
+		scroll.setHorizontalScrollBarPolicy(ScrollPaneConstants.HORIZONTAL_SCROLLBAR_ALWAYS);
+		scroll.setBounds(0, 0, 700, 500);		
+		pScroll.add(scroll);	    	    
 		
 	    //=========> Imagen Central <===========
-		
-			
-		
+	    panelInfo= new JTextArea();				
+	    centralPanel.add(msgs.showInfoInit(panelInfo)); // <== Informacion de la imagen
+	    
+	    
 		//===  Inicializar Commnad Line ===
 		panelCMD = new JTextArea();				
-	    centralPanel.add(msgs.initMsg(panelCMD));
-	    
-	    // ======= Menu de Algoritmos =============================
-	      
-		Ipanel = new JPanel();
-		//initPanel(1110, 415, 130, 180, Ipanel, centralPanel);
+	    centralPanel.add(msgs.initMsg(panelCMD));	    	    
 		
-		JLabel lblAlgortimoDeSegmentacion = new JLabel("Algortimo de segmentacion");
-		lblAlgortimoDeSegmentacion.setBounds(700, 410, 130, 14);
-		//centralPanel.add(lblAlgortimoDeSegmentacion);
-	    
+		JLabel lblMenuImagen = new JLabel("Menu de Imagenes");
+		lblMenuImagen.setBounds(720, 495, 130, 14);
+		centralPanel.add(lblMenuImagen);
 	    centralPanel.add(panelMenuImage());	
 		
 		
@@ -177,8 +181,7 @@ public class MainWindow {
 		initPanel(970, 150, 250, 145, canalG, centralPanel);		
 		canalB = new JPanel();
 		initPanel(720, 5, 250, 145, canalB, centralPanel);		
-		// canalX =  new JPanel(); --> No se usaba "Canal Alfa "
-		// initPanel(390, 415, 285, 140, canalX, centralPanel);	
+		
 		
 		canalY = new JPanel();
 		initPanel(720, 150, 250, 145, canalY, centralPanel);
@@ -188,6 +191,8 @@ public class MainWindow {
 	
 
 	public JPanel panelSup(){
+		
+	
 		
 		Spanel = new JPanel();
 		Spanel.setLayout(new BoxLayout(Spanel, BoxLayout.X_AXIS));
@@ -200,11 +205,10 @@ public class MainWindow {
 		JButton cargarImagen = new JButton("Load Image");
 		cargarImagen.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-												    				   				  				  				   
-				   Image img = arc.loadFile(tablaMenuImage, modelo);				   	
-				   mostrar(img);					    
-				   
-				  //  panelCMD.setText(msgs.msgOperacion(0,arc.getImageName(), originalImage));				    				 							   				    				    				            				  			  	
+													   
+				   oImage = arc.loadFile(tablaMenuImage, modelo);				   	
+				   panelCMD.setText(msgs.msgOperacion(0,arc.getImageName(), oImage.img));
+				   mostrar(oImage);
 			}
 		});
 		Spanel.add(cargarImagen);
@@ -218,7 +222,7 @@ public class MainWindow {
 				 
 				 Archivos arc = new Archivos();
 			     arc.saveFile();
-			     panelCMD.setText(msgs.msgOperacion(1,arc.getImageName(), originalImage));				    				    				    			
+			     panelCMD.append(msgs.msgOperacion(1,arc.getImageName(), originalImage));				    				    				    			
 			}
 		});
 		Spanel.add(salvarImagen);
@@ -229,11 +233,9 @@ public class MainWindow {
 			public void actionPerformed(ActionEvent e) {
 				xScaleFactor += 0.1;
 				yScaleFactor += 0.1;				  	
-				
-				finalImage = Tools.Zoom(originalImage, yScaleFactor, xScaleFactor );	
-				panelCMD.setText(msgs.msgOperacion(2,arc.getImageName(), finalImage));
-				mostrar(oImage);
-						
+				Image img = new Image(oImage.getFileCompleto()," ",Tools.Zoom(oImage.toBufferedImage(), xScaleFactor,yScaleFactor),false);
+				panelCMD.append(msgs.msgOperacion(4,arc.getImageName(), img.toBufferedImage()));				
+				mostrar(img);							
 			}
 		});		
 		
@@ -245,12 +247,10 @@ public class MainWindow {
 		JButton ZoomMinus = new JButton ("ZOOM --");
 		ZoomMinus.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				  xScaleFactor -= 0.1;
-				  yScaleFactor -= 0.1;			
-				  
-				  finalImage = Tools.Zoom(originalImage, yScaleFactor, xScaleFactor );
-				  panelCMD.setText(msgs.msgOperacion(3,arc.getImageName(), finalImage));
-				  mostrar(oImage);				  			
+				  xScaleFactor -= 0.1; yScaleFactor -= 0.1;			
+				  Image img = new Image(oImage.getFileCompleto()," ",Tools.Zoom(oImage.toBufferedImage(), xScaleFactor,yScaleFactor),false);
+				  panelCMD.append(msgs.msgOperacion(4,arc.getImageName(), img.toBufferedImage()));				
+				  mostrar(img);				 			  		
 			}
 		});		
 		
@@ -259,12 +259,10 @@ public class MainWindow {
 		JButton girarIZQ = new JButton ("Girar IZQ");
 		girarIZQ.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent arg0) {
-				 degree += 45;				 
-				 // RotatedPanel rot = new RotatedPanel();			
-				 finalImage = Tools.Rotar(originalImage, degree);
-				 panelCMD.setText(msgs.msgOperacion(4,arc.getImageName(), finalImage));
-				
-				 mostrar(oImage);
+				 degree += 30;				 				  		
+				 Image img = new Image(oImage.getFileCompleto()," ",Tools.Rotar(oImage.toBufferedImage(), degree),false);
+				 panelCMD.append(msgs.msgOperacion(4,arc.getImageName(), img.toBufferedImage()));				
+				 mostrar(oImage);				 
 			}
 		});			
 		
@@ -273,11 +271,10 @@ public class MainWindow {
 		JButton girarDCH = new JButton ("Girar DCH");
 		girarDCH.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent arg0) {
-				 degree -= 45;				 
-				 // RotatedPanel rot = new RotatedPanel();			
-				 finalImage = Tools.Rotar(originalImage, degree);
-				 panelCMD.setText(msgs.msgOperacion(5,arc.getImageName(), finalImage));				
-				 mostrar(oImage);
+				 degree -= 30;				 
+				 Image img = new Image(oImage.getFileCompleto()," ",Tools.Rotar(oImage.toBufferedImage(), degree),false);
+				 panelCMD.append(msgs.msgOperacion(4,arc.getImageName(), img.toBufferedImage()));				
+				 mostrar(img);				 
 			}
 		});		
 		
@@ -382,7 +379,7 @@ public class MainWindow {
 	
 	private void mostrar(Image img2){
 		
-		actPanel = new ImagePanel(img2);
+		ImagePanel actPanel = new ImagePanel(img2);
 	    	
 		final JPanel pScroll = new JPanel();
 		pScroll.setBounds(10, 10, 700, 500);			
@@ -397,7 +394,7 @@ public class MainWindow {
 		centralPanel.add(pScroll);	
 						 
 		try {
-			Graficar (img2.toBufferedImage());
+			Graficar (img2.toBufferedImage(), actPanel);
 		}catch (Exception e) {
 	        JOptionPane.showMessageDialog(null, "No se pudo cargar la imagen", "Error", JOptionPane.ERROR_MESSAGE);
 	    } 
@@ -405,7 +402,7 @@ public class MainWindow {
 	    miVentana.setVisible(true);	
 	}
 	
-	private void Graficar ( BufferedImage image){
+	private void Graficar ( BufferedImage image, ImagePanel actPanel){
 								
 		//CREAMOS EL HISTOGRAMAS
         ObjHistograma=new Histograma();

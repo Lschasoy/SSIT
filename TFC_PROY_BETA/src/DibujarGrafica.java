@@ -31,7 +31,7 @@ public class DibujarGrafica {
 	
     public void crearHistograma(int[] histograma,JPanel jpHisto,Color colorBarras, final BufferedImage image, final JPanel jpImagen, final JTextArea cmdLine) {
     	
-    	 cmdLine.setText("\n$ > [Crear histograma]: name: " + histograma + '\n');
+    	 cmdLine.append("$Run .. [Crear histograma]: name: " + colorBarras.toString() + '\n');
     	 
         //Creamos el dataSet y añadimos el histograma
         final DefaultCategoryDataset dataset = new DefaultCategoryDataset();
@@ -70,8 +70,8 @@ public class DibujarGrafica {
                 BufferedImage tmp = clona(image);
                 
             	
-                msg = "\n$ > Coordenada X:" + x + "Y:" + y ;
-                msg += "\n$ > [Color] = R: " + c1.getRed() + " B: " + c1.getBlue() + " G: "+ c1.getGreen()  + '\n';
+                msg = "$Run .. [Pulsar Histo]  x:" + x + "y:" + y ;
+                msg += " Color[r= " + c1.getRed()  + " g= "+ c1.getGreen()  + ",b= " + c1.getBlue() + "]\n";
                 cmdLine.append(msg); 
                 
                 for (int u = 0; u < image.getWidth(); u++){
