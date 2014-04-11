@@ -34,12 +34,9 @@ import java.awt.event.MouseEvent;
 public class MainWindow {
 	
 	private JFrame miVentana;
-//	private ImagePanel actPanel;
+
 	private JPanel centralPanel,  Spanel, canalR, canalG, canalB,  canalY;
-	
-	public  BufferedImage originalImage, finalImage;
-    public static  Image oImage;  
-    public  ImagePanel actPanel;
+	public  BufferedImage originalImage, finalImage;  
 		
 	private float xScaleFactor = 1, yScaleFactor = 1, degree;
 	private JTextArea panelCMD;
@@ -50,7 +47,6 @@ public class MainWindow {
 	private MyTableModel modelo;
 	private static Mensajes msgs;
 	private Archivos arc;
-	
 	 
     private Histograma ObjHistograma;
     private int[][] histograma;
@@ -79,7 +75,7 @@ public class MainWindow {
 		
 		msgs = new Mensajes();
 		modelo = new MyTableModel();
-		arc = new Archivos();
+		arc = new Archivos();				
 		
 		ImagePanel.setRoiListener(); // --> Importar ImagenPanel 
 		
@@ -120,44 +116,29 @@ public class MainWindow {
 		     public void mouseClicked(java.awt.event.MouseEvent evt) {
 		  		int row = tablaMenuImage.rowAtPoint(evt.getPoint());
 		    	int col = tablaMenuImage.columnAtPoint(evt.getPoint());
-		    		
-		    		//msg = "\n$ > [ImageMenu] : Seleccionado image [" + row + col +"]" ; 
-					//panelCMD.setText(msg);
-					try {
-						Image imag = arc.loadImage(row, col, tablaMenuImage,  modelo);						
-						mostrar(imag);
+		    				    		
+					try {						
+						   originalImage = arc.loadImage(row, col, tablaMenuImage,  modelo);	
+						   File pathFile = new File(modelo.getValueAt(row, col).toString());
+						   Image newImg = new Image(pathFile,originalImage,true);
+						   panelCMD.setText(msgs.msgOperacion(0,arc.getImageName(), newImg.img));
+						   mostrar(newImg);
 					} catch (IOException e) {
 						JOptionPane.showMessageDialog(null, "[Error] No Image", "Error", JOptionPane.ERROR_MESSAGE);
-					}
-					
-		    		
+					}							    		
 		    	}
 		    });
 		 pMenuImage.add(tablaMenuImage);
 		 
 		return pMenuImage;
 	}
-    //=====================================================================
-	public static void showInfo(){
-		panelInfo.append(msgs.showInfo(oImage));	
-	}
+ 				
 	public JPanel panelCentral (){
 		
 	    //====> Panel de la parte central <=============================== 		
 	    centralPanel = new JPanel();
 	    centralPanel.setLayout(null);
-	    
-	    actPanel = new ImagePanel();
-    	
-		final JPanel pScroll = new JPanel();
-		pScroll.setBounds(10, 10, 700, 500);			
-		pScroll.setLayout(null);
-	    
-		final JScrollPane scroll = new JScrollPane(actPanel);
-		scroll.setVerticalScrollBarPolicy(ScrollPaneConstants.VERTICAL_SCROLLBAR_ALWAYS);
-		scroll.setHorizontalScrollBarPolicy(ScrollPaneConstants.HORIZONTAL_SCROLLBAR_ALWAYS);
-		scroll.setBounds(0, 0, 700, 500);		
-		pScroll.add(scroll);	    	    
+	    	    	    
 		
 	    //=========> Imagen Central <===========
 	    panelInfo= new JTextArea();				
@@ -180,9 +161,7 @@ public class MainWindow {
 		canalG = new JPanel();
 		initPanel(970, 150, 250, 145, canalG, centralPanel);		
 		canalB = new JPanel();
-		initPanel(720, 5, 250, 145, canalB, centralPanel);		
-		
-		
+		initPanel(720, 5, 250, 145, canalB, centralPanel);						
 		canalY = new JPanel();
 		initPanel(720, 150, 250, 145, canalY, centralPanel);
 		
@@ -191,8 +170,6 @@ public class MainWindow {
 	
 
 	public JPanel panelSup(){
-		
-	
 		
 		Spanel = new JPanel();
 		Spanel.setLayout(new BoxLayout(Spanel, BoxLayout.X_AXIS));
@@ -205,16 +182,17 @@ public class MainWindow {
 		JButton cargarImagen = new JButton("Load Image");
 		cargarImagen.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-													   
-				   oImage = arc.loadFile(tablaMenuImage, modelo);				   	
-				   panelCMD.setText(msgs.msgOperacion(0,arc.getImageName(), oImage.img));
-				   mostrar(oImage);
+				
+				   File pathFile = null;
+				   originalImage = arc.loadFile(pathFile, tablaMenuImage, modelo);
+					
+				   Image newImg = new Image(pathFile,originalImage,true);
+				   panelCMD.setText(msgs.msgOperacion(0,arc.getImageName(), newImg.img));
+				   mostrar(newImg);
 			}
 		});
 		Spanel.add(cargarImagen);
-		
-	
-		
+					
 		//==================== Save Image ===================================
 		JButton salvarImagen = new JButton("Save Image");
 		salvarImagen.addActionListener(new ActionListener() {
@@ -233,9 +211,9 @@ public class MainWindow {
 			public void actionPerformed(ActionEvent e) {
 				xScaleFactor += 0.1;
 				yScaleFactor += 0.1;				  	
-				Image img = new Image(oImage.getFileCompleto()," ",Tools.Zoom(oImage.toBufferedImage(), xScaleFactor,yScaleFactor),false);
+				/*Image img = new Image(oImage.getFileCompleto(),Tools.Zoom(oImage.toBufferedImage(), xScaleFactor,yScaleFactor),false);
 				panelCMD.append(msgs.msgOperacion(4,arc.getImageName(), img.toBufferedImage()));				
-				mostrar(img);							
+				mostrar(img);*/							
 			}
 		});		
 		
@@ -248,9 +226,9 @@ public class MainWindow {
 		ZoomMinus.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				  xScaleFactor -= 0.1; yScaleFactor -= 0.1;			
-				  Image img = new Image(oImage.getFileCompleto()," ",Tools.Zoom(oImage.toBufferedImage(), xScaleFactor,yScaleFactor),false);
+				 /* Image img = new Image(oImage.getFileCompleto(),Tools.Zoom(oImage.toBufferedImage(), xScaleFactor,yScaleFactor),false);
 				  panelCMD.append(msgs.msgOperacion(4,arc.getImageName(), img.toBufferedImage()));				
-				  mostrar(img);				 			  		
+				  mostrar(img);		*/		 			  		
 			}
 		});		
 		
@@ -260,9 +238,9 @@ public class MainWindow {
 		girarIZQ.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent arg0) {
 				 degree += 30;				 				  		
-				 Image img = new Image(oImage.getFileCompleto()," ",Tools.Rotar(oImage.toBufferedImage(), degree),false);
+				/* Image img = new Image(oImage.getFileCompleto(),Tools.Rotar(oImage.toBufferedImage(), degree),false);
 				 panelCMD.append(msgs.msgOperacion(4,arc.getImageName(), img.toBufferedImage()));				
-				 mostrar(oImage);				 
+				 mostrar(oImage);		*/		 
 			}
 		});			
 		
@@ -272,9 +250,9 @@ public class MainWindow {
 		girarDCH.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent arg0) {
 				 degree -= 30;				 
-				 Image img = new Image(oImage.getFileCompleto()," ",Tools.Rotar(oImage.toBufferedImage(), degree),false);
+				/* Image img = new Image(oImage.getFileCompleto(),Tools.Rotar(oImage.toBufferedImage(), degree),false);
 				 panelCMD.append(msgs.msgOperacion(4,arc.getImageName(), img.toBufferedImage()));				
-				 mostrar(img);				 
+				 mostrar(img);	*/			 
 			}
 		});		
 		
@@ -289,8 +267,8 @@ public class MainWindow {
 			public void actionPerformed(ActionEvent arg0) {
 				
 				try {
-				    oImage =  arc.loadImage(0, 0, tablaMenuImage, modelo);
-					mostrar(oImage);
+				    originalImage =  arc.loadImage(0, 0, tablaMenuImage, modelo);
+					//mostrar(oImage);
 				} catch (IOException e) {
 					// TODO Auto-generated catch block
 					e.printStackTrace();
@@ -307,8 +285,8 @@ public class MainWindow {
 		goTo.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent arg0) {
 				try {
-				    oImage = arc.loadImage(0, 0, tablaMenuImage, modelo);
-					mostrar(oImage);
+					originalImage = arc.loadImage(0, 0, tablaMenuImage, modelo);
+				//	mostrar(oImage);
 				} catch (IOException e) {
 					// TODO Auto-generated catch block
 					e.printStackTrace();
@@ -378,27 +356,26 @@ public class MainWindow {
 	}
 	
 	private void mostrar(Image img2){
-		
-		ImagePanel actPanel = new ImagePanel(img2);
-	    	
+				   
 		final JPanel pScroll = new JPanel();
 		pScroll.setBounds(10, 10, 700, 500);			
 		pScroll.setLayout(null);
 	    
-		final JScrollPane scroll = new JScrollPane(actPanel);
-		scroll.setVerticalScrollBarPolicy(ScrollPaneConstants.VERTICAL_SCROLLBAR_ALWAYS);
-		scroll.setHorizontalScrollBarPolicy(ScrollPaneConstants.HORIZONTAL_SCROLLBAR_ALWAYS);
+		final JScrollPane scroll = new JScrollPane(img2.panel);
+		//scroll.setVerticalScrollBarPolicy(ScrollPaneConstants.VERTICAL_SCROLLBAR_ALWAYS);
+		//(scroll.setHorizontalScrollBarPolicy(ScrollPaneConstants.HORIZONTAL_SCROLLBAR_ALWAYS);
 		scroll.setBounds(0, 0, 700, 500);		
-		pScroll.add(scroll);
-									
+		pScroll.add(scroll);	
+		
+										
 		centralPanel.add(pScroll);	
-						 
+								 
 		try {
-			Graficar (img2.toBufferedImage(), actPanel);
+			Graficar (img2.toBufferedImage(), img2.panel);
 		}catch (Exception e) {
 	        JOptionPane.showMessageDialog(null, "No se pudo cargar la imagen", "Error", JOptionPane.ERROR_MESSAGE);
 	    } 
-		
+		panelInfo.setText(msgs.showInfo(img2)); // <-- Mensaje a Show Info
 	    miVentana.setVisible(true);	
 	}
 	

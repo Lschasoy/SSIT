@@ -19,13 +19,12 @@ public class Image {
         return img;
 	}
 	
-	public Image(File file, String prefijo, BufferedImage img, boolean saved) {
+	public Image(File file,  BufferedImage img, boolean saved) {
 		
 		System.err.print("Error Const Image");
 		this.file = file;
-		this.prefijo = prefijo;
 		this.img = img;
-		this.format = ImageFilter.getExtension(file);
+		//this.format = ImageFilter.getExtension(file);
 		this.saved = saved;
 		panel = new ImagePanel(this);
 		this.pixelsOut = 0;
@@ -208,22 +207,6 @@ public class Image {
 				BufferedImage.TYPE_INT_RGB), false);
 	}*/
 	
-	public static Image crearImagenConPrefijo(int width, int height, Image img, String prefijo) {
-		if (img.prefijo.compareTo("") != 0){
-			return new Image(img.getFileOriginal(), "Edición de " , new BufferedImage(width, height,
-					BufferedImage.TYPE_INT_RGB), false);
-		}
-		else{
-			return new Image(img.getFileOriginal(), prefijo, new BufferedImage(width, height,
-					BufferedImage.TYPE_INT_RGB), false);
-		}
-	}
-	
-	public static Image crearImagenSinPrefijo(int width, int height, Image img, String nombre) {
-		File file = new File(img.file.getParent(), nombre + "." + img.format);
-		return new Image(file, "", new BufferedImage(width, height,
-					BufferedImage.TYPE_INT_RGB), false);
-	}
 
 	public static String getString(int value) {
 		return "R=" + red(value) + ", G=" + green(value) + ", B=" + blue(value);

@@ -24,31 +24,33 @@ public class Archivos {
 	public int getY() {return coordY;}
 //======================================================================================================================
 	
-	public Image loadImage(int row, int col, JTable tablaMenuImage, MyTableModel modelo) throws IOException{
+	public BufferedImage loadImage(int row, int col, JTable tablaMenuImage, MyTableModel modelo) throws IOException{
 		
-		Image returnImg;
+		
 		if ( row >= 0 && col >= 0 ) 
 		{   
 		//si celda contiene imagen
 		   if( modelo.getValueAt(row, col) != null ){
 		      //obtiene la ruta que corresponde a la celda donde se hizo el clic
-		      File imagen = new File( modelo.getValueAt(row, col).toString() );
-		      returnImg = new Image(imagen, "", ImageIO.read(imagen), true); 
-		      return returnImg;		
+		      File imagen = new File( modelo.getValueAt(row, col).toString() );		       
+		      return ImageIO.read(imagen);		
 		    }                             
         }
 	    return null;
 	}
 
-//======================================================================================================================	
-	public Image loadFile(JTable tablaMenuImage, MyTableModel modelo){
+    /**
+     * @param tablaMenuImage
+     * @param modelo: Es una matrix que contiene la imagenes 
+     * @return La imagen cargada
+     */
+	public BufferedImage loadFile(File imagen, JTable tablaMenuImage, MyTableModel modelo){
 		
-		 Image returnImg;
-	
+		 	
 		 fc = new JFileChooser();
 		 int returnVal = fc.showOpenDialog(fc);
          if (returnVal == JFileChooser.APPROVE_OPTION){
-        	 File imagen = fc.getSelectedFile();
+        	 imagen = fc.getSelectedFile();
         	 
         	 
         	 setImageName(imagen.getName());        	 
@@ -66,11 +68,9 @@ public class Archivos {
         		        	   coordX = i; coordY = j;
         		               modelo.setValueAt( imagen.getAbsolutePath() , i, j );   
         		               
-        		               tablaMenuImage.repaint();
-        		               returnImg = new Image(imagen, "null", ImageIO.read(imagen), ok);        		               
-        		               ok = false;
-        		               
-        		               return returnImg;
+        		               tablaMenuImage.repaint();        		                      		              
+        		               ok = false;        		               
+        		               return ImageIO.read(imagen);
         		           }
         		        }
         		  }

@@ -84,20 +84,19 @@ public class Mensajes {
 		ImageInfo info = image.getInfo();
 		
 		String infoRGB = " RANGO DE VALORES RGB: ";	   	   
-		infoRGB += " R = [" + info.minR + ", " + info.maxR + "]";
-		infoRGB += " G = [" + info.minG + ", " + info.maxG + "]";
-		infoRGB += " B = [" + info.minB + ", " + info.maxB + "]\n";
+		infoRGB += " r = [" + info.minR + ", " + info.maxR + "]";
+		infoRGB += ", g = [" + info.minG + ", " + info.maxG + "]";
+		infoRGB += ", b = [" + info.minB + ", " + info.maxB + "]\n";
 		
-		String infoTam = " FORMATO Y DIMENSIONES: ";
-		infoTam += " Formato = " + image.format;
-		infoTam += " Ancho =" + image.widthRoi() + ", Alto =" + image.heightRoi()+ '\n';
+		String infoTam = " DIMENSIONES: ";		
+		infoTam += " Ancho = [" + image.widthRoi() + "], Alto = " + image.heightRoi()+ "]\n";
 		
-		String infoColor = " VALORES: ";
-		infoColor += " Brillo = " + info.brillo;
-		infoColor += " Contraste =  " + info.contraste;
-		infoColor += " Entrop\u00EDa =  " + Math.rint(info.entropia * 1000) / 1000 + '\n';
+		String infoCol = " VALORES:     ";
+		infoCol += " Brillo = [" + info.brillo;
+		infoCol += "], Contraste =  " + info.contraste;
+		infoCol += "], Entrop\u00EDa =  " + Math.rint(info.entropia * 1000) / 1000 + "]\n";
 		
-		return  infoRGB + infoTam + infoColor;
+		return  infoRGB + infoCol + infoTam ;
 	}
 
 }

@@ -80,7 +80,7 @@ public class ImagePanel extends JPanel implements MouseListener, MouseMotionList
 			g.setColor(Color.WHITE);
 			g.drawLine(begin.x, begin.y, end.x, end.y);
 		}
-		MainWindow.showInfo();
+		
 	}
 
 	public Point getCoordinate(int x, int y) {
@@ -173,6 +173,7 @@ public class ImagePanel extends JPanel implements MouseListener, MouseMotionList
 		@Override
 		public void mouseReleased(MouseEvent e) {
 			if (listener == Listener.ROI){
+				System.out.println(">>> mouseReleased: " + e.toString());
 				mouseReleasedRoi(e);
 			}
 			if (listener == Listener.PERFIL){
@@ -194,7 +195,7 @@ public class ImagePanel extends JPanel implements MouseListener, MouseMotionList
 
 		
 	public void mousePressedPerfil(MouseEvent e) {
-		if (getCoordinate(e.getX(), e.getY()) != null){
+		if (getCoordinate(e.getX(), e.getY()) != null){		
 			begin = e.getPoint();
 			end = begin;
 		}
@@ -202,6 +203,7 @@ public class ImagePanel extends JPanel implements MouseListener, MouseMotionList
 	
 	public void mouseReleasedPerfil(MouseEvent e) {
 		if (!validRecta()) {
+			
 			begin = null;
 		}
 		else{
@@ -223,10 +225,12 @@ public class ImagePanel extends JPanel implements MouseListener, MouseMotionList
 			repaint();
 		}
 	}
-	
+	// Cuando pinto un rectangulo --> Doy las coordenadas
 	public void mousePressedRoi(MouseEvent e) {
+		
 		begin = bringCloser(e.getPoint());
 		end = begin;
+		
 	}
 
 	public void mouseReleasedRoi(MouseEvent e) {
