@@ -26,7 +26,7 @@ public class Mensajes {
 	public JTextArea initMsg(JTextArea panelCMD){
 		
 		
-		panelCMD.setBounds(720, 295, 500, 200);
+		panelCMD.setBounds(5, 295, 500, 200);
 		panelCMD.setText(getWelcome() +"\n   "+ getVersion());
 	    panelCMD.setFont(new Font("Consolas", Font.PLAIN, 11));
 	    panelCMD.setBorder(new BevelBorder(BevelBorder.LOWERED, Color.DARK_GRAY, null, null, null));

@@ -1,14 +1,14 @@
-
 import java.awt.EventQueue;
+import java.awt.GridLayout;
 
+import javax.imageio.ImageIO;
 import javax.swing.BoxLayout;
+
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JButton;
 import javax.swing.JOptionPane;
 import javax.swing.JTextArea;
-
-import java.awt.BorderLayout;
 
 import javax.swing.JPanel;
 
@@ -24,20 +24,20 @@ import java.io.IOException;
 
 import javax.swing.JTable;
 import javax.swing.JScrollPane;
-import javax.swing.ScrollPaneConstants;
 import javax.swing.UIManager;
 
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+import org.xnap.commons.gui.CloseableTabbedPane;
 
 
 public class MainWindow {
 	
 	private JFrame miVentana;
 
-	private JPanel centralPanel,  Spanel, canalR, canalG, canalB,  canalY;
-	public  BufferedImage originalImage, finalImage;  
-		
+	private JPanel infoShow, Spanel, canalR, canalG, canalB,  canalY;
+	  
+	public static CloseableTabbedPane jTP;
 	private float xScaleFactor = 1, yScaleFactor = 1, degree;
 	private JTextArea panelCMD;
 	private static JTextArea panelInfo;
@@ -53,7 +53,7 @@ public class MainWindow {
     private DibujarGrafica ObjDibujaHisto;
     private PopWindows popUp;
         
-	
+    private Image oImage;
 	/******************* MAIN *****************************/	 
 	public static void main(String[] args) {
 		EventQueue.invokeLater(new Runnable() {
@@ -75,26 +75,30 @@ public class MainWindow {
 		
 		msgs = new Mensajes();
 		modelo = new MyTableModel();
-		arc = new Archivos();				
+		arc = new Archivos();	
+		jTP = new CloseableTabbedPane();
+		
 		
 		ImagePanel.setRoiListener(); // --> Importar ImagenPanel 
 		
 	// ===============> Inicializar wind <=============================	
 		miVentana = new JFrame();		
-		miVentana.setTitle(msgs.getVersion());
-		miVentana.getContentPane().setBackground(Color.LIGHT_GRAY);
-		miVentana.setSize(1250, 650);
+		miVentana.setTitle("TFG - sImage beta v.4.0");
+		miVentana.getContentPane().setBackground(Color.lightGray);
+		miVentana.getContentPane().setLayout(new BoxLayout(miVentana.getContentPane(), BoxLayout.Y_AXIS));
+		miVentana.getContentPane().add(panelSup()); // --> Parte Superior
+		miVentana.getContentPane().add(panelCentral());		
+		miVentana.pack();		
+		miVentana.setSize(1140, 650); //->Notocar
+		
 	// ================> Inicializar ventanas <=========================			
-		miVentana.getContentPane().add(panelSup(), BorderLayout.NORTH);
-		miVentana.getContentPane().add(panelCentral(),BorderLayout.CENTER);	
+		
 	}
-
-	
 	
 	public JPanel panelMenuImage (){
 		
 		 JPanel pMenuImage = new JPanel();				 
-		 pMenuImage.setBounds(720, 505, 500, 110);
+		 pMenuImage.setBounds(5, 505, 500, 110);
 		 				 		 
 		 // Inicializacion Table Model
 		 String [] nombreColumnas = {"image", "image", "image","image", "image", "image","image"};
@@ -117,10 +121,9 @@ public class MainWindow {
 		  		int row = tablaMenuImage.rowAtPoint(evt.getPoint());
 		    	int col = tablaMenuImage.columnAtPoint(evt.getPoint());
 		    				    		
-					try {						
-						   originalImage = arc.loadImage(row, col, tablaMenuImage,  modelo);	
-						   File pathFile = new File(modelo.getValueAt(row, col).toString());
-						   Image newImg = new Image(pathFile,originalImage,true);
+					try {												   	
+						   File pathFile = arc.loadImage(row, col, tablaMenuImage,  modelo);
+						   Image newImg = new Image(pathFile,ImageIO.read(pathFile),true);
 						   panelCMD.setText(msgs.msgOperacion(0,arc.getImageName(), newImg.img));
 						   mostrar(newImg);
 					} catch (IOException e) {
@@ -135,46 +138,45 @@ public class MainWindow {
  				
 	public JPanel panelCentral (){
 		
-	    //====> Panel de la parte central <=============================== 		
-	    centralPanel = new JPanel();
-	    centralPanel.setLayout(null);
-	    	    	    
+		JPanel central = new JPanel();
+		central.setLayout(new GridLayout(1,2));
 		
-	    //=========> Imagen Central <===========
-	    panelInfo= new JTextArea();				
-	    centralPanel.add(msgs.showInfoInit(panelInfo)); // <== Informacion de la imagen
-	    
-	    
-		//===  Inicializar Commnad Line ===
-		panelCMD = new JTextArea();				
-	    centralPanel.add(msgs.initMsg(panelCMD));	    	    
-		
-		JLabel lblMenuImagen = new JLabel("Menu de Imagenes");
-		lblMenuImagen.setBounds(720, 495, 130, 14);
-		centralPanel.add(lblMenuImagen);
-	    centralPanel.add(panelMenuImage());	
-		
-		
+	    //====> Panel de la parte central <=============================== 			    	
+	    infoShow = new JPanel();
+	    infoShow.setLayout(null);
+	
 		/****** Inicializar canales *************/
 		canalR = new JPanel();
-		initPanel(970, 5, 250, 145, canalR, centralPanel );				
+		initPanel(255, 5, 250, 145, canalR, infoShow);				
 		canalG = new JPanel();
-		initPanel(970, 150, 250, 145, canalG, centralPanel);		
+		initPanel(255, 150, 250, 145, canalG, infoShow);		
 		canalB = new JPanel();
-		initPanel(720, 5, 250, 145, canalB, centralPanel);						
+		initPanel(5, 5, 250, 145, canalB, infoShow);						
 		canalY = new JPanel();
-		initPanel(720, 150, 250, 145, canalY, centralPanel);
+		initPanel(5, 150, 250, 145, canalY, infoShow);
 		
-		return centralPanel;
+		JLabel lblMenuImagen = new JLabel("Menu de Imagenes");
+		lblMenuImagen.setBounds(5, 495, 130, 14);
+		infoShow.add(lblMenuImagen);
+	    infoShow.add(panelMenuImage());
+	    	     	    
+	    //===  Inicializar Commnad Line ===
+		panelCMD = new JTextArea();				
+	    infoShow.add(msgs.initMsg(panelCMD));
+	    
+	    central.add(infoShow); // -> Cargo la informacion
+	    central.add(jTP); // -> Cargo las pestañas
+	    	     	    	    		 	    	    				 	
+		return central;
 	}
 	
 
 	public JPanel panelSup(){
 		
 		Spanel = new JPanel();
+	
 		Spanel.setLayout(new BoxLayout(Spanel, BoxLayout.X_AXIS));
-		Spanel.setBorder(new BevelBorder(BevelBorder.LOWERED, Color.DARK_GRAY, null, null, null));
-		Spanel.setBackground(Color.white);
+		
 		
 		JLabel lblMenu = new JLabel(" Menu ");
 		Spanel.add(lblMenu);
@@ -182,13 +184,17 @@ public class MainWindow {
 		JButton cargarImagen = new JButton("Load Image");
 		cargarImagen.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				
-				   File pathFile = null;
-				   originalImage = arc.loadFile(pathFile, tablaMenuImage, modelo);
+								   				   				   				  
+					try {
+						File pathFile = Archivos.loadFile(tablaMenuImage, modelo);
+						Image img = new Image(pathFile,ImageIO.read(pathFile),true);
+					    System.out.println("Salida: "+ img);
+						panelCMD.setText(msgs.msgOperacion(0,img.toString(), img.img));						
+						mostrar(img);
+					} catch (IOException e1) {
+						JOptionPane.showMessageDialog(null, "Erro al cargar", "Load Error", JOptionPane.ERROR_MESSAGE);	
 					
-				   Image newImg = new Image(pathFile,originalImage,true);
-				   panelCMD.setText(msgs.msgOperacion(0,arc.getImageName(), newImg.img));
-				   mostrar(newImg);
+					}				   
 			}
 		});
 		Spanel.add(cargarImagen);
@@ -200,7 +206,7 @@ public class MainWindow {
 				 
 				 Archivos arc = new Archivos();
 			     arc.saveFile();
-			     panelCMD.append(msgs.msgOperacion(1,arc.getImageName(), originalImage));				    				    				    			
+			  //   panelCMD.append(msgs.msgOperacion(1,arc.getImageName(), oImage.img));				    				    				    			
 			}
 		});
 		Spanel.add(salvarImagen);
@@ -264,18 +270,8 @@ public class MainWindow {
 		//==================== DESHACER =================================== 
 		JButton desHacer = new JButton ("Deshacer");
 		desHacer.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent arg0) {
-				
-				try {
-				    originalImage =  arc.loadImage(0, 0, tablaMenuImage, modelo);
-					//mostrar(oImage);
-				} catch (IOException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
-				}
-				String msg = "Pos X" + arc.getX() + "Pos Y" + arc.getY(); 
-				panelCMD.setText(msgs.msgOperacion(6,msg, originalImage));	
-				
+			public void actionPerformed(ActionEvent arg0) {				
+				mostrar(oImage);			 									
 			}
 		});			
 		
@@ -284,15 +280,9 @@ public class MainWindow {
 		JButton goTo = new JButton ("Deshacer todo");
 		goTo.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent arg0) {
-				try {
-					originalImage = arc.loadImage(0, 0, tablaMenuImage, modelo);
-				//	mostrar(oImage);
-				} catch (IOException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
-				}
-				panelCMD.setText(msgs.msgOperacion(7,arc.getImageName(), originalImage));
-				 
+				mostrar(oImage);
+				panelCMD.setText(msgs.msgOperacion(7,arc.getImageName(), oImage.img));
+								 
 			}
 		});
 		Spanel.add(goTo);	
@@ -307,7 +297,7 @@ public class MainWindow {
 	 	    	@Override
 	 	    	public void mouseClicked(MouseEvent arg0) { 
 	 	    		popUp = new PopWindows(tablaMenuImage,  modelo);
-	 	    	    popUp.gCanalR(originalImage); 	    	     	    	
+	 	    	    popUp.gCanalR(oImage.img); 	    	     	    	
 	 	    	}
 	 	 });
 		Spanel.add(iCanalR);
@@ -317,7 +307,7 @@ public class MainWindow {
 	 	    	@Override
 	 	    	public void mouseClicked(MouseEvent arg0) { 
 	 	    		popUp = new PopWindows(tablaMenuImage,  modelo);
-	 	    	    popUp.gCanalG(originalImage); 	    	     	    	
+	 	    	    popUp.gCanalG(oImage.img); 	    	     	    	
 	 	    	}
 	 	});
 		Spanel.add(iCanalG);
@@ -327,7 +317,7 @@ public class MainWindow {
  	    	@Override
  	    	public void mouseClicked(MouseEvent arg0) { 
  	    		popUp = new PopWindows(tablaMenuImage,  modelo);
- 	    	    popUp.gCanalB(originalImage); 	    	     	    	
+ 	    	    popUp.gCanalB(oImage.img); 	    	     	    	
  	    	}
   	    });
 	    Spanel.add(iCanalB);
@@ -337,7 +327,7 @@ public class MainWindow {
 	    	@Override
 	    	public void mouseClicked(MouseEvent arg0) { 	
 	    		popUp = new PopWindows(tablaMenuImage,  modelo);
-	    	    popUp.gCanalX(originalImage); 	    	     	    	
+	    	    popUp.gCanalX(oImage.img); 	    	     	    	
 	    	}
 	    });
  	   Spanel.add(iCanalX);
@@ -347,7 +337,7 @@ public class MainWindow {
  	    	@Override
  	    	public void mouseClicked(MouseEvent arg0) { 	    		
  	    		popUp = new PopWindows(tablaMenuImage,  modelo);
- 	    	    popUp.gCanalY(originalImage); 	    	     	    	
+ 	    	    popUp.gCanalY(oImage.img); 	    	     	    	
  	    	}
  	    });
 	    Spanel.add(iCanalY);
@@ -355,31 +345,25 @@ public class MainWindow {
 		return Spanel;
 	}
 	
-	private void mostrar(Image img2){
-				   
-		final JPanel pScroll = new JPanel();
-		pScroll.setBounds(10, 10, 700, 500);			
-		pScroll.setLayout(null);
-	    
-		final JScrollPane scroll = new JScrollPane(img2.panel);
-		//scroll.setVerticalScrollBarPolicy(ScrollPaneConstants.VERTICAL_SCROLLBAR_ALWAYS);
-		//(scroll.setHorizontalScrollBarPolicy(ScrollPaneConstants.HORIZONTAL_SCROLLBAR_ALWAYS);
-		scroll.setBounds(0, 0, 700, 500);		
-		pScroll.add(scroll);	
-		
-										
-		centralPanel.add(pScroll);	
-								 
+	private final void mostrar(Image img2){
+				   	    
+	    JScrollPane scroll = new JScrollPane();
+	    scroll.setViewportView(img2.panel);
+		jTP.addTab(" Imagen: ", scroll);
+
 		try {
 			Graficar (img2.toBufferedImage(), img2.panel);
 		}catch (Exception e) {
 	        JOptionPane.showMessageDialog(null, "No se pudo cargar la imagen", "Error", JOptionPane.ERROR_MESSAGE);
 	    } 
 		panelInfo.setText(msgs.showInfo(img2)); // <-- Mensaje a Show Info
+		miVentana.pack();
 	    miVentana.setVisible(true);	
 	}
 	
-	private void Graficar ( BufferedImage image, ImagePanel actPanel){
+	
+	
+	private void Graficar ( BufferedImage image, ImagePanel Panel){
 								
 		//CREAMOS EL HISTOGRAMAS
         ObjHistograma=new Histograma();
@@ -394,19 +378,19 @@ public class MainWindow {
 	            //Dibujamos en el panel
 	            switch(i){
 	                case 0:
-	                    ObjDibujaHisto.crearHistograma(histogramaCanal, canalR, Color.red, image, actPanel, panelCMD);	                    
+	                    ObjDibujaHisto.crearHistograma(histogramaCanal, canalR, Color.red, image, Panel, panelCMD);	                    
 	                    break;
 	                case 1:
-	                    ObjDibujaHisto.crearHistograma(histogramaCanal, canalG, Color.green, image, actPanel, panelCMD);
+	                    ObjDibujaHisto.crearHistograma(histogramaCanal, canalG, Color.green, image, Panel, panelCMD);
 	                    break;
 	                case 2:
-	                    ObjDibujaHisto.crearHistograma(histogramaCanal, canalB, Color.blue, image, actPanel, panelCMD);
+	                    ObjDibujaHisto.crearHistograma(histogramaCanal, canalB, Color.blue, image, Panel, panelCMD);
 	                    break;
 	                case 3:
 	                   // ObjDibujaHisto.crearHistograma(histogramaCanal, canalX, Color.black, image, actPanel, panelCMD);
 	                    break;
 	                case 4:
-	                    ObjDibujaHisto.crearHistograma(histogramaCanal, canalY, Color.gray, image, actPanel, panelCMD);
+	                    ObjDibujaHisto.crearHistograma(histogramaCanal, canalY, Color.gray, image, Panel, panelCMD);
 	                    break;
 	            }
 	        }
@@ -416,8 +400,7 @@ public class MainWindow {
 		
 		panel_In.setBounds(x, y, tamX, tamY);
 		panel_In.setBorder(new BevelBorder(BevelBorder.LOWERED, Color.DARK_GRAY, null, null, null));
-		panel_In.setBackground(Color.LIGHT_GRAY);
-		
+		panel_In.setBackground(Color.LIGHT_GRAY);		
 		panel_Out.add(panel_In);
 	}	
 }
