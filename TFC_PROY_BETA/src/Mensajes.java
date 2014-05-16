@@ -39,25 +39,26 @@ public class Mensajes {
 	
 	public String msgOperacion(int opcion, String file, BufferedImage img){
 		
-	  String infoImage = " Type = " + img.getType() + " Height = " + img.getHeight() + " Width = " + img.getWidth() +'\n';	  
+	  
+	  String infoImage = " $Type = " + img.getType() + " Height = " + img.getHeight() + " Width = " + img.getWidth() +'\n';	  
 	  				     			  
 	  switch(opcion){
           case 0:
-        	  return msg = "$Run .. [load image]: Name: " + file +  infoImage;	                            
+        	  return msg = " $Run .. [load image]: Name: " + file +  infoImage;	                            
           case 1:
-        	  return msg = "$Run .. [Save image]: Name: " + file +  infoImage;             
+        	  return msg = " $Run .. [Save image]: Name: " + file +  infoImage;             
           case 2:
-        	  return msg = "$Run .. [Zoom Plus]: Name: " + file +  infoImage;
+        	  return msg = " $Run .. [Zoom Plus]: Name: " + file +  infoImage;
           case 3:
-        	  return msg = "$Run .. [Zoom Minus]: Name: " + file + infoImage;
+        	  return msg = " $Run .. [Zoom Minus]: Name: " + file + infoImage;
           case 4:
-        	  return msg = "$Run .. [Rotar Dch]: Name: " + file +  infoImage;        	  
+        	  return msg = " $Run .. [Rotar Dch]: Name: " + file +  infoImage;        	  
           case 5:
-        	  return msg = "$Run .. [Rotar Izq]: Name: " + file +  infoImage;
+        	  return msg = " $Run .. [Rotar Izq]: Name: " + file +  infoImage;
           case 6:	  
-        	  return msg = "$Run .. [Deshacer]: File name: " + file + infoImage;
+        	  return msg = " $Run .. [Deshacer]: File name: " + file + infoImage;
           case 7:	  
-        	  return msg = "$Run .. [Deshacer Todo]: File name: " + file + infoImage;	  
+        	  return msg = " $Run .. [Deshacer Todo]: File name: " + file + infoImage;	  
       }		
 	   
 	  return "[Error] msgOperacion";

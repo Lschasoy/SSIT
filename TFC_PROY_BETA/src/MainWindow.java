@@ -29,6 +29,7 @@ import javax.swing.UIManager;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import org.xnap.commons.gui.CloseableTabbedPane;
+import java.awt.Component;
 
 
 public class MainWindow {
@@ -84,7 +85,7 @@ public class MainWindow {
 	// ===============> Inicializar wind <=============================	
 		miVentana = new JFrame();		
 		miVentana.setTitle("TFG - sImage beta v.4.0");
-		miVentana.getContentPane().setBackground(Color.lightGray);
+		miVentana.getContentPane().setBackground(Color.GRAY);
 		miVentana.getContentPane().setLayout(new BoxLayout(miVentana.getContentPane(), BoxLayout.Y_AXIS));
 		miVentana.getContentPane().add(panelSup()); // --> Parte Superior
 		miVentana.getContentPane().add(panelCentral());		
@@ -174,7 +175,6 @@ public class MainWindow {
 	public JPanel panelSup(){
 		
 		Spanel = new JPanel();
-	
 		Spanel.setLayout(new BoxLayout(Spanel, BoxLayout.X_AXIS));
 		
 		
@@ -217,9 +217,11 @@ public class MainWindow {
 			public void actionPerformed(ActionEvent e) {
 				xScaleFactor += 0.1;
 				yScaleFactor += 0.1;				  	
-				/*Image img = new Image(oImage.getFileCompleto(),Tools.Zoom(oImage.toBufferedImage(), xScaleFactor,yScaleFactor),false);
-				panelCMD.append(msgs.msgOperacion(4,arc.getImageName(), img.toBufferedImage()));				
-				mostrar(img);*/							
+				oImage = getCurrentImage();
+				Image img = new Image(oImage.getFileCompleto(),Tools.Zoom(oImage.toBufferedImage(), xScaleFactor,yScaleFactor),false);			   
+				panelCMD.append(msgs.msgOperacion(4,arc.getImageName(), img.toBufferedImage()));
+				removeCurrentImage(); 
+				mostrar(img);				
 			}
 		});		
 		
@@ -231,10 +233,12 @@ public class MainWindow {
 		JButton ZoomMinus = new JButton ("ZOOM --");
 		ZoomMinus.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				  xScaleFactor -= 0.1; yScaleFactor -= 0.1;			
-				 /* Image img = new Image(oImage.getFileCompleto(),Tools.Zoom(oImage.toBufferedImage(), xScaleFactor,yScaleFactor),false);
-				  panelCMD.append(msgs.msgOperacion(4,arc.getImageName(), img.toBufferedImage()));				
-				  mostrar(img);		*/		 			  		
+				xScaleFactor -= 0.1; yScaleFactor -= 0.1;				  	
+				oImage = getCurrentImage();
+				Image img = new Image(oImage.getFileCompleto(),Tools.Zoom(oImage.toBufferedImage(), xScaleFactor,yScaleFactor),false);			   
+				panelCMD.append(msgs.msgOperacion(4,arc.getImageName(), img.toBufferedImage()));
+				removeCurrentImage(); 
+				mostrar(img);		 			  		
 			}
 		});		
 		
@@ -243,10 +247,13 @@ public class MainWindow {
 		JButton girarIZQ = new JButton ("Girar IZQ");
 		girarIZQ.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent arg0) {
-				 degree += 30;				 				  		
-				/* Image img = new Image(oImage.getFileCompleto(),Tools.Rotar(oImage.toBufferedImage(), degree),false);
-				 panelCMD.append(msgs.msgOperacion(4,arc.getImageName(), img.toBufferedImage()));				
-				 mostrar(oImage);		*/		 
+				 degree += 30;								  	
+				 oImage = getCurrentImage();				
+				 Image img = new Image(oImage.getFileCompleto(),Tools.Rotar(oImage.toBufferedImage(), degree),false);
+				 panelCMD.append(msgs.msgOperacion(4,arc.getImageName(), img.toBufferedImage()));
+				 removeCurrentImage(); 
+				 mostrar(img);
+						 
 			}
 		});			
 		
@@ -255,10 +262,12 @@ public class MainWindow {
 		JButton girarDCH = new JButton ("Girar DCH");
 		girarDCH.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent arg0) {
-				 degree -= 30;				 
-				/* Image img = new Image(oImage.getFileCompleto(),Tools.Rotar(oImage.toBufferedImage(), degree),false);
-				 panelCMD.append(msgs.msgOperacion(4,arc.getImageName(), img.toBufferedImage()));				
-				 mostrar(img);	*/			 
+				degree -= 30;								  	
+				oImage = getCurrentImage();				
+				Image img = new Image(oImage.getFileCompleto(),Tools.Rotar(oImage.toBufferedImage(), degree),false);
+				panelCMD.append(msgs.msgOperacion(4,arc.getImageName(), img.toBufferedImage()));
+				removeCurrentImage(); 
+				mostrar(img);						 			 
 			}
 		});		
 		
@@ -344,7 +353,7 @@ public class MainWindow {
 	
 		return Spanel;
 	}
-	
+	//========================================================================================================
 	private final void mostrar(Image img2){
 				   	    
 	    JScrollPane scroll = new JScrollPane();
@@ -356,12 +365,9 @@ public class MainWindow {
 		}catch (Exception e) {
 	        JOptionPane.showMessageDialog(null, "No se pudo cargar la imagen", "Error", JOptionPane.ERROR_MESSAGE);
 	    } 
-		panelInfo.setText(msgs.showInfo(img2)); // <-- Mensaje a Show Info
-		miVentana.pack();
 	    miVentana.setVisible(true);	
 	}
-	
-	
+
 	
 	private void Graficar ( BufferedImage image, ImagePanel Panel){
 								
@@ -395,7 +401,7 @@ public class MainWindow {
 	            }
 	        }
 	}
-//========================================================================================================	
+	//========================================================================================================	
 	public void initPanel(int x, int y, int tamX,int tamY, JPanel panel_In, JPanel panel_Out){
 		
 		panel_In.setBounds(x, y, tamX, tamY);
@@ -403,4 +409,19 @@ public class MainWindow {
 		panel_In.setBackground(Color.LIGHT_GRAY);		
 		panel_Out.add(panel_In);
 	}	
+	
+	//========================================================================================================
+    /*  Funciones de jTP */
+	public static Image getImage(int tabIndex) {
+		return ((ImagePanel) ((JScrollPane) jTP.getComponentAt(tabIndex)).getViewport().getView()).image;
+	}
+	//========================================================================================================
+	public static Image getCurrentImage() {
+		return getImage(jTP.getSelectedIndex());
+	}
+	//========================================================================================================
+	public static void removeCurrentImage() {
+		jTP.remove(jTP.getSelectedIndex());
+	}
+			
 }
