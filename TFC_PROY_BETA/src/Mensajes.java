@@ -10,23 +10,22 @@ public class Mensajes {
 	private String msg;
 	
 	public String getWelcome (){
-		 return msg = "\n\n  UNIVERSIDAD DE LA LAGUNA           \n"
-		           + "   E.T.S DE INGENIERIA INFORMATICA        \n"
-		           + "   TFG - GRADO EN INGENIERIA INFORMATICA  \n"		           
-		           + "   AUTOR : LEONARDO SIVERIO CHASOY        \n";
-		        
+		 return msg = "\n\n\t\tUNIVERSIDAD DE LA LAGUNA        \n"
+		           + "\tE.T.S DE INGENIERIA INFORMATICA        \n"
+		           + "\tTFG - GRADO EN INGENIERIA INFORMATICA  \n"		           
+		           + "\tAUTOR : LEONARDO SIVERIO CHASOY        \n";		        
 		
 	}
 	
 	public String getVersion(){
-		return msg = "$ > TFG - sImage beta v.4.0";
+		return msg = "\t$ > TFG - sImage beta v.7.0";
 				
 	}
 	
 	public JTextArea initMsg(JTextArea panelCMD){
 		
 		
-		panelCMD.setBounds(5, 295, 500, 200);
+	
 		panelCMD.setText(getWelcome() +"\n   "+ getVersion());
 	    panelCMD.setFont(new Font("Consolas", Font.PLAIN, 11));
 	    panelCMD.setBorder(new BevelBorder(BevelBorder.LOWERED, Color.DARK_GRAY, null, null, null));

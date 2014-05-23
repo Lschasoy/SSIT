@@ -29,7 +29,7 @@ public class DibujarGrafica {
 
 	private String msg;
 	
-    public void crearHistograma(int[] histograma,JPanel jpHisto,Color colorBarras, final BufferedImage image, final JPanel jpImagen, final JTextArea cmdLine) {
+    public void crearHistograma(int[] histograma,JPanel jpHisto,final Color colorBarras, final BufferedImage image, final JPanel jpImagen, final JTextArea cmdLine) {
     	
     	 cmdLine.append("$Run .. [Crear histograma]: name: " + colorBarras.toString() + '\n');
     	 
@@ -69,8 +69,8 @@ public class DibujarGrafica {
                 Color c1 = new Color(image.getRGB(x, y));
                 BufferedImage tmp = clona(image);
                 
-            	
-                msg = "$Run .. [Pulsar Histo]  x:" + x + "y:" + y ;
+                
+                msg = "$(Pulsar Histo)  x:" + x + "y:" + y ;
                 msg += " Color[r= " + c1.getRed()  + " g= "+ c1.getGreen()  + ",b= " + c1.getBlue() + "]\n";
                 cmdLine.append(msg); 
                 
@@ -78,15 +78,21 @@ public class DibujarGrafica {
                 	for (int v = 0; v < image.getHeight(); v++){
                 		
                 		Color c2 = new Color(image.getRGB(u, v));
-                		
-                	                    	    
+                		                	                    	    
                 	        if ( c1.getRGB() == c2.getRGB()){// Pintar en color                 	        
 	                	        image.setRGB(u, v, new Color(0,255,0).getRGB()); // Pintar de verde
 	                	        
                 	        }   else{ // Colocar en grises
-                	        	int med= (int) Math.round((c2.getRed()+c2.getGreen()+c2.getBlue())/3);
-            					//Almacena el color en la imagen destino
-            					image.setRGB(u, v, new Color(med,med,med).getRGB());
+                	        	   if (colorBarras.equals(Color.RED))                	            	   
+                	            	   image.setRGB(u, v, new Color(c2.getRed(),0,0).getRGB());
+                	        	   if (colorBarras.equals(Color.GREEN))                	            	   
+                	            	   image.setRGB(u, v, new Color(0,c2.getGreen(),0).getRGB());   
+                	        	   if (colorBarras.equals(Color.BLUE))                	            	   
+                	            	   image.setRGB(u, v, new Color(0,0,c2.getBlue()).getRGB());
+                	        	   if (colorBarras.equals(Color.GRAY)){
+                	        		   int med = (int)((c2.getRed()+c2.getGreen()+c2.getBlue())/3);
+                	        		   image.setRGB(u, v, new Color(med,med,med).getRGB());
+                	        	   }                	        	               					
                 	        }
                 	        jpImagen.repaint();     
                 	}   
@@ -113,5 +119,7 @@ public class DibujarGrafica {
     	copia.setData(imagen.getData());
     	return copia;
     }
+    
+    
     
 }
