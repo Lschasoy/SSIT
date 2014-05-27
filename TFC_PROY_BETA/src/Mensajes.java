@@ -18,7 +18,7 @@ public class Mensajes {
 	}
 	
 	public String getVersion(){
-		return msg = "\t$ > TFG - sImage beta v.7.0";
+		return msg = "\t$ > TFG - sImage beta v.8.0";
 				
 	}
 	

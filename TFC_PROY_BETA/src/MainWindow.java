@@ -1,5 +1,6 @@
 import java.awt.EventQueue;
 import java.awt.GridLayout;
+
 import javax.imageio.ImageIO;
 import javax.swing.JButton;
 import javax.swing.JFrame;
@@ -27,13 +28,19 @@ import javax.swing.JScrollPane;
 import javax.swing.UIManager;
 
 import org.xnap.commons.gui.CloseableTabbedPane;
+
 import javax.swing.JTabbedPane;
+
 import java.awt.FlowLayout;
-import java.awt.event.MouseAdapter;
-import java.awt.event.MouseEvent;
 
+import javax.swing.border.TitledBorder;
+import javax.swing.JComboBox;
+import javax.swing.DefaultComboBoxModel;
+import javax.swing.JTextField;
+import javax.swing.SwingConstants;
 
-
+import matlab.*;
+import javax.swing.ImageIcon;
 
 
 
@@ -47,7 +54,6 @@ public class MainWindow {
 	private float xScaleFactor = 1, yScaleFactor = 1, degree;
 	private JTextArea panelCMD;
 	private JTable tablaMenuImage;
-	private JLabel jlCanal, jlCmd, jlPath;
 	
 	private MyTableModel modelo;
 	private static Mensajes msgs;
@@ -57,9 +63,8 @@ public class MainWindow {
     private int[][] histograma;
     private DibujarGrafica ObjDibujaHisto;
     private Canales jdCanales;
- 
-        
-    private Image oImage;
+   private Image oImage;
+   
 	/******************* MAIN *****************************/	 
 	public static void main(String[] args) {
 		EventQueue.invokeLater(new Runnable() {
@@ -73,7 +78,6 @@ public class MainWindow {
 				}
 			}
 		});
-		System.gc(); // -> Elimina los objetos creados,para que no queden sombies
 	}
 
 	/** Create the application. */
@@ -86,11 +90,7 @@ public class MainWindow {
 		
 		jTP = new CloseableTabbedPane();
 		jTP.setTabLayoutPolicy(JTabbedPane.SCROLL_TAB_LAYOUT);
-		jTP.setBorder(new BevelBorder(BevelBorder.LOWERED, null, null, null, null));
-		jTP.setBackground(new Color(135, 206, 235));
-		
-		
-		ImagePanel.setRoiListener(); // --> Importar ImagenPanel 
+				
 		
 	// ===============> Inicializar wind <=============================	
 		miVentana = new JFrame();		
@@ -100,10 +100,7 @@ public class MainWindow {
 		miVentana.getContentPane().setLayout(new GridLayout(1,2));			
 		miVentana.getContentPane().add(panelCentral());		
 		miVentana.getContentPane().add(jTP);		
-		miVentana.setSize(1140, 680); //->Notocar
-		
-	// ================> Inicializar ventanas <=========================			
-		
+		miVentana.setSize(1140, 680); //->Notocar						
 	}
 	
 	public JPanel panelMenuImage (){
@@ -111,7 +108,7 @@ public class MainWindow {
 		 JPanel pMenuImage = new JPanel();				 
 		 FlowLayout flowLayout = (FlowLayout) pMenuImage.getLayout();
 		 flowLayout.setAlignment(FlowLayout.LEFT);
-		 pMenuImage.setBounds(10, 320, 520, 69);
+		 pMenuImage.setBounds(10, 370, 520, 69);
 		 				 		 
 		 // Inicializacion Table Model
 		 String [] nombreColumnas = {"image", "image", "image","image", "image", "image","image"};
@@ -155,78 +152,161 @@ public class MainWindow {
 		
 	    //====> Panel de la parte central <=============================== 			    	
 	    infoShow = new JPanel();
+	    infoShow.setBorder(new TitledBorder(null, "", TitledBorder.LEADING, TitledBorder.TOP, null, null));
 	    infoShow.setLayout(null);
 	
-	    infoShow.add(panelSup()); 
+	    infoShow.add(panelSup()); 	 
+	    infoShow.add(panelSpacioCanales());
+	    
 	    
 		/****** Inicializar canales *************/
-		canalR = new JPanel();
-		initPanel(275, 30, 270, 145, canalR, infoShow);				
+	    canalR = new JPanel();
+		initPanel(275, 90, 270, 140, canalR, infoShow);				
 		canalG = new JPanel();
-		initPanel(275, 175, 270, 145, canalG, infoShow);		
+		initPanel(275, 230, 270, 140, canalG, infoShow);		
 		canalB = new JPanel();
-		initPanel(5, 30, 270, 145, canalB, infoShow);						
+		initPanel(5, 90, 270, 140, canalB, infoShow);						
 		canalY = new JPanel();
-		initPanel(5, 175, 270, 145, canalY, infoShow);
+		initPanel(5, 230, 270, 140, canalY, infoShow);
 		
 		
 	    infoShow.add(panelMenuImage());
-	    
-	    //--> Label's 
-	    
-	    jlCmd = new JLabel("Commad: ");
-	    jlCmd.setBounds(20, 390, 250, 15); // Size Y =  680
-	    infoShow.add(jlCmd);
-	    
-	    jlCanal = new JLabel("Espacio de Color: ");
-	    jlCanal.setBounds(270, 390, 250, 15); // Size Y =  680
-	    infoShow.add(jlCanal);
-	    
-	    jlPath = new JLabel("Path image: ");
-	    jlPath.setBounds(20, 405, 300, 15); // Size Y =  680
-	    infoShow.add(jlPath);
-	    
+	    	 	  
 	    //===  Inicializar Commnad Line ===
 		panelCMD = new JTextArea();				
 		JScrollPane scroll = new JScrollPane(msgs.initMsg(panelCMD));
-		scroll.setBounds(5, 455, 540, 190); // Size Y =  680
+		scroll.setBounds(5, 450, 540, 190); // Size Y =  680
 		scroll.setVerticalScrollBarPolicy(ScrollPaneConstants.VERTICAL_SCROLLBAR_ALWAYS);
 		
-	    infoShow.add(scroll);
+	    infoShow.add(scroll);	   
 	    	    	    	     	    	    		 	    	    				
 		return infoShow;
 	}
-	
-
-	public JMenuBar panelSup(){
-						
-		JMenuBar barSup = new JMenuBar ();				
-		barSup.setBounds(0, 0, 545, 25);
+	/**
+	 * @param: scPanel: contiene los ComboBox
+	 * @return: cpParam: Panel que contienen los ComboBox y los JPanel de parametros 
+	 */    
+	public JPanel panelSpacioCanales(){
+		final JPanel cpParam = new JPanel(); 
+		cpParam.setBounds(0, 25, 562, 60);		
+		cpParam.setLayout(new GridLayout(2,1)); // -> 
+		
+		final JPanel pParam = new JPanel (new GridLayout(1,8));
 		
 		
-		JMenu menuFile = new JMenu(" File ");	
-		//==================== Load Image ===================================
-		JMenuItem cargarImagen = new JMenuItem("Load Image");
-		cargarImagen.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent e) {
-								   				   				   				  
-					try {
-						File pathFile = Archivos.loadFile(tablaMenuImage, modelo);
-						Image img = new Image(pathFile,ImageIO.read(pathFile),true);
-						jlCmd.setText(jlCmd.getText() + "Load Image");
-						jlPath.setText(jlPath.getText() + pathFile.getAbsolutePath());
-						panelCMD.setText(msgs.msgOperacion(0,img.toString(), img.img));						
-						mostrar(img);
-					} catch (IOException e1) {
-						JOptionPane.showMessageDialog(null, "Erro al cargar", "Load Error", JOptionPane.ERROR_MESSAGE);	
-					
-					}				   
+		final JLabel lb1 = new JLabel(); 
+		lb1.setHorizontalAlignment(SwingConstants.RIGHT);pParam.add(lb1);
+		final JTextField tfParam1 = new JTextField(3);tfParam1.enable(false);pParam.add(tfParam1);
+		final JLabel lb2 = new JLabel(); 
+		lb2.setHorizontalAlignment(SwingConstants.RIGHT);pParam.add(lb2);
+		final JTextField tfParam2 = new JTextField(3);tfParam2.enable(false);pParam.add(tfParam2);
+		final JLabel lb3 = new JLabel(); 
+		lb3.setHorizontalAlignment(SwingConstants.RIGHT);pParam.add(lb3);
+		final JTextField tfParam3 = new JTextField(3);tfParam3.enable(false);pParam.add(tfParam3);
+		
+		pParam.add(new JButton("ENVIAR"));
+ 		
+		final JPanel scPanel = new JPanel();
+		scPanel.setBounds(0, 5, 545, 25);
+		scPanel.setLayout(null);
+		cpParam.add(scPanel);								
+		// =================== Segmentacion ====================================
+		final JComboBox comboBox = new JComboBox();
+		comboBox.setBounds(5, 0, 150, 25);	
+		String [] algoritmos = {"Algoritmos", "Segementacion_1", "Segementacion_2", "Segementacion_3"};
+		comboBox.setModel(new DefaultComboBoxModel(algoritmos));
+		
+		comboBox.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent arg0) {
+			    if (comboBox.getSelectedItem().equals(comboBox.getItemAt(1) .toString())){
+			    	System.out.println("Segementacion_1");
+			    	lb1.setText("Param 1: ");tfParam1.enable(true);
+			    	lb2.setText("Param 2: ");tfParam2.enable(true);
+			    	lb3.setText("Param 3: ");tfParam3.enable(true);
+					pParam.repaint();
+                   
+			    }
+			    if (comboBox.getSelectedItem().equals(comboBox.getItemAt(2) .toString())){
+			    	System.out.println("Segementacion_2");	
+			    	lb1.setText("Param 1: ");lb1.setText("Param 2: ");
+					cpParam.repaint();
+			
+			    }	
+			    if (comboBox.getSelectedItem().equals(comboBox.getItemAt(3) .toString())){
+			    	System.out.println("Segementacion_3");				    	
+			    	
+			    }
 			}
 		});
-		menuFile.add(cargarImagen);
+		
+		
+		
+		final JComboBox cbSpaceColor = new JComboBox();		
+		cbSpaceColor.setBounds(155, 0, 150, 25);		
+		String[] spacecolor = {"Espacios de color", "RGB", "HSV", "CYK"};
+		cbSpaceColor.setModel(new DefaultComboBoxModel(spacecolor));		
+			
+		// =================== Espacio de Colores ====================================		
+		cbSpaceColor.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent arg0) {
+				
+			    if (cbSpaceColor.getSelectedItem().equals(cbSpaceColor.getItemAt(0) .toString())){
+			    	System.out.println("RGB");
+			    	String path = getCurrentImage().getFileOriginal().getAbsolutePath().toString();
+			    	//ColorSpace espColor = new ColorSpace(path);
+			    	scPanel.add(jdCanales.generarComoboBox("RGB", getCurrentImage().img));
+			    }   
+			    if (cbSpaceColor.getSelectedItem().equals(cbSpaceColor.getItemAt(1) .toString())){
+			    	System.out.println("HSV");
+			    	scPanel.add(jdCanales.generarComoboBox("HSV", getCurrentImage().img));
+			    	
+			    	String path = getCurrentImage().getFileOriginal().getAbsolutePath().toString();
+			    	ColorSpace cImage = new ColorSpace(path);
+			    	
+				
+			    }
+			    if (cbSpaceColor.getSelectedItem().equals(cbSpaceColor.getItemAt(2) .toString())){
+			    	System.out.println("CYK");
+			    	
+			    }
+			}
+		});	
+		
+		scPanel.add(comboBox);	
+		scPanel.add(cbSpaceColor);	
+		cpParam.add(pParam);
+		
+		return cpParam;
+	}
+
+	public JPanel panelSup(){
+						
+		JPanel barSup = new JPanel();	
+		barSup.setLayout(new GridLayout(1,8));	
+		barSup.setBounds(0, 0, 562, 25);
+				
+		//==================== Load Image ===================================
+		JButton cargarImagen = new JButton();
+		cargarImagen.setIcon(new ImageIcon("image\\open.png", "LOAD"));
+		cargarImagen.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {								   				   				   				 
+				try {
+					File pathFile = Archivos.loadFile(tablaMenuImage, modelo);
+					System.out.println("Load Image: " + pathFile.toString());
+					Image img = new Image(pathFile,ImageIO.read(pathFile),true);										
+					panelCMD.setText(msgs.msgOperacion(0,img.toString(), img.img));						
+					mostrar(img);
+				} catch (IOException e1) {
+					JOptionPane.showMessageDialog(null, "Erro al cargar", "Load Error", JOptionPane.ERROR_MESSAGE);	
+				
+				}				   
+			}
+		});
+		barSup.add(cargarImagen); 
 					
 		//==================== Save Image ===================================
-		JMenuItem salvarImagen = new JMenuItem("Save Image");
+		JButton salvarImagen = new JButton();
+		salvarImagen.setIcon(new ImageIcon("image\\save.png", "SAVE"));
 		salvarImagen.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				 
@@ -234,23 +314,12 @@ public class MainWindow {
 			     arc.saveFile();
 			  //   panelCMD.append(msgs.msgOperacion(1,arc.getImageName(), oImage.img));				    				    				    			
 			}
-		});
-		menuFile.add(salvarImagen);
+		});		
+		barSup.add(salvarImagen); // -> Fin menuFile
 		
-		//==================== EXIT ===================================
-		JMenuItem exitApp = new JMenuItem("Exit");
-		exitApp.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent e) {
-				 System.exit(0);										    				    				    		
-			}
-		});
-		menuFile.add(exitApp);
-
-		barSup.add(menuFile); // -> Fin menuFile
-		
-		JMenu menuTool = new JMenu(" Tools ");
 		//==================== ZOOM ++ ===================================
-		JMenuItem ZoomPlus = new JMenuItem ("ZOOM ++");
+		JButton ZoomPlus = new JButton ();
+		ZoomPlus.setIcon(new ImageIcon("image\\zIn.png", "Zoom ++"));
 		ZoomPlus.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				xScaleFactor += 0.1;
@@ -261,12 +330,12 @@ public class MainWindow {
 				removeCurrentImage(); 
 				mostrar(img);				
 			}
-		});		
+		});				
 		
-		
-		menuTool.add(ZoomPlus);
+		barSup.add(ZoomPlus);
 		//==================== ZOOM -- =================================== 
-		JMenuItem ZoomMinus = new JMenuItem ("ZOOM --");
+		JButton ZoomMinus = new JButton ();
+		ZoomMinus.setIcon(new ImageIcon("image\\zOut.png", "Zoom --"));
 		ZoomMinus.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				xScaleFactor -= 0.1; yScaleFactor -= 0.1;				  	
@@ -276,11 +345,11 @@ public class MainWindow {
 				removeCurrentImage(); 
 				mostrar(img);		 			  		
 			}
-		});		
-		
-		menuTool.add(ZoomMinus);
+		});				
+		barSup.add(ZoomMinus);
 		//==================== GIRAR IZQ =================================== 
-		JMenuItem girarIZQ = new JMenuItem ("Girar IZQ");
+		JButton girarIZQ = new JButton ();
+		girarIZQ.setIcon(new ImageIcon("image\\gIn.png", "Girar Izq"));
 		girarIZQ.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent arg0) {
 				 degree += 30;								  	
@@ -291,11 +360,11 @@ public class MainWindow {
 				 mostrar(img);
 						 
 			}
-		});			
-		
-		menuTool.add(girarIZQ);
+		});					
+		barSup.add(girarIZQ);
         // ==================== GIRAR DCH ===================================
-		JMenuItem girarDCH = new JMenuItem ("Girar DCH");
+		JButton girarDCH = new JButton ();
+		girarDCH.setIcon(new ImageIcon("image\\gOut.png", "Girar Dch"));
 		girarDCH.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent arg0) {
 				degree -= 30;								  	
@@ -305,58 +374,12 @@ public class MainWindow {
 				removeCurrentImage(); 
 				mostrar(img);						 			 
 			}
-		});		
-		
-		menuTool.add(girarDCH);
-		barSup.add(menuTool); // -> fin menuTool
-		
-		
-		// =================== Espacio de Colores ====================================		
-		JMenu menuColor = new JMenu("Space");
-		barSup.add(menuColor);
-		
-		JMenuItem rgbColor = new JMenuItem("RGB");
-		rgbColor.addMouseListener(new MouseAdapter() {			
-			public void mouseClicked(MouseEvent arg0) {
-				jlCanal.setText(jlCanal.getText() + "RGB");
-				jlCanal.setVisible(true);
-			}
-		});
-		menuColor.add(rgbColor);
-		
-		JMenuItem cmykColor = new JMenuItem("CMYK");
-		menuColor.add(cmykColor);
-		
-		JMenuItem hsvColor = new JMenuItem("HSV");
-		menuColor.add(hsvColor);
-		
-		// =================== Canales ====================================
-		JButton c1 = new JButton (" Canal 1");
-		c1.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent arg0) {					
-			   jdCanales.gCanalR(getCurrentImage().img);			 									
-			}
-		});			
-		
-		barSup.add(c1); // -> Canal 1
-		JButton c2 = new JButton (" Canal 2");
-		c2.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent arg0) {				
-				 jdCanales.gCanalG(getCurrentImage().img);			 									
-			}
-		});			
-		
-		barSup.add(c2); // -> Canal 2
-		JButton c3 = new JButton (" Canal 3");
-		c3.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent arg0) {				
-				 jdCanales.gCanalB(getCurrentImage().img);			 									
-			}
-		});			
-		
-		barSup.add(c3); // -> Canal 3
+		});				
+		barSup.add(girarDCH);
+				
 		//==================== DESHACER =================================== 
-		JButton desHacer = new JButton ("<");
+		JButton desHacer = new JButton ();
+		desHacer.setIcon(new ImageIcon("image\\atras.png", " atras"));
 		desHacer.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent arg0) {				
 				mostrar(oImage);			 									
@@ -365,7 +388,8 @@ public class MainWindow {
 		
 		barSup.add(desHacer);
         // ==================== DESHACER TODO ===================================
-		JButton goTo = new JButton ("<<");
+		JButton goTo = new JButton ();
+		goTo.setIcon(new ImageIcon("image\\atras_all.png", " deshacer todo"));
 		goTo.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent arg0) {
 				mostrar(oImage);
@@ -376,7 +400,8 @@ public class MainWindow {
 		
 		
 		// ============== Refrescar ===================================
-		JButton refrescar = new JButton("F5");
+		JButton refrescar = new JButton();
+		refrescar.setIcon(new ImageIcon("image\\refrescar.png", " arefrescar"));
 		refrescar.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent arg0) {	
 				oImage = getCurrentImage();	
