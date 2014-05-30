@@ -29,6 +29,8 @@ import javax.swing.UIManager;
 
 import org.xnap.commons.gui.CloseableTabbedPane;
 
+import com.mathworks.toolbox.javabuilder.MWException;
+
 import javax.swing.JTabbedPane;
 
 import java.awt.FlowLayout;
@@ -40,7 +42,13 @@ import javax.swing.JTextField;
 import javax.swing.SwingConstants;
 
 import matlab.*;
+import matlabToJavaSC.Espacios;
+import matlabToJavaSC.Segmentacion;
+
 import javax.swing.ImageIcon;
+
+import procesos.FormSegment;
+import java.awt.SystemColor;
 
 
 
@@ -63,7 +71,10 @@ public class MainWindow {
     private int[][] histograma;
     private DibujarGrafica ObjDibujaHisto;
     private Canales jdCanales;
-   private Image oImage;
+    private Image oImage;
+    private Espacios esp;
+    private Segmentacion fun;
+    
    
 	/******************* MAIN *****************************/	 
 	public static void main(String[] args) {
@@ -80,13 +91,17 @@ public class MainWindow {
 		});
 	}
 
-	/** Create the application. */
-	public MainWindow() {
+	/** Create the application. 
+	 * @throws MWException */
+	public MainWindow() throws MWException {
 		
 		msgs = new Mensajes();
 		modelo = new MyTableModel();
 		arc = new Archivos();
 		jdCanales = new Canales();
+		esp = new Espacios();
+		fun = new Segmentacion();
+		
 		
 		jTP = new CloseableTabbedPane();
 		jTP.setTabLayoutPolicy(JTabbedPane.SCROLL_TAB_LAYOUT);
@@ -152,11 +167,13 @@ public class MainWindow {
 		
 	    //====> Panel de la parte central <=============================== 			    	
 	    infoShow = new JPanel();
-	    infoShow.setBorder(new TitledBorder(null, "", TitledBorder.LEADING, TitledBorder.TOP, null, null));
+	    infoShow.setBackground(SystemColor.inactiveCaption);
+	    infoShow.setBorder(null);
 	    infoShow.setLayout(null);
 	
-	    infoShow.add(panelSup()); 	 
-	    infoShow.add(panelSpacioCanales());
+	    infoShow.add(panelSup()); 	
+	    infoShow.add(panelTools());
+	    infoShow.add(panelCombos());
 	    
 	    
 		/****** Inicializar canales *************/
@@ -186,107 +203,203 @@ public class MainWindow {
 	 * @param: scPanel: contiene los ComboBox
 	 * @return: cpParam: Panel que contienen los ComboBox y los JPanel de parametros 
 	 */    
-	public JPanel panelSpacioCanales(){
-		final JPanel cpParam = new JPanel(); 
-		cpParam.setBounds(0, 25, 562, 60);		
-		cpParam.setLayout(new GridLayout(2,1)); // -> 
-		
-		final JPanel pParam = new JPanel (new GridLayout(1,8));
-		
-		
-		final JLabel lb1 = new JLabel(); 
-		lb1.setHorizontalAlignment(SwingConstants.RIGHT);pParam.add(lb1);
-		final JTextField tfParam1 = new JTextField(3);tfParam1.enable(false);pParam.add(tfParam1);
-		final JLabel lb2 = new JLabel(); 
-		lb2.setHorizontalAlignment(SwingConstants.RIGHT);pParam.add(lb2);
-		final JTextField tfParam2 = new JTextField(3);tfParam2.enable(false);pParam.add(tfParam2);
-		final JLabel lb3 = new JLabel(); 
-		lb3.setHorizontalAlignment(SwingConstants.RIGHT);pParam.add(lb3);
-		final JTextField tfParam3 = new JTextField(3);tfParam3.enable(false);pParam.add(tfParam3);
-		
-		pParam.add(new JButton("ENVIAR"));
- 		
-		final JPanel scPanel = new JPanel();
-		scPanel.setBounds(0, 5, 545, 25);
+	public JPanel panelCombos(){
+	
+										
+ 		final JPanel scPanel = new JPanel();
+ 		scPanel.setBackground(SystemColor.inactiveCaption);
+		scPanel.setBounds(0, 50, 545, 25);
 		scPanel.setLayout(null);
-		cpParam.add(scPanel);								
+									
 		// =================== Segmentacion ====================================
 		final JComboBox comboBox = new JComboBox();
 		comboBox.setBounds(5, 0, 150, 25);	
-		String [] algoritmos = {"Algoritmos", "Segementacion_1", "Segementacion_2", "Segementacion_3"};
+		String [] algoritmos = {"Algoritmos", "Segementacion_1", "Segementacion_2"};
 		comboBox.setModel(new DefaultComboBoxModel(algoritmos));
 		
 		comboBox.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent arg0) {
 			    if (comboBox.getSelectedItem().equals(comboBox.getItemAt(1) .toString())){
 			    	System.out.println("Segementacion_1");
-			    	lb1.setText("Param 1: ");tfParam1.enable(true);
-			    	lb2.setText("Param 2: ");tfParam2.enable(true);
-			    	lb3.setText("Param 3: ");tfParam3.enable(true);
-					pParam.repaint();
-                   
+					String path = getCurrentImage().getFileOriginal().getAbsolutePath().toString();
+					FormSegment seg = new FormSegment();
+					FormSegment.main(seg, path, fun);
+														
+					Image img = new Image(null,seg.getImgOut(),true);					
+				    mostrar(img);
+											     
 			    }
 			    if (comboBox.getSelectedItem().equals(comboBox.getItemAt(2) .toString())){
-			    	System.out.println("Segementacion_2");	
-			    	lb1.setText("Param 1: ");lb1.setText("Param 2: ");
-					cpParam.repaint();
+			    	System.out.println("Segementacion_2");				        
 			
 			    }	
-			    if (comboBox.getSelectedItem().equals(comboBox.getItemAt(3) .toString())){
-			    	System.out.println("Segementacion_3");				    	
-			    	
-			    }
+			 
 			}
-		});
-		
-		
+		});				
 		
 		final JComboBox cbSpaceColor = new JComboBox();		
 		cbSpaceColor.setBounds(155, 0, 150, 25);		
-		String[] spacecolor = {"Espacios de color", "RGB", "HSV", "CYK"};
+		String[] spacecolor = {"RGB", "HSV", "LAB", "YCbCr"};
 		cbSpaceColor.setModel(new DefaultComboBoxModel(spacecolor));		
 			
 		// =================== Espacio de Colores ====================================		
 		cbSpaceColor.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent arg0) {
 				
-			    if (cbSpaceColor.getSelectedItem().equals(cbSpaceColor.getItemAt(0) .toString())){
-			    	System.out.println("RGB");
-			    	String path = getCurrentImage().getFileOriginal().getAbsolutePath().toString();
-			    	//ColorSpace espColor = new ColorSpace(path);
-			    	scPanel.add(jdCanales.generarComoboBox("RGB", getCurrentImage().img));
-			    }   
 			    if (cbSpaceColor.getSelectedItem().equals(cbSpaceColor.getItemAt(1) .toString())){
 			    	System.out.println("HSV");
+			    	String path = getCurrentImage().getFileOriginal().getAbsolutePath().toString();
+			    	ColorSpace espColor = new ColorSpace();
+			    				    	
+			    	Image img = new Image(getCurrentImage().getFileOriginal(),espColor.toImgHsv(esp, path, panelCMD),true);																			
+					mostrar(img);			    	
 			    	scPanel.add(jdCanales.generarComoboBox("HSV", getCurrentImage().img));
 			    	
-			    	String path = getCurrentImage().getFileOriginal().getAbsolutePath().toString();
-			    	ColorSpace cImage = new ColorSpace(path);
-			    	
-				
-			    }
+			        			    	
+			    }   
 			    if (cbSpaceColor.getSelectedItem().equals(cbSpaceColor.getItemAt(2) .toString())){
-			    	System.out.println("CYK");
+			    	System.out.println("LAB");
+			    	String path = getCurrentImage().getFileOriginal().getAbsolutePath().toString();
+			    	ColorSpace espColor = new ColorSpace();
+			    	
+			    	
+			    	Image img = new Image(getCurrentImage().getFileOriginal(),espColor.toImglab(esp, path, panelCMD),true);																			
+					mostrar(img);			    	
+			    	scPanel.add(jdCanales.generarComoboBox("LAB", getCurrentImage().img));			    				    	
+			    }
+			    if (cbSpaceColor.getSelectedItem().equals(cbSpaceColor.getItemAt(3) .toString())){
+			    	System.out.println("YCbCr");
+			    	String path = getCurrentImage().getFileOriginal().getAbsolutePath().toString();
+			    	ColorSpace espColor = new ColorSpace();
+			    	
+			    	
+			    	Image img = new Image(getCurrentImage().getFileOriginal(),espColor.toImgYCbCr(esp, path, panelCMD),true);																			
+					mostrar(img);			    	
+			    	scPanel.add(jdCanales.generarComoboBox("YCbCr", getCurrentImage().img));
 			    	
 			    }
 			}
 		});	
 		
 		scPanel.add(comboBox);	
-		scPanel.add(cbSpaceColor);	
-		cpParam.add(pParam);
+		scPanel.add(cbSpaceColor);			
 		
-		return cpParam;
+		return scPanel;
+	}
+	
+	public JPanel panelTools (){
+		
+		JPanel barTools = new JPanel();	
+		barTools.setLayout(new GridLayout(1,8));	
+		barTools.setBounds(0, 25, 562, 25);
+		
+	//==================== ZOOM ++ ===================================
+			JButton ZoomPlus = new JButton ();
+			ZoomPlus.setIcon(new ImageIcon("image\\zIn.png", "Zoom ++"));
+			ZoomPlus.addActionListener(new ActionListener() {
+				public void actionPerformed(ActionEvent e) {
+					xScaleFactor += 0.1;
+					yScaleFactor += 0.1;				  	
+					oImage = getCurrentImage();
+					Image img = new Image(oImage.getFileCompleto(),Tools.Zoom(oImage.toBufferedImage(), xScaleFactor,yScaleFactor),false);			   
+					panelCMD.append(msgs.msgOperacion(4,arc.getImageName(), img.toBufferedImage()));
+					removeCurrentImage(); 
+					mostrar(img);				
+				}
+			});				
+			
+			barTools.add(ZoomPlus);
+			//==================== ZOOM -- =================================== 
+			JButton ZoomMinus = new JButton ();
+			ZoomMinus.setIcon(new ImageIcon("image\\zOut.png", "Zoom --"));
+			ZoomMinus.addActionListener(new ActionListener() {
+				public void actionPerformed(ActionEvent e) {
+					xScaleFactor -= 0.1; yScaleFactor -= 0.1;				  	
+					oImage = getCurrentImage();
+					Image img = new Image(oImage.getFileCompleto(),Tools.Zoom(oImage.toBufferedImage(), xScaleFactor,yScaleFactor),false);			   
+					panelCMD.append(msgs.msgOperacion(4,arc.getImageName(), img.toBufferedImage()));
+					removeCurrentImage(); 
+					mostrar(img);		 			  		
+				}
+			});				
+			barTools.add(ZoomMinus);
+			//==================== GIRAR IZQ =================================== 
+			JButton girarIZQ = new JButton ();
+			girarIZQ.setIcon(new ImageIcon("image\\gIn.png", "Girar Izq"));
+			girarIZQ.addActionListener(new ActionListener() {
+				public void actionPerformed(ActionEvent arg0) {
+					 degree += 30;								  	
+					 oImage = getCurrentImage();				
+					 Image img = new Image(oImage.getFileCompleto(),Tools.Rotar(oImage.toBufferedImage(), degree),false);
+					 panelCMD.append(msgs.msgOperacion(4,arc.getImageName(), img.toBufferedImage()));
+					 removeCurrentImage(); 
+					 mostrar(img);
+							 
+				}
+			});					
+			barTools.add(girarIZQ);
+	        // ==================== GIRAR DCH ===================================
+			JButton girarDCH = new JButton ();
+			girarDCH.setIcon(new ImageIcon("image\\gOut.png", "Girar Dch"));
+			girarDCH.addActionListener(new ActionListener() {
+				public void actionPerformed(ActionEvent arg0) {
+					degree -= 30;								  	
+					oImage = getCurrentImage();				
+					Image img = new Image(oImage.getFileCompleto(),Tools.Rotar(oImage.toBufferedImage(), degree),false);
+					panelCMD.append(msgs.msgOperacion(4,arc.getImageName(), img.toBufferedImage()));
+					removeCurrentImage(); 
+					mostrar(img);						 			 
+				}
+			});				
+			barTools.add(girarDCH);
+					
+			//==================== DESHACER =================================== 
+			JButton desHacer = new JButton ();
+			desHacer.setIcon(new ImageIcon("image\\atras.png", " atras"));
+			desHacer.addActionListener(new ActionListener() {
+				public void actionPerformed(ActionEvent arg0) {				
+					mostrar(oImage);			 									
+				}
+			});			
+			
+			barTools.add(desHacer);
+	        // ==================== DESHACER TODO ===================================
+			JButton goTo = new JButton ();
+			goTo.setIcon(new ImageIcon("image\\atras_all.png", " deshacer todo"));
+			goTo.addActionListener(new ActionListener() {
+				public void actionPerformed(ActionEvent arg0) {
+					mostrar(oImage);
+					panelCMD.setText(msgs.msgOperacion(7,arc.getImageName(), oImage.img));								
+				}
+			});
+			barTools.add(goTo);	
+			
+			
+			// ============== Refrescar ===================================
+			JButton refrescar = new JButton();
+			refrescar.setIcon(new ImageIcon("image\\refrescar.png", " arefrescar"));
+			refrescar.addActionListener(new ActionListener() {
+				public void actionPerformed(ActionEvent arg0) {	
+					oImage = getCurrentImage();	
+					removeCurrentImage();						
+					mostrar(oImage);
+				}
+			});
+			barTools.add(refrescar); 
+		return barTools;	
+		
 	}
 
-	public JPanel panelSup(){
+	public JMenuBar panelSup(){
 						
-		JPanel barSup = new JPanel();	
-		barSup.setLayout(new GridLayout(1,8));	
+		
+		JMenuBar barSup = new JMenuBar();	
 		barSup.setBounds(0, 0, 562, 25);
-				
+		
+		JMenu menuFile = new JMenu("File");
+		menuFile.setHorizontalAlignment(SwingConstants.LEFT);
 		//==================== Load Image ===================================
-		JButton cargarImagen = new JButton();
+		JMenuItem cargarImagen = new JMenuItem("Load Image");
 		cargarImagen.setIcon(new ImageIcon("image\\open.png", "LOAD"));
 		cargarImagen.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {								   				   				   				 
@@ -294,19 +407,18 @@ public class MainWindow {
 					File pathFile = Archivos.loadFile(tablaMenuImage, modelo);
 					System.out.println("Load Image: " + pathFile.toString());
 					Image img = new Image(pathFile,ImageIO.read(pathFile),true);										
-					panelCMD.setText(msgs.msgOperacion(0,img.toString(), img.img));						
+					panelCMD.setText(msgs.msgOperacion(0,pathFile.getAbsolutePath(), img.img));						
 					mostrar(img);
 				} catch (IOException e1) {
-					JOptionPane.showMessageDialog(null, "Erro al cargar", "Load Error", JOptionPane.ERROR_MESSAGE);	
-				
+					JOptionPane.showMessageDialog(null, "Erro al cargar", "Load Error", JOptionPane.ERROR_MESSAGE);					
 				}				   
 			}
 		});
-		barSup.add(cargarImagen); 
+		menuFile.add(cargarImagen); 
 					
 		//==================== Save Image ===================================
-		JButton salvarImagen = new JButton();
-		salvarImagen.setIcon(new ImageIcon("image\\save.png", "SAVE"));
+		JMenuItem salvarImagen = new JMenuItem("Save Image");
+	 	salvarImagen.setIcon(new ImageIcon("image\\save.png", "SAVE"));
 		salvarImagen.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				 
@@ -315,102 +427,9 @@ public class MainWindow {
 			  //   panelCMD.append(msgs.msgOperacion(1,arc.getImageName(), oImage.img));				    				    				    			
 			}
 		});		
-		barSup.add(salvarImagen); // -> Fin menuFile
+		menuFile.add(salvarImagen); // -> Fin menuFile
 		
-		//==================== ZOOM ++ ===================================
-		JButton ZoomPlus = new JButton ();
-		ZoomPlus.setIcon(new ImageIcon("image\\zIn.png", "Zoom ++"));
-		ZoomPlus.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent e) {
-				xScaleFactor += 0.1;
-				yScaleFactor += 0.1;				  	
-				oImage = getCurrentImage();
-				Image img = new Image(oImage.getFileCompleto(),Tools.Zoom(oImage.toBufferedImage(), xScaleFactor,yScaleFactor),false);			   
-				panelCMD.append(msgs.msgOperacion(4,arc.getImageName(), img.toBufferedImage()));
-				removeCurrentImage(); 
-				mostrar(img);				
-			}
-		});				
-		
-		barSup.add(ZoomPlus);
-		//==================== ZOOM -- =================================== 
-		JButton ZoomMinus = new JButton ();
-		ZoomMinus.setIcon(new ImageIcon("image\\zOut.png", "Zoom --"));
-		ZoomMinus.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent e) {
-				xScaleFactor -= 0.1; yScaleFactor -= 0.1;				  	
-				oImage = getCurrentImage();
-				Image img = new Image(oImage.getFileCompleto(),Tools.Zoom(oImage.toBufferedImage(), xScaleFactor,yScaleFactor),false);			   
-				panelCMD.append(msgs.msgOperacion(4,arc.getImageName(), img.toBufferedImage()));
-				removeCurrentImage(); 
-				mostrar(img);		 			  		
-			}
-		});				
-		barSup.add(ZoomMinus);
-		//==================== GIRAR IZQ =================================== 
-		JButton girarIZQ = new JButton ();
-		girarIZQ.setIcon(new ImageIcon("image\\gIn.png", "Girar Izq"));
-		girarIZQ.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent arg0) {
-				 degree += 30;								  	
-				 oImage = getCurrentImage();				
-				 Image img = new Image(oImage.getFileCompleto(),Tools.Rotar(oImage.toBufferedImage(), degree),false);
-				 panelCMD.append(msgs.msgOperacion(4,arc.getImageName(), img.toBufferedImage()));
-				 removeCurrentImage(); 
-				 mostrar(img);
-						 
-			}
-		});					
-		barSup.add(girarIZQ);
-        // ==================== GIRAR DCH ===================================
-		JButton girarDCH = new JButton ();
-		girarDCH.setIcon(new ImageIcon("image\\gOut.png", "Girar Dch"));
-		girarDCH.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent arg0) {
-				degree -= 30;								  	
-				oImage = getCurrentImage();				
-				Image img = new Image(oImage.getFileCompleto(),Tools.Rotar(oImage.toBufferedImage(), degree),false);
-				panelCMD.append(msgs.msgOperacion(4,arc.getImageName(), img.toBufferedImage()));
-				removeCurrentImage(); 
-				mostrar(img);						 			 
-			}
-		});				
-		barSup.add(girarDCH);
-				
-		//==================== DESHACER =================================== 
-		JButton desHacer = new JButton ();
-		desHacer.setIcon(new ImageIcon("image\\atras.png", " atras"));
-		desHacer.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent arg0) {				
-				mostrar(oImage);			 									
-			}
-		});			
-		
-		barSup.add(desHacer);
-        // ==================== DESHACER TODO ===================================
-		JButton goTo = new JButton ();
-		goTo.setIcon(new ImageIcon("image\\atras_all.png", " deshacer todo"));
-		goTo.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent arg0) {
-				mostrar(oImage);
-				panelCMD.setText(msgs.msgOperacion(7,arc.getImageName(), oImage.img));								
-			}
-		});
-		barSup.add(goTo);	
-		
-		
-		// ============== Refrescar ===================================
-		JButton refrescar = new JButton();
-		refrescar.setIcon(new ImageIcon("image\\refrescar.png", " arefrescar"));
-		refrescar.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent arg0) {	
-				oImage = getCurrentImage();	
-				removeCurrentImage();						
-				mostrar(oImage);
-			}
-		});
-		barSup.add(refrescar); 
-			
+        barSup.add(menuFile);
 		return barSup;
 	}
 	//========================================================================================================

@@ -5,7 +5,9 @@ import java.awt.FlowLayout;
 
 import javax.swing.JDialog;
 import javax.swing.JPanel;
+import javax.swing.JTextArea;
 import javax.swing.border.EmptyBorder;
+
 import java.awt.image.BufferedImage;
 
 import matlabToJavaSC.*;
@@ -19,44 +21,69 @@ import com.mathworks.toolbox.javabuilder.MWNumericArray;
 
 public class ColorSpace extends JDialog {
 
-	private final JPanel contentPanel = new JPanel();
-	private JProgressBar progressBar = new JProgressBar(0,100);
 	private BufferedImage imgHsv;
-	private Espacios esp;
+    private String cmd = null;
 	
-	public BufferedImage getImgHsv() {return imgHsv;}
-
-	public ColorSpace(String path) {
-		setBounds(250, 250, 450, 300);
-		getContentPane().setLayout(new BorderLayout());
-		contentPanel.setLayout(new FlowLayout());
-		contentPanel.setBorder(new EmptyBorder(5, 5, 5, 5));
-		getContentPane().add(contentPanel, BorderLayout.CENTER);
-		{	
+ 
+	
+   //========================================================================================
+	public BufferedImage toImgHsv(Espacios esp, String path, JTextArea panelCMD) {
+		try {
+		    cmd = "\nRun ColorSpace ...... param: Espacio, String, JTextArea";				
+            Object[] result = esp.convertRgb2hsv(2, path);
+            cmd += "\nFinalizado convertRgb2hsv ................ ok";
+			imgHsv = getBufferedImageFromDeployedComponent(result[1]);
+			cmd += "\nFinalizado getBufferedImageFromDeplyedComponent";
+			kill(result); // -> Kill result							
+			cmd += "\nkill of tmp Object ..................";
 			
-			contentPanel.add(progressBar);
-			setVisible(true);
-			progressBar.setValue(25);
-			try {
-				esp = new Espacios();
-				System.out.println("ColorSpace: "+esp.toString());
-                Object[] result = esp.convertRgb2hsv(2, path);
-				progressBar.setValue(50);
-				imgHsv = getBufferedImageFromDeployedComponent(result[1]);
-				progressBar.setValue(75);				
-			
-				kill(result); // -> Kill result			
-				progressBar.setValue(100);
-				
-			} catch (MWException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
-			
-		}
-		
-	}
-//========================================================================================
+		} catch (MWException e) {		
+			cmd = "\nRun ColorSpace: [ERROR] \n";
+			panelCMD.append(cmd);
+		}		
+		cmd += "\n.... End of ColorSpace .................. ok\n";
+		panelCMD.append(cmd);
+		return imgHsv;
+    }
+	   //========================================================================================
+   	public BufferedImage toImglab(Espacios esp, String path, JTextArea panelCMD) {
+   		try {
+   		    cmd = "\nRun ColorSpace ...... param: Espacio, String, JTextArea";				
+               Object[] result = esp.convertRgb2lab(2, path);
+               cmd += "\nFinalizado convertRgb2hsv ................ ok";
+   			imgHsv = getBufferedImageFromDeployedComponent(result[1]);
+   			cmd += "\nFinalizado getBufferedImageFromDeplyedComponent";
+   			kill(result); // -> Kill result							
+   			cmd += "\nkill of tmp Object ..................";
+   			
+   		} catch (MWException e) {		
+   			cmd = "\nRun ColorSpace: [ERROR] \n";
+   			panelCMD.append(cmd);
+   		}		
+   		cmd += "\n.... End of ColorSpace .................. ok\n";
+   		panelCMD.append(cmd);
+   		return imgHsv;
+       }
+    //========================================================================================
+   	public BufferedImage toImgYCbCr(Espacios esp, String path, JTextArea panelCMD) {
+   		try {
+   		    cmd = "\nRun ColorSpace ...... param: Espacio, String, JTextArea";				
+               Object[] result = esp.convertRgb2ycbcr(2, path);
+               cmd += "\nFinalizado convertRgb2hsv ................ ok";
+   			imgHsv = getBufferedImageFromDeployedComponent(result[1]);
+   			cmd += "\nFinalizado getBufferedImageFromDeplyedComponent";
+   			kill(result); // -> Kill result							
+   			cmd += "\nkill of tmp Object ..................";
+   			
+   		} catch (MWException e) {		
+   			cmd = "\nRun ColorSpace: [ERROR] \n";
+   			panelCMD.append(cmd);
+   		}		
+   		cmd += "\n.... End of ColorSpace .................. ok\n";
+   		panelCMD.append(cmd);
+   		return imgHsv;
+       }	
+   //========================================================================================
 	public void kill (Object[] result){
 		
        for (int i = 0; i < result.length; i++) {
