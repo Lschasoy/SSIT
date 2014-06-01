@@ -1,3 +1,4 @@
+package main;
 import java.awt.Toolkit;
 import java.awt.image.BufferedImage;
 import java.io.File;
@@ -6,6 +7,8 @@ import java.io.IOException;
 import javax.imageio.ImageIO;
 import javax.swing.JFileChooser;
 import javax.swing.JTable;
+
+import MenuImage.MyTableModel;
 
 
 

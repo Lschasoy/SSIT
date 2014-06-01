@@ -1,3 +1,4 @@
+package main;
 import java.awt.EventQueue;
 import java.awt.GridLayout;
 
@@ -29,6 +30,11 @@ import javax.swing.UIManager;
 
 import org.xnap.commons.gui.CloseableTabbedPane;
 
+import Images.Image;
+import Images.ImagePanel;
+import MenuImage.ImageRenderer;
+import MenuImage.MyTableModel;
+
 import com.mathworks.toolbox.javabuilder.MWException;
 
 import javax.swing.JTabbedPane;
@@ -47,7 +53,12 @@ import matlabToJavaSC.Segmentacion;
 
 import javax.swing.ImageIcon;
 
+import procesos.Canales;
+import procesos.DibujarGrafica;
 import procesos.FormSegment;
+import procesos.Histograma;
+import procesos.Tools;
+
 import java.awt.SystemColor;
 
 
@@ -77,7 +88,7 @@ public class MainWindow {
     
    
 	/******************* MAIN *****************************/	 
-	public static void main(String[] args) {
+	public static void main() {
 		EventQueue.invokeLater(new Runnable() {
 			public void run() {
 				try {

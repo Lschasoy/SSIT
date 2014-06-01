@@ -1,3 +1,4 @@
+package Images;
 
 import java.awt.Color;
 import java.awt.Dimension;
@@ -15,7 +16,7 @@ public class ImagePanel extends JPanel implements MouseListener, MouseMotionList
 	
 	
 	private static final long serialVersionUID = 1L;
-	Image image;
+	public Image image;
 	public BufferedImage img;
 	Dimension imgSize;
 	Point offset;

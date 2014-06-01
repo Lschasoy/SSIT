@@ -1,3 +1,4 @@
+package Images;
 
 public class ImageInfo {
 	public int[] hist, histR, histG, histB;

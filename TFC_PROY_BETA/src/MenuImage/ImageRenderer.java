@@ -1,3 +1,4 @@
+package MenuImage;
 import java.awt.Component;
 import java.awt.Image;
 import java.io.File;

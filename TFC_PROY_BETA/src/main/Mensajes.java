@@ -1,9 +1,13 @@
+package main;
 import java.awt.Color;
 import java.awt.Font;
 import java.awt.image.BufferedImage;
 
 import javax.swing.JTextArea;
 import javax.swing.border.BevelBorder;
+
+import Images.Image;
+import Images.ImageInfo;
 
 public class Mensajes {
 	
@@ -79,24 +83,4 @@ public class Mensajes {
 	    return panelCMD;
 	}
 	
-	public String showInfo(Image image){
-		
-		ImageInfo info = image.getInfo();
-		
-		String infoRGB = " RANGO DE VALORES RGB: ";	   	   
-		infoRGB += " r = [" + info.minR + ", " + info.maxR + "]";
-		infoRGB += ", g = [" + info.minG + ", " + info.maxG + "]";
-		infoRGB += ", b = [" + info.minB + ", " + info.maxB + "]\n";
-		
-		String infoTam = " DIMENSIONES: ";		
-		infoTam += " Ancho = [" + image.widthRoi() + "], Alto = " + image.heightRoi()+ "]\n";
-		
-		String infoCol = " VALORES:     ";
-		infoCol += " Brillo = [" + info.brillo;
-		infoCol += "], Contraste =  " + info.contraste;
-		infoCol += "], Entrop\u00EDa =  " + Math.rint(info.entropia * 1000) / 1000 + "]\n";
-		
-		return  infoRGB + infoCol + infoTam ;
-	}
-
 }
