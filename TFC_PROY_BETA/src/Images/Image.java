@@ -7,15 +7,18 @@ public class Image {
 
 	private File file;
 	private String prefijo;
+	public String name;
 	
 	public BufferedImage img;
 	public ImagePanel panel;
 	public boolean saved;
 	// Atributos para guardar la información de la imagen
 	public String format;
-	private ImageInfo info;
 	private long pixelsOut;
 	
+	
+	
+    
 	public  BufferedImage toBufferedImage() {
         return img;
 	}
@@ -26,6 +29,7 @@ public class Image {
 		this.file = file;
 		this.img = img;
 		//this.format = ImageFilter.getExtension(file);
+		this.name = file.getName();
 		this.saved = saved;
 		panel = new ImagePanel(this);
 		this.pixelsOut = 0;

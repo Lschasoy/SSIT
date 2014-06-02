@@ -3,6 +3,7 @@ import java.awt.Color;
 import java.awt.image.BufferedImage;
 
 
+
 import javax.swing.JPanel;
 import javax.swing.JTextArea;
 
@@ -11,11 +12,12 @@ import org.jfree.chart.ChartMouseEvent;
 import org.jfree.chart.ChartMouseListener;
 import org.jfree.chart.ChartPanel;
 import org.jfree.chart.JFreeChart;
-
 import org.jfree.chart.plot.CategoryPlot;
 import org.jfree.chart.plot.PlotOrientation;
 import org.jfree.chart.renderer.category.BarRenderer;
 import org.jfree.data.category.DefaultCategoryDataset;
+
+import Images.ImagePanel;
  
 
 public class DibujarGrafica {
@@ -26,11 +28,52 @@ public class DibujarGrafica {
      * @param colorBarras color de cuál será dibujado el histograma
      */
 
+	private Histograma ObjHistograma;
+	private int[][] histograma;
+	private DibujarGrafica ObjDibujaHisto;
+	
 	private String msg;
 	private int count = 0, x0 = 0, y0 = 0;
 	private Color c1;
 	
-    public void crearHistograma(int[] histograma,JPanel jpHisto,final Color colorBarras, final BufferedImage image, final JPanel jpImagen, final JTextArea cmdLine) {
+	public DibujarGrafica(){
+		//CREAMOS EL HISTOGRAMAS
+        ObjHistograma=new Histograma();
+	}
+		
+	public void Graficar ( BufferedImage image, ImagePanel Panel, JPanel [] canal){
+		
+		
+        histograma=ObjHistograma.histograma(image);
+        //DIBUJAMOS LOS HISTOGRAMAS        
+        System.out.println("Graficar");
+	      
+	        for (int i = 0; i < 5; i++) {
+	            //extraemos un canal del histograma 
+	            int[] histogramaCanal=new int[256];
+	            System.arraycopy(histograma[i], 0, histogramaCanal, 0, histograma[i].length);
+	            //Dibujamos en el panel
+	            switch(i){
+	                case 0:
+	                    crearHistograma(histogramaCanal, canal[0], Color.red, image, Panel);	                    
+	                    break;
+	                case 1:
+	                    crearHistograma(histogramaCanal, canal[1], Color.green, image, Panel);
+	                    break;
+	                case 2:
+	                    crearHistograma(histogramaCanal, canal[2], Color.blue, image, Panel);
+	                    break;
+	                case 3:
+	                   // crearHistograma(histogramaCanal, canal[3], Color.black, image, actPanel, panelCMD);
+	                    break;
+	                case 4:
+	                    crearHistograma(histogramaCanal, canal[3], Color.gray, image, Panel);
+	                    break;
+	            }
+	        }
+	}
+	
+    public void crearHistograma(int[] histograma,JPanel jpHisto,final Color colorBarras, final BufferedImage image, final JPanel jpImagen) {
     	    	 
     	//Creamos el dataSet y añadimos el histograma
         final DefaultCategoryDataset dataset = new DefaultCategoryDataset();
@@ -70,7 +113,7 @@ public class DibujarGrafica {
                  if ((count %2) == 0){
                 	 msg += "$[Clicked in Histo]  (x0:" + x + ",y0:"+y+") ... ";
                 	 msg += "p0: ("+x0+','+y0+")" + "p1: (" +x+','+y+") \n"; 
-                	 cmdLine.append(msg);
+                	 
                 	 if (x0 > x ) {int tmp = x; x = x0; x0 = tmp;}
                 	 if (y0 > y ) {int tmp = y; y = y0; y0 = tmp;}                	 
                 	 while (x0 <= x){
@@ -84,8 +127,7 @@ public class DibujarGrafica {
                	     }
                 	                                 		                    		                   
                  }else{
-                    msg = ">[clicked in Histo] (x0:" + x + ",y0:"+y+") ...... Pulse el otro punto\n";
-                    cmdLine.append(msg);
+                    msg = ">[clicked in Histo] (x0:" + x + ",y0:"+y+") ...... Pulse el otro punto\n";                    
                 	x0 = x;
                 	y0 = y;
                 	

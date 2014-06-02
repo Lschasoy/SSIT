@@ -7,19 +7,24 @@ import java.awt.event.ActionListener;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JDialog;
+import javax.swing.JFileChooser;
+import javax.swing.JLabel;
 import javax.swing.JMenu;
 import javax.swing.JMenuBar;
 import javax.swing.JMenuItem;
-import javax.swing.JPanel;
 import javax.swing.UIManager;
 import javax.swing.JTextPane;
+
+import Images.ImageFilter;
+
+import java.io.File;
 
 
 
 public class Index extends JDialog {
 
-	private final JPanel contentPanel = new JPanel();
-	private JButton button;
+	
+	private JLabel img_bg;
 	private JTextPane Msg;
 	private String welcomeMsg = " Segemtation Tools: Es una interfaz de usuario java"
 			                +" para la segmentacion de imagenes de forma fácil, "
@@ -32,6 +37,7 @@ public class Index extends JDialog {
 			                  +"  Last Review: Mayo - 2014";
 	                           
 
+	private File [] files = {}; 
 	/**
 	 * Launch the application.
 	 */
@@ -49,7 +55,7 @@ public class Index extends JDialog {
 	/**
 	 * Create the dialog.
 	 */
-	public Index() {
+	public Index() {		
 	     Msg = new JTextPane();
 		
 		setTitle("Segmentation Tools - ULL - TFG");
@@ -58,14 +64,11 @@ public class Index extends JDialog {
 		getContentPane().setLayout(new BorderLayout());
 		getContentPane().add(panelSup(0,0,500,25), BorderLayout.NORTH);	
 		
-		button = new JButton();
-		button.setIcon(new ImageIcon("image\\bg_index.jpg", "index"));
-		button.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent e) {
-			}
-		});
+		img_bg = new JLabel();
+		img_bg.setIcon(new ImageIcon("image\\bg_index.jpg", "index"));
 		
-		getContentPane().add(button, BorderLayout.CENTER);
+		
+		getContentPane().add(img_bg, BorderLayout.CENTER);
 		
 		
 		
@@ -85,14 +88,23 @@ public class Index extends JDialog {
 	}
 	
 	private JMenu menuFile(){
+				
 		JMenu menuFile = new JMenu("File");
 		
 		//==================== Load Image ===================================
 		JMenuItem cargarImagen = new JMenuItem("Load Image");
 		cargarImagen.setIcon(new ImageIcon("image\\open.png", "LOAD"));
 		cargarImagen.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent e) {								   				   				   				 
-				MainWindow.main();
+			public void actionPerformed(ActionEvent e) {	
+			   System.out.println("Load single Image: ");
+			   JFileChooser fc = new JFileChooser();
+			   fc.setFileFilter(new ImageFilter());
+			   int returnVal = fc.showOpenDialog(fc);
+		       if (returnVal == JFileChooser.APPROVE_OPTION){		    	     
+		        	 MainWindow.main(fc.getSelectedFile());  
+		        	 dispose();
+		       }
+			   
 				
 			}
 		});
@@ -117,7 +129,7 @@ public class Index extends JDialog {
 		welcome.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {								   				   				   				 
 				System.out.println("Welcome ");	
-				getContentPane().remove(button);
+				getContentPane().remove(img_bg);
 				Msg.setText(aboutMsg);
 				getContentPane().add(Msg,BorderLayout.CENTER);
 				setVisible(true);
@@ -129,7 +141,7 @@ public class Index extends JDialog {
 		about.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {								   				   				   				 
 				System.out.println("About us ");
-				getContentPane().remove(button);
+				getContentPane().remove(img_bg);
 				Msg.setText(welcomeMsg+"\n\n"+versionMsg);
 				getContentPane().add(Msg,BorderLayout.CENTER);
 				setVisible(true);
@@ -145,15 +157,41 @@ public class Index extends JDialog {
 	  
 	  JMenu menuBatch = new JMenu("Batch");
 		//==================== Load Image ===================================
-		JMenuItem loadDir = new JMenuItem("Load Dir");		
+		JMenuItem loadDir = new JMenuItem("Load Directory");		
 		loadDir.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {								   				   				   				 
-				System.out.println("load a Directory ");				   
-			}
+				System.out.println("load a Directory ");	
+				
+				 JFileChooser fc = new JFileChooser();				 			
+				 fc.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
+				 
+				 int returnVal = fc.showOpenDialog(fc);				 
+			     if (returnVal == JFileChooser.APPROVE_OPTION){			    	
+			    	 MainWindow.main(fc.getSelectedFile());  
+		        	 dispose();
+			     }	 
+			    				 				 			    
+			}	 			
 		});
 		menuBatch.add(loadDir); 
-			
-	  
+
+		JMenuItem segDir = new JMenuItem("Segments a Directory");		
+		segDir.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {								   				   				   				 
+				System.out.println("Segments a Directory ");	
+				
+				 JFileChooser fc = new JFileChooser();				 			
+				 fc.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
+				 
+				 int returnVal = fc.showOpenDialog(fc);				 
+			     if (returnVal == JFileChooser.APPROVE_OPTION){			    	
+			    	 MainWindow.main(fc.getSelectedFile());  
+		        	 dispose();
+			     }	 
+			    				 				 			    
+			}	 			
+		});
+		menuBatch.add(segDir);
 	  return menuBatch;
   }
 }

@@ -203,8 +203,7 @@ public class ImagePanel extends JPanel implements MouseListener, MouseMotionList
 	}
 	
 	public void mouseReleasedPerfil(MouseEvent e) {
-		if (!validRecta()) {
-			
+		if (!validRecta()) {			
 			begin = null;
 		}
 		else{

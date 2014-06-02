@@ -5,9 +5,8 @@ import java.awt.image.BufferedImage;
 
 import javax.swing.JTextArea;
 import javax.swing.border.BevelBorder;
-
 import Images.Image;
-import Images.ImageInfo;
+
 
 public class Mensajes {
 	
