@@ -12,38 +12,48 @@ import javax.swing.JLabel;
 import javax.swing.JMenu;
 import javax.swing.JMenuBar;
 import javax.swing.JMenuItem;
+import javax.swing.JTextArea;
 import javax.swing.UIManager;
 import javax.swing.JTextPane;
 
 import Images.ImageFilter;
 
 import java.io.File;
+import java.awt.Dialog.ModalityType;
+import java.awt.Dialog.ModalExclusionType;
+
+import javax.swing.JProgressBar;
+import javax.swing.JPanel;
+import javax.swing.border.BevelBorder;
+import java.awt.Color;
+import javax.swing.border.LineBorder;
 
 
 
 public class Index extends JDialog {
-
 	
-	private JLabel img_bg;
-	private JTextPane Msg;
-	private String welcomeMsg = " Segemtation Tools: Es una interfaz de usuario java"
+	static final int FULL_PROGRESS = 1000;
+	
+	private JTextArea digStart;	
+	private JProgressBar progressBar;
+	
+	private String welcomedigStart = " Segemtation Tools: Es una interfaz de usuario java"
 			                +" para la segmentacion de imagenes de forma fácil, "
 			                +"implementa funciones de matlab para generar las imagenes"
 			                + "segmentadas"; 
-	private String versionMsg = "Version 1.0 - Primera revisión";
+	private String versiondigStart = "Version 1.0 - Primera revisión";
 	
-	private String aboutMsg = "\n  Segmentation Tools: 1.0\n"
+	private String aboutdigStart = "\n  Segmentation Tools: 1.0\n"
 			                  +"  Autor: Ing Informatico Lschasoy\n"
 			                  +"  Last Review: Mayo - 2014";
-	                           
-
+	 
 	private File [] files = {}; 
 	/**
 	 * Launch the application.
 	 */
 	public static void main(String[] args) {
 		try {
-			Index dialog = new Index();
+			Index dialog = new Index();			
 			dialog.setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE);
 			dialog.setResizable(false);
 			dialog.setVisible(true);
@@ -56,31 +66,36 @@ public class Index extends JDialog {
 	 * Create the dialog.
 	 */
 	public Index() {		
-	     Msg = new JTextPane();
-		
+	   	    	   
+	    digStart = new JTextArea();
+	    digStart.setLineWrap(true);
+	    digStart.setEditable(false);
+	    digStart.setBackground(Color.LIGHT_GRAY);
+	    digStart.setLayout(null);
+	    digStart.setBounds(15,30,400,220);
+	    
+	    
+	    progressBar = new JProgressBar();
+	    progressBar.setValue(0);		
+		progressBar.setMaximum(FULL_PROGRESS);
+		progressBar.setStringPainted(true);
+					    	   
 		setTitle("Segmentation Tools - ULL - TFG");
-		getContentPane().setBackground(UIManager.getColor("Button.light"));
-		setBounds(100, 100, 300, 200);
+		setBounds(0, 0, 400, 250);
+		
+		
 		getContentPane().setLayout(new BorderLayout());
-		getContentPane().add(panelSup(0,0,500,25), BorderLayout.NORTH);	
-		
-		img_bg = new JLabel();
-		img_bg.setIcon(new ImageIcon("image\\bg_index.jpg", "index"));
-		
-		
-		getContentPane().add(img_bg, BorderLayout.CENTER);
-		
-		
-		
+		getContentPane().add(panelSup(0,0,400,25), BorderLayout.NORTH);
+		getContentPane().add(digStart, BorderLayout.CENTER);
+		getContentPane().add(progressBar, BorderLayout.SOUTH);
+								 	
 	}
 	
-	public JMenuBar panelSup(int x, int y, int width, int high){
-						
-		
+	public JMenuBar panelSup(int x, int y, int width, int hight){
+								
 		JMenuBar barSup = new JMenuBar();	
-		barSup.setBounds(0, 0, 562, 25);
-		
-		 			
+		barSup.setBounds(x, y, width, hight);
+				 		
         barSup.add(menuFile());
         barSup.add(menuBatch());
         barSup.add(menuHelp());
@@ -100,12 +115,14 @@ public class Index extends JDialog {
 			   JFileChooser fc = new JFileChooser();
 			   fc.setFileFilter(new ImageFilter());
 			   int returnVal = fc.showOpenDialog(fc);
-		       if (returnVal == JFileChooser.APPROVE_OPTION){		    	     
-		        	 MainWindow.main(fc.getSelectedFile());  
-		        	 dispose();
+			   // ==> Inicializar BarProgress ===			   
+		       if (returnVal == JFileChooser.APPROVE_OPTION){
+		    	    progressBar.setVisible(true);
+		    	    MainWindow.main(fc.getSelectedFile(), digStart, progressBar);	
+		    			    	    		        		     				             		    	    		             		        		      
 		       }
 			   
-				
+			  // => FIN 	
 			}
 		});
 		menuFile.add(cargarImagen); 
@@ -128,10 +145,9 @@ public class Index extends JDialog {
 		final JMenuItem welcome = new JMenuItem("Welcome");		
 		welcome.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {								   				   				   				 
-				System.out.println("Welcome ");	
-				getContentPane().remove(img_bg);
-				Msg.setText(aboutMsg);
-				getContentPane().add(Msg,BorderLayout.CENTER);
+				System.out.println("Welcome ");					
+				digStart.setText(aboutdigStart);
+				getContentPane().add(digStart,BorderLayout.CENTER);
 				setVisible(true);
 			}
 		});
@@ -140,10 +156,9 @@ public class Index extends JDialog {
 		JMenuItem about = new JMenuItem("About");		
 		about.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {								   				   				   				 
-				System.out.println("About us ");
-				getContentPane().remove(img_bg);
-				Msg.setText(welcomeMsg+"\n\n"+versionMsg);
-				getContentPane().add(Msg,BorderLayout.CENTER);
+				System.out.println("About us ");				
+				digStart.setText(welcomedigStart+"\n\n"+versiondigStart);
+				getContentPane().add(digStart,BorderLayout.CENTER);
 				setVisible(true);
 				
 			}
@@ -167,7 +182,7 @@ public class Index extends JDialog {
 				 
 				 int returnVal = fc.showOpenDialog(fc);				 
 			     if (returnVal == JFileChooser.APPROVE_OPTION){			    	
-			    	 MainWindow.main(fc.getSelectedFile());  
+			    	 MainWindow.main(fc.getSelectedFile(), digStart, progressBar);  
 		        	 dispose();
 			     }	 
 			    				 				 			    
@@ -185,7 +200,8 @@ public class Index extends JDialog {
 				 
 				 int returnVal = fc.showOpenDialog(fc);				 
 			     if (returnVal == JFileChooser.APPROVE_OPTION){			    	
-			    	 MainWindow.main(fc.getSelectedFile());  
+			    	 MainWindow.main(fc.getSelectedFile(),digStart, progressBar); 
+			    	 
 		        	 dispose();
 			     }	 
 			    				 				 			    

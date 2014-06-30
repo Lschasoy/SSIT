@@ -1,4 +1,6 @@
 package main;
+import java.awt.BorderLayout;
+import java.awt.Dimension;
 import java.awt.EventQueue;
 import java.awt.GridLayout;
 
@@ -9,20 +11,14 @@ import javax.swing.JMenu;
 import javax.swing.JMenuBar;
 import javax.swing.JMenuItem;
 import javax.swing.JOptionPane;
+import javax.swing.JProgressBar;
 import javax.swing.JTextArea;
 import javax.swing.JPanel;
-import javax.swing.ScrollPaneConstants;
-
-import java.awt.Color;
 import java.awt.event.ActionListener;
 import java.awt.event.ActionEvent;
-
-import javax.swing.border.BevelBorder;
-
 import java.io.File;
 import java.io.IOException;
 
-import javax.swing.JTable;
 import javax.swing.JScrollPane;
 import javax.swing.UIManager;
 
@@ -46,22 +42,18 @@ import javax.swing.ImageIcon;
 
 import procesos.Canales;
 import procesos.DibujarGrafica;
-import procesos.FormSegment;
 import procesos.Tools;
-
+import java.awt.FlowLayout;
 
 
 public class MainWindow {
 	
-	private JFrame miVentana;
+	private static JFrame miVentana;
 
-	private JPanel infoShow, canalR, canalG, canalB,  canalY;
-	private JPanel [] canales = {null, null, null, null};  
+	private static JPanel [] canales = {new JPanel(), new JPanel(), new JPanel(), new JPanel()};  
 	public static CloseableTabbedPane jTP;
 	private float xScaleFactor = 1, yScaleFactor = 1, degree;
 	private JTextArea panelCMD;
-	private JTable tablaMenuImage;
-	
 	private static Mensajes msgs;
 	private Archivos arc;
 	 
@@ -70,59 +62,77 @@ public class MainWindow {
     private Image oImage;
     private Espacios esp;
     private Segmentacion fun;
+    private static DibujarGrafica dg;
     private Info info;
-    private DibujarGrafica dg;
-    
-   
+    private ColorSpace espColor;
+
 	/******************* MAIN 
 	 * @param file *****************************/	 
-	public static void main(final File file) {
+	public static void main(final File file, final JTextArea digStart, final JProgressBar progressBar) {
 		EventQueue.invokeLater(new Runnable() {
 			public void run() {
-				try {
-					UIManager.setLookAndFeel("com.sun.java.swing.plaf.nimbus.NimbusLookAndFeel");
-					MainWindow window = new MainWindow(file);
-					window.miVentana.setResizable(false);
-					window.miVentana.setVisible(true);
+				try {					
+					UIManager.setLookAndFeel("com.sun.java.swing.plaf.nimbus.NimbusLookAndFeel");					
+					MainWindow window = new MainWindow(file, digStart, progressBar);
+					progressBar.setValue(1000);
+					digStart.append("  Generando ventana principal: .......... FIN");					
+					
 				} catch (Exception e) {
 					e.printStackTrace();
 				}
 			}
-		});
+		});		
 	}
-
-	/** Create the application. 
-	 * @param file 
-	 * @throws MWException */
-	public MainWindow(File file) throws MWException {
+//===================================================================================================================
+	/**name: initialize 
+	 * descrip: Configuracion y distribucion de la pantalla principal
+	 */
+	public void initialize(){
 		
-		msgs = new Mensajes();
-		arc = new Archivos();
-		jdCanales = new Canales();
-		esp = new Espacios();
-		fun = new Segmentacion();
-				
-		jTP = new CloseableTabbedPane();
-		info = new Info();	
-		dg = new DibujarGrafica();
-		
-	// ===============> Inicializar wind <=============================	
-		miVentana = new JFrame();		
 		miVentana.setTitle("TFG - sImage beta v.4.0");
-		miVentana.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE); 
-	
-		miVentana.getContentPane().setLayout(new GridLayout(1,2));			
-		miVentana.getContentPane().add(panelCentral());		
-		miVentana.getContentPane().add(jTP);		
-		miVentana.setSize(1140, 680); //->Notocar		
-		
+		miVentana.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+		miVentana.setSize(1140, 680); //->Notocar	
+		miVentana.getContentPane().setLayout(new BorderLayout());
 			
+		miVentana.getContentPane().add(panelSup(),BorderLayout.PAGE_START);	
+		miVentana.getContentPane().add(panelTools(),BorderLayout.WEST);
+		miVentana.getContentPane().add(jTP);
+		miVentana.getContentPane().add(pFooter(), BorderLayout.PAGE_END);		
 		
-	 // ==> Fin de inizializacion, se crea la imagen 
+		//miVentana.setResizable(false);
+		miVentana.setVisible(true);
+		
+	}
+//===================================================================================================================	
+	public MainWindow(File file, JTextArea msg, JProgressBar progressBar) throws MWException {
+		
+		msgs = new Mensajes();		
+		msg.append("  Instanciando Command Line : .......... ok\n"); progressBar.setValue(100);
+		arc = new Archivos();
+		msg.append("  Instanciando clase de manipulacion de archivo: .......... ok\n");progressBar.setValue(200);
+		jdCanales = new Canales();
+		msg.append("  Instanciando Histogramas y canales: .......... ok\n");progressBar.setValue(300);
+		esp = new Espacios();
+		msg.append("  Instanciando Espacios de colores: .......... ok\n");progressBar.setValue(400);
+		fun = new Segmentacion();
+		msg.append("  Cargando lanzadores de funciones de segementacion: .......... ok\n");progressBar.setValue(500);
+		espColor = new ColorSpace();
+		msg.append("  Cargando funciones de espacio de color .......... ok\n");
+		jTP = new CloseableTabbedPane();		
+		msg.append("  Instanciando pestañas: .......... ok\n");progressBar.setValue(600);
+		info = new Info();		
+		msg.append("  Instanciando clase de informacion: .......... ok\n");progressBar.setValue(700);
+		dg = new DibujarGrafica();
+		msg.append("  Instanciando graficas: .......... ok\n");progressBar.setValue(800);			
+		miVentana = new JFrame(); initialize();
+	    msg.append(" Configurando ventana principal : .......... ok\n");progressBar.setValue(900);	
+						
+			
+		msg.append("  Load Imagen: .......... ok\n");
 		try {
 			if (file.isFile()){
 			   Image newImg = new Image(file,ImageIO.read(file),true);
-			   panelCMD.setText(msgs.msgOperacion(0,newImg.name, newImg.img));			   
+			   info.msg(0,newImg.name, newImg.img);			   
 			   mostrar(newImg);
 			}else{
 				File []list = file.listFiles();
@@ -131,7 +141,7 @@ public class MainWindow {
 		    		if (imgFiltro.accept(list[i]) && (list[i].isFile())){
 		    			System.out.println("Load image batch: "+  list[i]);
 		    		    Image newImg = new Image(file,ImageIO.read(list[i]),true);
-		 			    panelCMD.setText(msgs.msgOperacion(0,newImg.name, newImg.img));			   
+		    		    info.msg(0,newImg.name, newImg.img);			   
 		 			    mostrar(newImg);
 		    		}
 		    	 }	
@@ -142,41 +152,20 @@ public class MainWindow {
 	  		  
 	}
 	 			
-	public JPanel panelCentral (){
-		
-		
+	public JPanel pFooter(){				
 	    //====> Panel de la parte central <=============================== 			    	
-	    infoShow = new JPanel();	    
-	    infoShow.setBorder(null);
-	    infoShow.setLayout(null);
-	
-	    infoShow.add(panelSup()); 	
-	    infoShow.add(panelTools());
-	    infoShow.add(panelCombos());
+	    final JPanel pFooter = new JPanel(new GridLayout(0,4));
+	    pFooter.setMaximumSize(new Dimension(1100, 165));
+	    pFooter.setPreferredSize(new Dimension(1100, 165));
+	    pFooter.setMinimumSize(new Dimension(100, 165));	
 	    
-	    
-		/****** Inicializar canales *************/
-	    canalR = new JPanel(); /*******/ canales[0] = canalR;
-		initPanel(275, 90, 270, 140, canalR, infoShow);		
-		canalG = new JPanel(); /*******/ canales[1] = canalG; 
-		initPanel(275, 230, 270, 140, canalG, infoShow);		
-		canalB = new JPanel(); /*******/canales[2] = canalB;
-		initPanel(5, 90, 270, 140, canalB, infoShow);						
-		canalY = new JPanel(); /*******/ canales[3] = canalY;
-		initPanel(5, 230, 270, 140, canalY, infoShow);		
-		
-	    infoShow.add(info);
-	    	 	  
-	    //===  Inicializar Commnad Line ===
-		panelCMD = new JTextArea();				
-		JScrollPane scroll = new JScrollPane(msgs.initMsg(panelCMD));
-		scroll.setBounds(5, 450, 540, 190); // Size Y =  680
-		scroll.setVerticalScrollBarPolicy(ScrollPaneConstants.VERTICAL_SCROLLBAR_ALWAYS);
-		
-	    infoShow.add(scroll);	   
-	    	    	    	     	    	    		 	    	    				
-		return infoShow;
+	    for (int i = 0; i < 4; i++) 
+	    	pFooter.add(canales[i]);	    			    
+	    	    	 	  	  	   	    	    	    	     	    	    		 	    	    		
+		return pFooter;
 	}
+	
+	
 	/**
 	 * @param: scPanel: contiene los ComboBox
 	 * @return: cpParam: Panel que contienen los ComboBox y los JPanel de parametros 
@@ -190,83 +179,73 @@ public class MainWindow {
 									
 		// =================== Segmentacion ====================================
 		final JComboBox comboBox = new JComboBox();
-		comboBox.setBounds(5, 0, 150, 25);	
-		String [] algoritmos = {"Algoritmos", "Segementacion_1", "Segementacion_2"};
+		comboBox.setBounds(5, 0, 150, 20);	
+		String [] algoritmos = {"Algoritmos", "ms", "srm"};
 		comboBox.setModel(new DefaultComboBoxModel(algoritmos));
 		
 		comboBox.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent arg0) {
 			    if (comboBox.getSelectedItem().equals(comboBox.getItemAt(1) .toString())){
-			    	System.out.println("Segementacion_1");
-					String path = getCurrentImage().getFileOriginal().getAbsolutePath().toString();
+			    	System.out.println("Combox seleccion: ms");
+					
 					FormSegment seg = new FormSegment();
-					FormSegment.main(seg, path, fun);
+					FormSegment.main(seg, getPath(), fun);
 														
-					Image img = new Image(null,seg.getImgOut(),true);					
-				    mostrar(img);
-											     
+					Image img = new Image(null,seg.getImgOut(),false);					
+				    mostrar(img);											     
 			    }
 			    if (comboBox.getSelectedItem().equals(comboBox.getItemAt(2) .toString())){
 			    	System.out.println("Segementacion_2");				        			
-			    }	
-			 
+			    }				 
 			}
 		});				
 		
 		final JComboBox cbSpaceColor = new JComboBox();		
-		cbSpaceColor.setBounds(155, 0, 150, 25);		
+		cbSpaceColor.setBounds(155, 0, 150, 20);		
 		String[] spacecolor = {"RGB", "HSV", "LAB", "YCbCr"};
 		cbSpaceColor.setModel(new DefaultComboBoxModel(spacecolor));		
-			
+		scPanel.add(jdCanales.init()); // --> Inicializo los canales 
 		// =================== Espacio de Colores ====================================		
 		cbSpaceColor.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent arg0) {
 				
 			    if (cbSpaceColor.getSelectedItem().equals(cbSpaceColor.getItemAt(1) .toString())){
-			    	System.out.println("HSV");
-			    	String path = getCurrentImage().getFileOriginal().getAbsolutePath().toString();
-			    	ColorSpace espColor = new ColorSpace();
-			    				    	
-			    	Image img = new Image(getCurrentImage().getFileOriginal(),espColor.toImgHsv(esp, path, panelCMD),true);																			
+			    	System.out.println("HSV");			    				    				    				    
+			    	Image img = new Image(getFile(),espColor.toImgHsv(esp, getPath()),true);																			
 					mostrar(img);			    	
-			    	scPanel.add(jdCanales.generarComoboBox("HSV", getCurrentImage().img));
-			    	
-			        			    	
+			    	scPanel.add(jdCanales.generarComoboBox("HSV", getCurrentImage().img));			    				        			    
 			    }   
 			    if (cbSpaceColor.getSelectedItem().equals(cbSpaceColor.getItemAt(2) .toString())){
-			    	System.out.println("LAB");
-			    	String path = getCurrentImage().getFileOriginal().getAbsolutePath().toString();
-			    	ColorSpace espColor = new ColorSpace();
-			    	
-			    	
-			    	Image img = new Image(getCurrentImage().getFileOriginal(),espColor.toImglab(esp, path, panelCMD),true);																			
+			    	System.out.println("LAB");			    				    				    				   
+			    	Image img = new Image(getFile(),espColor.toImglab(esp, getPath()),true);																			
 					mostrar(img);			    	
 			    	scPanel.add(jdCanales.generarComoboBox("LAB", getCurrentImage().img));			    				    	
 			    }
 			    if (cbSpaceColor.getSelectedItem().equals(cbSpaceColor.getItemAt(3) .toString())){
-			    	System.out.println("YCbCr");
-			    	String path = getCurrentImage().getFileOriginal().getAbsolutePath().toString();
-			    	ColorSpace espColor = new ColorSpace();
-			    	
-			    	
-			    	Image img = new Image(getCurrentImage().getFileOriginal(),espColor.toImgYCbCr(esp, path, panelCMD),true);																			
+			    	System.out.println("YCbCr");			    				    				    				    
+			    	Image img = new Image(getFile(),espColor.toImgYCbCr(esp, getPath()),true);																			
 					mostrar(img);			    	
-			    	scPanel.add(jdCanales.generarComoboBox("YCbCr", getCurrentImage().img));
-			    	
+			    	scPanel.add(jdCanales.generarComoboBox("YCbCr", getCurrentImage().img));			    	
 			    }
 			}
 		});	
-		
+			
 		scPanel.add(comboBox);	
-		scPanel.add(cbSpaceColor);			
+		scPanel.add(cbSpaceColor);	
 		
+		//============ Panel de informacion ===============
+		FlowLayout flowLayout = (FlowLayout) info.getLayout();
+		flowLayout.setAlignment(FlowLayout.RIGHT);
+		info.setSize(646, 20);
+		info.setLocation(474, -2);
+		scPanel.add(info);
 		return scPanel;
 	}
 	
 	public JPanel panelTools (){
 		
 		JPanel barTools = new JPanel();	
-		barTools.setLayout(new GridLayout(1,8));	
+		barTools.setLayout(new GridLayout(8,1));	
 		barTools.setBounds(0, 25, 562, 25);
 		
 	//==================== ZOOM ++ ===================================
@@ -309,8 +288,7 @@ public class MainWindow {
 					 Image img = new Image(oImage.getFileCompleto(),Tools.Rotar(oImage.toBufferedImage(), degree),false);
 					 panelCMD.append(msgs.msgOperacion(4,arc.getImageName(), img.toBufferedImage()));
 					 removeCurrentImage(); 
-					 mostrar(img);
-							 
+					 mostrar(img);							 
 				}
 			});					
 			barTools.add(girarIZQ);
@@ -369,8 +347,8 @@ public class MainWindow {
 	public JMenuBar panelSup(){
 						
 		
-		JMenuBar barSup = new JMenuBar();	
-		barSup.setBounds(0, 0, 562, 25);
+		JMenuBar barSup = new JMenuBar();					
+		barSup.setLayout(new GridLayout(2,1));
 		
 		JMenu menuFile = new JMenu("File");
 		menuFile.setHorizontalAlignment(SwingConstants.LEFT);
@@ -382,9 +360,9 @@ public class MainWindow {
 				try {
 					File pathFile = Archivos.loadFile();
 					System.out.println("Load Image: " + pathFile.toString());
-					Image img = new Image(pathFile,ImageIO.read(pathFile),true);										
-					panelCMD.setText(msgs.msgOperacion(0,pathFile.getAbsolutePath(), img.img));						
-					mostrar(img);
+					Image newImg = new Image(pathFile,ImageIO.read(pathFile),true);										
+					info.msg(0,newImg.name, newImg.img);					
+					mostrar(newImg);
 				} catch (IOException e1) {
 					JOptionPane.showMessageDialog(null, "Erro al cargar", "Load Error", JOptionPane.ERROR_MESSAGE);					
 				}				   
@@ -405,14 +383,16 @@ public class MainWindow {
 		});		
 		menuFile.add(salvarImagen); // -> Fin menuFile
 		
+		
         barSup.add(menuFile);
+        barSup.add(panelCombos());
 		return barSup;
 	}
 	//========================================================================================================
-	private final void mostrar(Image img2){
+	public static void mostrar(Image img2){
 				   	    
 	    JScrollPane scroll = new JScrollPane();
-	    scroll.setViewportView(img2.panel);
+	    scroll.setViewportView(img2.panel);	    
 		jTP.addTab(" ", scroll);		
 		jTP.setEnabledAt(0, true);
 		changeImageTitle(img2);
@@ -425,32 +405,13 @@ public class MainWindow {
 		
 	    miVentana.setVisible(true);	
 	}
-
-	
-	
-	//========================================================================================================	
-	public void initPanel(int x, int y, int tamX,int tamY, JPanel panel_In, JPanel panel_Out){
-		
-		panel_In.setBounds(x, y, tamX, tamY);
-		panel_In.setBorder(new BevelBorder(BevelBorder.LOWERED, Color.DARK_GRAY, null, null, null));
-		panel_In.setBackground(Color.LIGHT_GRAY);		
-		panel_Out.add(panel_In);
-	}	
 	
 	//========================================================================================================
     /*  Funciones de jTP */
 	public static Image getImage(int tabIndex) {
 		return ((ImagePanel) ((JScrollPane) jTP.getComponentAt(tabIndex)).getViewport().getView()).image;
 	}
-	//========================================================================================================
-	public static Image getCurrentImage() {
-		return getImage(jTP.getSelectedIndex());
-	}
-	//========================================================================================================
-	public static void removeCurrentImage() {
-		jTP.remove(jTP.getSelectedIndex());
-	}
-	
+	//========================================================================================================	
 	public static void changeImageTitle(Image image) {
 		String title = image.name;
 		if (!image.saved) {
@@ -458,4 +419,12 @@ public class MainWindow {
 		}
 		jTP.setTitleAt(jTP.getSelectedIndex(), title);
 	}
+	//===========================================================================================================
+	public static String getPath (){ return getCurrentImage().getFileOriginal().getAbsolutePath().toString(); }
+	public static File getFile () {return getCurrentImage().getFileOriginal();}
+	
+	public static Image getCurrentImage() {return getImage(jTP.getSelectedIndex());}
+	public static void removeCurrentImage() {jTP.remove(jTP.getSelectedIndex());}
+	
+	
 }

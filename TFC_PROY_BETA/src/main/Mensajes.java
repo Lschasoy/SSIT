@@ -10,8 +10,9 @@ import Images.Image;
 
 public class Mensajes {
 	
-	private String msg;
 	
+	
+	private String msg;
 	public String getWelcome (){
 		 return msg = "\n\n\t\tUNIVERSIDAD DE LA LAGUNA        \n"
 		           + "\tE.T.S DE INGENIERIA INFORMATICA        \n"
@@ -69,12 +70,9 @@ public class Mensajes {
 	
 	//=================================================================================================
 	public JTextArea showInfoInit(JTextArea panelCMD){
-		
-		
-		panelCMD.setBounds(10, 510, 700, 60);
+					
 		panelCMD.setText("\t\t >> INFORMACION DE LA IMAGEN  << \n");
-	    panelCMD.setFont(new Font("Consolas", Font.PLAIN, 11));
-	    panelCMD.setBorder(new BevelBorder(BevelBorder.LOWERED, Color.DARK_GRAY, null, null, null));
+	    panelCMD.setFont(new Font("Consolas", Font.PLAIN, 11));	    
 	    panelCMD.setLineWrap(true);
 	    panelCMD.setColumns(10);
 	    panelCMD.setRows(10);

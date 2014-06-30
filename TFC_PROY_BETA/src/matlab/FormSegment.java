@@ -1,4 +1,4 @@
-package procesos;
+package matlab;
 
 import java.awt.BorderLayout;
 import java.awt.FlowLayout;
@@ -15,11 +15,11 @@ import javax.swing.SwingConstants;
 
 
 
+
 import java.awt.event.ActionListener;
 import java.awt.event.ActionEvent;
 import java.awt.image.BufferedImage;
 
-import matlab.Funciones;
 import matlabToJavaSC.*;
 
 import javax.swing.JProgressBar;

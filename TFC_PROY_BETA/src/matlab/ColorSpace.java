@@ -27,7 +27,7 @@ public class ColorSpace extends JDialog {
  
 	
    //========================================================================================
-	public BufferedImage toImgHsv(Espacios esp, String path, JTextArea panelCMD) {
+	public BufferedImage toImgHsv(Espacios esp, String path) {
 		try {
 		    cmd = "\nRun ColorSpace ...... param: Espacio, String, JTextArea";				
             Object[] result = esp.convertRgb2hsv(2, path);
@@ -39,14 +39,13 @@ public class ColorSpace extends JDialog {
 			
 		} catch (MWException e) {		
 			cmd = "\nRun ColorSpace: [ERROR] \n";
-			panelCMD.append(cmd);
+			
 		}		
-		cmd += "\n.... End of ColorSpace .................. ok\n";
-		panelCMD.append(cmd);
+		cmd += "\n.... End of ColorSpace .................. ok\n";		
 		return imgHsv;
     }
 	   //========================================================================================
-   	public BufferedImage toImglab(Espacios esp, String path, JTextArea panelCMD) {
+   	public BufferedImage toImglab(Espacios esp, String path) {
    		try {
    		    cmd = "\nRun ColorSpace ...... param: Espacio, String, JTextArea";				
                Object[] result = esp.convertRgb2lab(2, path);
@@ -58,14 +57,13 @@ public class ColorSpace extends JDialog {
    			
    		} catch (MWException e) {		
    			cmd = "\nRun ColorSpace: [ERROR] \n";
-   			panelCMD.append(cmd);
+   			
    		}		
-   		cmd += "\n.... End of ColorSpace .................. ok\n";
-   		panelCMD.append(cmd);
+   		cmd += "\n.... End of ColorSpace .................. ok\n";   		
    		return imgHsv;
        }
     //========================================================================================
-   	public BufferedImage toImgYCbCr(Espacios esp, String path, JTextArea panelCMD) {
+   	public BufferedImage toImgYCbCr(Espacios esp, String path) {
    		try {
    		    cmd = "\nRun ColorSpace ...... param: Espacio, String, JTextArea";				
                Object[] result = esp.convertRgb2ycbcr(2, path);
@@ -76,11 +74,9 @@ public class ColorSpace extends JDialog {
    			cmd += "\nkill of tmp Object ..................";
    			
    		} catch (MWException e) {		
-   			cmd = "\nRun ColorSpace: [ERROR] \n";
-   			panelCMD.append(cmd);
+   			cmd = "\nRun ColorSpace: [ERROR] \n";   			
    		}		
-   		cmd += "\n.... End of ColorSpace .................. ok\n";
-   		panelCMD.append(cmd);
+   		cmd += "\n.... End of ColorSpace .................. ok\n";   		
    		return imgHsv;
        }	
    //========================================================================================

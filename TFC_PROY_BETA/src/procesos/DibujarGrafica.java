@@ -46,7 +46,7 @@ public class DibujarGrafica {
 		
         histograma=ObjHistograma.histograma(image);
         //DIBUJAMOS LOS HISTOGRAMAS        
-        System.out.println("Graficar");
+        System.out.println("\n Ejecutando clase DibujarGrafica -> [Graficar]");
 	      
 	        for (int i = 0; i < 5; i++) {
 	            //extraemos un canal del histograma 
@@ -95,7 +95,7 @@ public class DibujarGrafica {
         chart.setAntiAlias(true);
         
         
-        chart.setBackgroundPaint(new Color(214, 217, 0)); 
+        chart.setBackgroundPaint(new Color(255, 255, 255));
         jpHisto.removeAll();
         jpHisto.repaint();
         jpHisto.setLayout(new java.awt.BorderLayout());

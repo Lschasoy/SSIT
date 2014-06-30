@@ -25,11 +25,12 @@ public class Image {
 	
 	public Image(File file,  BufferedImage img, boolean saved) {
 		
-		System.err.print("Error Const Image");
+		System.out.println("$$$ Genenado la imagen: "+ file.getAbsolutePath());
 		this.file = file;
 		this.img = img;
 		//this.format = ImageFilter.getExtension(file);
-		this.name = file.getName();
+		if (saved)
+			this.name = file.getName();
 		this.saved = saved;
 		panel = new ImagePanel(this);
 		this.pixelsOut = 0;
