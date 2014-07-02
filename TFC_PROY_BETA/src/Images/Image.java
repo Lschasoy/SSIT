@@ -3,6 +3,11 @@ import java.awt.Point;
 import java.awt.image.BufferedImage;
 import java.io.File;
 
+import javax.swing.JOptionPane;
+import javax.swing.JPanel;
+
+import procesos.DibujarGrafica;
+
 public class Image {
 
 	private File file;
@@ -12,20 +17,19 @@ public class Image {
 	public BufferedImage img;
 	public ImagePanel panel;
 	public boolean saved;
-	// Atributos para guardar la información de la imagen
-	public String format;
-	private long pixelsOut;
 	
-	
+	public String format;        // Atributos para guardar la información de la imagen
+	private static DibujarGrafica dg;
 	
     
 	public  BufferedImage toBufferedImage() {
         return img;
 	}
 	
-	public Image(File file,  BufferedImage img, boolean saved) {
+	public Image(File file,  BufferedImage img, boolean saved, JPanel [] canales) {
 		
-		System.out.println("$$$ Genenado la imagen: "+ file.getAbsolutePath());
+		//System.out.println("$$$ Genenado la imagen: "+ file.getAbsolutePath());
+		
 		this.file = file;
 		this.img = img;
 		//this.format = ImageFilter.getExtension(file);
@@ -33,7 +37,27 @@ public class Image {
 			this.name = file.getName();
 		this.saved = saved;
 		panel = new ImagePanel(this);
-		this.pixelsOut = 0;
+		dg = new DibujarGrafica();   //Grafica asociada a cada imagen
+		try {
+			dg.Graficar (img, panel, canales);
+		}catch (Exception e) {
+	        JOptionPane.showMessageDialog(null, "Dibujar Histograma", "[constructor image]", JOptionPane.ERROR_MESSAGE);
+	    }
+		
+		
+	}
+	// myFuncion: Repintar los canales
+	public  void canales(JPanel [] canales){
+		System.out.println("Pintando los canales de " + name);
+		try {
+			dg.Graficar (img, panel, canales);
+		}catch (Exception e) {
+	        JOptionPane.showMessageDialog(null, "Dibujar Histograma", "[constructor image]", JOptionPane.ERROR_MESSAGE);
+	    }  		
+	}
+		
+	public void changeImg(BufferedImage img){
+		this.img = img;
 	}
 
 	public File getFileCompleto(){
@@ -83,7 +107,6 @@ public class Image {
 	}
 	
 	public void setPixelsOut(long pixOut) {
-		this.pixelsOut = pixOut;
 	}
 	
 	/*public static Image crearImagen(int width, int height, File filename) {

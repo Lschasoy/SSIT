@@ -1,20 +1,22 @@
 package main;
 
+import java.awt.Color;
 import java.awt.Font;
 import java.awt.image.BufferedImage;
 
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 
+@SuppressWarnings("serial")
 public class Info extends JPanel {
 	
-	String[] etiquetas = {"OPER: ","","NAME: ","","IMAGE: ",""};
-	JLabel[] labels = {null, null, null,null, null, null};
+	private static String[] etiquetas = {"OPER: ","","NAME: ","","IMAGE: ","", " ",""};
+	private static JLabel[] labels = {null, null, null,null, null, null, null, null};
 	
-	
-	Font font1 = new Font("Serif", Font.BOLD, 11);
-	Font font2 = new Font("Serif", Font.PLAIN, 11);
-//==========================================================================	
+
+	private static Font font1 = new Font("Serif", Font.BOLD, 11);	
+	private static Font font2 = new Font("Serif", Font.PLAIN, 11);
+	//==========================================================================	
 	public Info(){
 		// ========= Inicializamos ==================
 		for (int i = 0; i < etiquetas.length; i++)
@@ -30,11 +32,48 @@ public class Info extends JPanel {
 		}
 	}
 //==========================================================================	
-	public void msg(int opcion, String file, BufferedImage img){
+	public static void msg(int opcion, String file, BufferedImage img){
 		
-		labels[1].setText("load");
+	
 		labels[3].setText(file);
 		labels[5].setText("Tipo = " + img.getType() + " Alto = " + img.getHeight() + " Ancho = " + img.getWidth());
+		switch (opcion) {
+			 case 0: labels[1].setText("load");
+				 break;
+			case 1: labels[1].setText("save");
+		     	break;
+			case 2: labels[1].setText("Zoom Out");
+		     	break;
+			case 3: labels[1].setText("Zoom In");
+		     	break;
+			case 4: labels[1].setText("Rotar Izq");
+				break;
+			case 5: labels[1].setText("Rotar Dch");
+	     		break;
+			case 8: labels[1].setText("Seleccionar canal");
+     		    break;	
+			case 9: labels[1].setText("Espacio de color");
+ 		   	break;	    
+	     	default: labels[1].setText("Error");
+	     		 break;
+		}			
 	
 	}
+	public static void posXY(String msg1, String msg2){
+		labels[etiquetas.length -2].setText(msg1);
+		labels[etiquetas.length -1].setText(msg2);
+	}
+	public static void msgOut(String msg1, String msg2){
+		labels[etiquetas.length -2].setFont(font1);
+		labels[etiquetas.length -2].setBackground(Color.BLACK);
+		labels[etiquetas.length -2].setText(msg1);
+		labels[etiquetas.length -1].setText(msg2);
+	}
+	public static void msgError(String msg1, String msg2){
+		
+		labels[etiquetas.length -2].setText(msg1);
+		labels[etiquetas.length -2].setBackground(Color.RED);
+		labels[etiquetas.length -1].setText(msg2);
+	}
+	
 }

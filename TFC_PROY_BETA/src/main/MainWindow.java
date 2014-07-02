@@ -14,6 +14,7 @@ import javax.swing.JOptionPane;
 import javax.swing.JProgressBar;
 import javax.swing.JTextArea;
 import javax.swing.JPanel;
+
 import java.awt.event.ActionListener;
 import java.awt.event.ActionEvent;
 import java.io.File;
@@ -41,9 +42,11 @@ import matlabToJavaSC.Segmentacion;
 import javax.swing.ImageIcon;
 
 import procesos.Canales;
-import procesos.DibujarGrafica;
+import procesos.HistoInfo;
 import procesos.Tools;
-import java.awt.FlowLayout;
+
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
 
 
 public class MainWindow {
@@ -52,22 +55,17 @@ public class MainWindow {
 
 	private static JPanel [] canales = {new JPanel(), new JPanel(), new JPanel(), new JPanel()};  
 	public static CloseableTabbedPane jTP;
-	private float xScaleFactor = 1, yScaleFactor = 1, degree;
-	private JTextArea panelCMD;
-	private static Mensajes msgs;
-	private Archivos arc;
-	 
-   
-    private Canales jdCanales;
+	
+	private Canales jdCanales;
     private Image oImage;
     private Espacios esp;
     private Segmentacion fun;
-    private static DibujarGrafica dg;
+ 
     private Info info;
+    private HistoInfo hInfo;
     private ColorSpace espColor;
 
-	/******************* MAIN 
-	 * @param file *****************************/	 
+	/******************* MAIN  *****************************/	 
 	public static void main(final File file, final JTextArea digStart, final JProgressBar progressBar) {
 		EventQueue.invokeLater(new Runnable() {
 			public void run() {
@@ -97,7 +95,11 @@ public class MainWindow {
 		miVentana.getContentPane().add(panelSup(),BorderLayout.PAGE_START);	
 		miVentana.getContentPane().add(panelTools(),BorderLayout.WEST);
 		miVentana.getContentPane().add(jTP);
-		miVentana.getContentPane().add(pFooter(), BorderLayout.PAGE_END);		
+		
+		JPanel divFooter = new JPanel(new BorderLayout());
+		divFooter.add(hInfo, BorderLayout.NORTH);
+		divFooter.add(pFooter(), BorderLayout.CENTER);
+		miVentana.getContentPane().add(divFooter, BorderLayout.PAGE_END);		
 		
 		//miVentana.setResizable(false);
 		miVentana.setVisible(true);
@@ -106,9 +108,9 @@ public class MainWindow {
 //===================================================================================================================	
 	public MainWindow(File file, JTextArea msg, JProgressBar progressBar) throws MWException {
 		
-		msgs = new Mensajes();		
+		new Mensajes();		
 		msg.append("  Instanciando Command Line : .......... ok\n"); progressBar.setValue(100);
-		arc = new Archivos();
+		new Archivos();
 		msg.append("  Instanciando clase de manipulacion de archivo: .......... ok\n");progressBar.setValue(200);
 		jdCanales = new Canales();
 		msg.append("  Instanciando Histogramas y canales: .......... ok\n");progressBar.setValue(300);
@@ -119,11 +121,17 @@ public class MainWindow {
 		espColor = new ColorSpace();
 		msg.append("  Cargando funciones de espacio de color .......... ok\n");
 		jTP = new CloseableTabbedPane();		
+		jTP.addMouseListener(new MouseAdapter() {
+			@Override
+			public void mouseClicked(MouseEvent arg0) {
+				getCurrentImage().canales(canales);
+			}
+		});
 		msg.append("  Instanciando pestañas: .......... ok\n");progressBar.setValue(600);
 		info = new Info();		
 		msg.append("  Instanciando clase de informacion: .......... ok\n");progressBar.setValue(700);
-		dg = new DibujarGrafica();
-		msg.append("  Instanciando graficas: .......... ok\n");progressBar.setValue(800);			
+		hInfo = new HistoInfo();			
+		msg.append("  Informacion de Histograma: .......... ok\n");progressBar.setValue(700);		
 		miVentana = new JFrame(); initialize();
 	    msg.append(" Configurando ventana principal : .......... ok\n");progressBar.setValue(900);	
 						
@@ -131,8 +139,8 @@ public class MainWindow {
 		msg.append("  Load Imagen: .......... ok\n");
 		try {
 			if (file.isFile()){
-			   Image newImg = new Image(file,ImageIO.read(file),true);
-			   info.msg(0,newImg.name, newImg.img);			   
+			   Image newImg = new Image(file,ImageIO.read(file),true, canales);
+			   Info.msg(0,newImg.name, newImg.img);			   
 			   mostrar(newImg);
 			}else{
 				File []list = file.listFiles();
@@ -140,8 +148,8 @@ public class MainWindow {
 		    	 for (int i = 0; i < list.length; i++ ){
 		    		if (imgFiltro.accept(list[i]) && (list[i].isFile())){
 		    			System.out.println("Load image batch: "+  list[i]);
-		    		    Image newImg = new Image(file,ImageIO.read(list[i]),true);
-		    		    info.msg(0,newImg.name, newImg.img);			   
+		    		    Image newImg = new Image(file,ImageIO.read(list[i]),true,canales);
+		    		    Info.msg(0,newImg.name, newImg.img);			   
 		 			    mostrar(newImg);
 		    		}
 		    	 }	
@@ -170,6 +178,7 @@ public class MainWindow {
 	 * @param: scPanel: contiene los ComboBox
 	 * @return: cpParam: Panel que contienen los ComboBox y los JPanel de parametros 
 	 */    
+	@SuppressWarnings({ "unchecked", "rawtypes" })
 	public JPanel panelCombos(){
 	
 										
@@ -191,7 +200,7 @@ public class MainWindow {
 					FormSegment seg = new FormSegment();
 					FormSegment.main(seg, getPath(), fun);
 														
-					Image img = new Image(null,seg.getImgOut(),false);					
+					Image img = new Image(null,seg.getImgOut(),false,canales);					
 				    mostrar(img);											     
 			    }
 			    if (comboBox.getSelectedItem().equals(comboBox.getItemAt(2) .toString())){
@@ -202,29 +211,33 @@ public class MainWindow {
 		
 		final JComboBox cbSpaceColor = new JComboBox();		
 		cbSpaceColor.setBounds(155, 0, 150, 20);		
+		
 		String[] spacecolor = {"RGB", "HSV", "LAB", "YCbCr"};
 		cbSpaceColor.setModel(new DefaultComboBoxModel(spacecolor));		
-		scPanel.add(jdCanales.init()); // --> Inicializo los canales 
+		scPanel.add(jdCanales.init(canales)); // --> Inicializo los canales 
 		// =================== Espacio de Colores ====================================		
 		cbSpaceColor.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent arg0) {
 				
 			    if (cbSpaceColor.getSelectedItem().equals(cbSpaceColor.getItemAt(1) .toString())){
 			    	System.out.println("HSV");			    				    				    				    
-			    	Image img = new Image(getFile(),espColor.toImgHsv(esp, getPath()),true);																			
-					mostrar(img);			    	
+			    	Image newImg = new Image(getFile(),espColor.toImgHsv(esp, getPath()),true, canales);
+			    	Info.msg(9,newImg.name, newImg.img);
+					mostrar(newImg);			    	
 			    	scPanel.add(jdCanales.generarComoboBox("HSV", getCurrentImage().img));			    				        			    
 			    }   
 			    if (cbSpaceColor.getSelectedItem().equals(cbSpaceColor.getItemAt(2) .toString())){
 			    	System.out.println("LAB");			    				    				    				   
-			    	Image img = new Image(getFile(),espColor.toImglab(esp, getPath()),true);																			
-					mostrar(img);			    	
+			    	Image newImg = new Image(getFile(),espColor.toImglab(esp, getPath()),true, canales);
+			    	Info.msg(9,newImg.name, newImg.img);
+					mostrar(newImg);			    	
 			    	scPanel.add(jdCanales.generarComoboBox("LAB", getCurrentImage().img));			    				    	
 			    }
 			    if (cbSpaceColor.getSelectedItem().equals(cbSpaceColor.getItemAt(3) .toString())){
 			    	System.out.println("YCbCr");			    				    				    				    
-			    	Image img = new Image(getFile(),espColor.toImgYCbCr(esp, getPath()),true);																			
-					mostrar(img);			    	
+			    	Image newImg = new Image(getFile(),espColor.toImgYCbCr(esp, getPath()),true, canales);
+			    	Info.msg(9,newImg.name, newImg.img);
+					mostrar(newImg);			    	
 			    	scPanel.add(jdCanales.generarComoboBox("YCbCr", getCurrentImage().img));			    	
 			    }
 			}
@@ -233,9 +246,6 @@ public class MainWindow {
 		scPanel.add(comboBox);	
 		scPanel.add(cbSpaceColor);	
 		
-		//============ Panel de informacion ===============
-		FlowLayout flowLayout = (FlowLayout) info.getLayout();
-		flowLayout.setAlignment(FlowLayout.RIGHT);
 		info.setSize(646, 20);
 		info.setLocation(474, -2);
 		scPanel.add(info);
@@ -253,13 +263,11 @@ public class MainWindow {
 			ZoomPlus.setIcon(new ImageIcon("image\\zIn.png", "Zoom ++"));
 			ZoomPlus.addActionListener(new ActionListener() {
 				public void actionPerformed(ActionEvent e) {
-					xScaleFactor += 0.1;
-					yScaleFactor += 0.1;				  	
 					oImage = getCurrentImage();
-					Image img = new Image(oImage.getFileCompleto(),Tools.Zoom(oImage.toBufferedImage(), xScaleFactor,yScaleFactor),false);			   
-					panelCMD.append(msgs.msgOperacion(4,arc.getImageName(), img.toBufferedImage()));
-					removeCurrentImage(); 
-					mostrar(img);				
+					removeCurrentImage();
+					Image newImg = new Image(oImage.getFileCompleto(),Tools.Zoom_out(oImage.toBufferedImage()),false, canales);
+					Info.msg(2,newImg.name, newImg.img);
+					mostrar(newImg);																
 				}
 			});				
 			
@@ -269,12 +277,11 @@ public class MainWindow {
 			ZoomMinus.setIcon(new ImageIcon("image\\zOut.png", "Zoom --"));
 			ZoomMinus.addActionListener(new ActionListener() {
 				public void actionPerformed(ActionEvent e) {
-					xScaleFactor -= 0.1; yScaleFactor -= 0.1;				  	
-					oImage = getCurrentImage();
-					Image img = new Image(oImage.getFileCompleto(),Tools.Zoom(oImage.toBufferedImage(), xScaleFactor,yScaleFactor),false);			   
-					panelCMD.append(msgs.msgOperacion(4,arc.getImageName(), img.toBufferedImage()));
-					removeCurrentImage(); 
-					mostrar(img);		 			  		
+					oImage = getCurrentImage();				
+					 Image newImg = new Image(getFile(),Tools.Zoom_in(oImage.toBufferedImage()),false, canales);
+					 Info.msg(3,newImg.name, newImg.img);
+					 removeCurrentImage(); 
+					 mostrar(newImg);								 			  
 				}
 			});				
 			barTools.add(ZoomMinus);
@@ -282,13 +289,12 @@ public class MainWindow {
 			JButton girarIZQ = new JButton ();
 			girarIZQ.setIcon(new ImageIcon("image\\gIn.png", "Girar Izq"));
 			girarIZQ.addActionListener(new ActionListener() {
-				public void actionPerformed(ActionEvent arg0) {
-					 degree += 30;								  	
+				public void actionPerformed(ActionEvent arg0) {					 							  
 					 oImage = getCurrentImage();				
-					 Image img = new Image(oImage.getFileCompleto(),Tools.Rotar(oImage.toBufferedImage(), degree),false);
-					 panelCMD.append(msgs.msgOperacion(4,arc.getImageName(), img.toBufferedImage()));
+					 Image newImg = new Image(getFile(),Tools.rotarI(oImage.toBufferedImage()),false, canales);
+					 Info.msg(4,newImg.name, newImg.img);
 					 removeCurrentImage(); 
-					 mostrar(img);							 
+					 mostrar(newImg);							 
 				}
 			});					
 			barTools.add(girarIZQ);
@@ -296,13 +302,12 @@ public class MainWindow {
 			JButton girarDCH = new JButton ();
 			girarDCH.setIcon(new ImageIcon("image\\gOut.png", "Girar Dch"));
 			girarDCH.addActionListener(new ActionListener() {
-				public void actionPerformed(ActionEvent arg0) {
-					degree -= 30;								  	
+				public void actionPerformed(ActionEvent arg0) {											  	
 					oImage = getCurrentImage();				
-					Image img = new Image(oImage.getFileCompleto(),Tools.Rotar(oImage.toBufferedImage(), degree),false);
-					panelCMD.append(msgs.msgOperacion(4,arc.getImageName(), img.toBufferedImage()));
+					Image newImg = new Image(oImage.getFileCompleto(),Tools.rotarD(oImage.toBufferedImage()),false, canales);
+					Info.msg(5,newImg.name, newImg.img);
 					removeCurrentImage(); 
-					mostrar(img);						 			 
+					mostrar(newImg);						 			 
 				}
 			});				
 			barTools.add(girarDCH);
@@ -312,18 +317,17 @@ public class MainWindow {
 			desHacer.setIcon(new ImageIcon("image\\atras.png", " atras"));
 			desHacer.addActionListener(new ActionListener() {
 				public void actionPerformed(ActionEvent arg0) {				
-					mostrar(oImage);			 									
+					System.out.println("Falta por hacer");			 									
 				}
 			});			
 			
 			barTools.add(desHacer);
-	        // ==================== DESHACER TODO ===================================
+	        // ==================== DESHACER ===================================
 			JButton goTo = new JButton ();
 			goTo.setIcon(new ImageIcon("image\\atras_all.png", " deshacer todo"));
 			goTo.addActionListener(new ActionListener() {
 				public void actionPerformed(ActionEvent arg0) {
-					mostrar(oImage);
-					panelCMD.setText(msgs.msgOperacion(7,arc.getImageName(), oImage.img));								
+					System.out.println("Falta por hacer");								
 				}
 			});
 			barTools.add(goTo);	
@@ -334,9 +338,7 @@ public class MainWindow {
 			refrescar.setIcon(new ImageIcon("image\\refrescar.png", " arefrescar"));
 			refrescar.addActionListener(new ActionListener() {
 				public void actionPerformed(ActionEvent arg0) {	
-					oImage = getCurrentImage();	
-					removeCurrentImage();						
-					mostrar(oImage);
+					System.out.println("Falta por hacer");
 				}
 			});
 			barTools.add(refrescar); 
@@ -360,9 +362,9 @@ public class MainWindow {
 				try {
 					File pathFile = Archivos.loadFile();
 					System.out.println("Load Image: " + pathFile.toString());
-					Image newImg = new Image(pathFile,ImageIO.read(pathFile),true);										
-					info.msg(0,newImg.name, newImg.img);					
-					mostrar(newImg);
+					oImage = new Image(pathFile,ImageIO.read(pathFile),true, canales);										
+					Info.msg(0,oImage.name, oImage.img);					
+					mostrar(oImage);
 				} catch (IOException e1) {
 					JOptionPane.showMessageDialog(null, "Erro al cargar", "Load Error", JOptionPane.ERROR_MESSAGE);					
 				}				   
@@ -374,11 +376,9 @@ public class MainWindow {
 		JMenuItem salvarImagen = new JMenuItem("Save Image");
 	 	salvarImagen.setIcon(new ImageIcon("image\\save.png", "SAVE"));
 		salvarImagen.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent e) {
-				 
+			public void actionPerformed(ActionEvent e) {				 
 				 Archivos arc = new Archivos();
-			     arc.saveFile();
-			  //   panelCMD.append(msgs.msgOperacion(1,arc.getImageName(), oImage.img));				    				    				    			
+			     arc.saveFile();			    			    				    				    		
 			}
 		});		
 		menuFile.add(salvarImagen); // -> Fin menuFile
@@ -395,14 +395,7 @@ public class MainWindow {
 	    scroll.setViewportView(img2.panel);	    
 		jTP.addTab(" ", scroll);		
 		jTP.setEnabledAt(0, true);
-		changeImageTitle(img2);
-		
-		try {
-			dg.Graficar (img2.toBufferedImage(), img2.panel, canales);
-		}catch (Exception e) {
-	        JOptionPane.showMessageDialog(null, "Dibujar Histograma", "Error", JOptionPane.ERROR_MESSAGE);
-	    } 
-		
+		changeImageTitle(img2);			
 	    miVentana.setVisible(true);	
 	}
 	

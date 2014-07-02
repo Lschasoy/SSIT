@@ -1,4 +1,5 @@
 package procesos;
+
 import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.GraphicsConfiguration;
@@ -15,6 +16,7 @@ import java.awt.image.PixelGrabber;
 import javax.swing.ImageIcon;
 import javax.swing.JPanel;
 
+import main.Info;
   
   /* NAME: TRABAJO DE FIN DE GRADO
    * AUTOR: LEONARDO SIVERIO CHASOY
@@ -23,22 +25,38 @@ import javax.swing.JPanel;
 @SuppressWarnings("serial")
 public class Tools extends JPanel {
 	
+	private static float xScaleFactor = 1;
+	private static float yScaleFactor = 1;
+	private static float degree = 0;	
+	
+	
+	
 	// =================== ROTAR IMAGEN =======================================================================
-	  public static Image rotateImage(Image img,double degree){
-	        BufferedImage bufImg = toBufferedImage(img);
-	        double angle = Math.toRadians(degree);
-	 
-	        return Rotar(bufImg,angle);
-	    }
-	 
-	    public static BufferedImage Rotar(BufferedImage image, double angle) {
+	   public static BufferedImage rotarD(BufferedImage img){
+		   degree -= 90;
+		   Info.msgOut("grados", String.valueOf(degree));			   
+		   double angle = Math.toRadians(degree);
+		   return rotar(img,angle);
+	   }
+	   
+	   public static BufferedImage rotarI(BufferedImage img){
+		   degree += 90;
+		   Info.msgOut(" Grados", String.valueOf(degree));		   
+		   double angle = Math.toRadians(degree);
+		   return rotar(img,angle);
+	   }
+		   	 
+	    public static BufferedImage rotar(BufferedImage image, double angle) {
 	    	
 	        double sin = Math.abs(Math.sin(angle)), cos = Math.abs(Math.cos(angle));
 	        int w = image.getWidth(), h = image.getHeight();
-	        int neww = (int)Math.floor(w*cos+h*sin), newh = (int)Math.floor(h*cos+w*sin);
+	        
+	        int neww = (int)Math.floor(w *cos+h* sin), newh = (int)Math.floor(h* cos+w *sin);
+	        
 	        GraphicsConfiguration gc = getDefaultConfiguration();
 	        BufferedImage result = gc.createCompatibleImage(neww, newh, Transparency.TRANSLUCENT);
 	        Graphics2D g = result.createGraphics();
+	        
 	        g.translate((neww-w)/2, (newh-h)/2);
 	        g.rotate(angle, w/2, h/2);
 	        g.drawRenderedImage(image, null);
@@ -47,8 +65,24 @@ public class Tools extends JPanel {
 	    }
 	    
 	 // =================== ZOOM IMAGEN =======================================================================
-	 
-	  public static BufferedImage Zoom(BufferedImage originalImage, float xScaleFactor, float yScaleFactor) {
+	  public static BufferedImage Zoom_in(BufferedImage img){
+		  String cad =  "xcale: " +String.valueOf(xScaleFactor) + " "+ "yscale: " + String.valueOf(yScaleFactor);
+		  Info.msgOut(" Zoom ", cad);
+		  if (( img.getHeight() > 0) && ( img.getWidth() > 0)){
+			  xScaleFactor -= 0.1;
+			  yScaleFactor -= 0.1;
+			  return zoom(img, xScaleFactor,yScaleFactor);
+		  }	  
+		  return img;	
+	  }
+	  public static BufferedImage Zoom_out(BufferedImage img){
+		  String cad =  "xcale: " +String.valueOf(xScaleFactor) + " "+ "yscale: " + String.valueOf(yScaleFactor);
+		  Info.msgOut(" Zoom ", cad);
+		  xScaleFactor += 0.1;
+		  yScaleFactor += 0.1;
+	      return zoom(img, xScaleFactor,yScaleFactor);
+	  }
+	  public static BufferedImage zoom(BufferedImage originalImage, float xScaleFactor, float yScaleFactor) {
 		  
 		  int newW = (int) (originalImage.getWidth() * xScaleFactor);
 		  int newH = (int) (originalImage.getHeight() * yScaleFactor);
@@ -56,14 +90,15 @@ public class Tools extends JPanel {
 		  GraphicsConfiguration gc = getDefaultConfiguration();
 	      BufferedImage result = gc.createCompatibleImage(newW, newH, Transparency.TRANSLUCENT);
 	      Graphics2D g2 = result.createGraphics();
-	        
-		 
+	        		 
 		  g2.setRenderingHint(RenderingHints.KEY_INTERPOLATION, RenderingHints.VALUE_INTERPOLATION_BILINEAR);
 		  g2.clearRect(0, 0, newW, newH);
 		  g2.drawImage(originalImage, 0, 0, newW, newH, null);		  
 		  g2.dispose();
-		return result;
+		return result;		
 	  }	  	 
+	  
+	  
 // =================== Default Configuracion  ==================================================================
 	  
 	  public static GraphicsConfiguration getDefaultConfiguration() {

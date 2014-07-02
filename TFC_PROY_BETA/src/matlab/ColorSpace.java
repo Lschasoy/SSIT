@@ -1,24 +1,16 @@
 package matlab;
 
-import java.awt.BorderLayout;
-import java.awt.FlowLayout;
-
 import javax.swing.JDialog;
-import javax.swing.JPanel;
-import javax.swing.JTextArea;
-import javax.swing.border.EmptyBorder;
-
 import java.awt.image.BufferedImage;
 
 import matlabToJavaSC.*;
-
-import javax.swing.JProgressBar;
 
 import com.mathworks.toolbox.javabuilder.Images;
 import com.mathworks.toolbox.javabuilder.MWException;
 import com.mathworks.toolbox.javabuilder.MWNumericArray;
 
 
+@SuppressWarnings("serial")
 public class ColorSpace extends JDialog {
 
 	private BufferedImage imgHsv;
@@ -66,8 +58,8 @@ public class ColorSpace extends JDialog {
    	public BufferedImage toImgYCbCr(Espacios esp, String path) {
    		try {
    		    cmd = "\nRun ColorSpace ...... param: Espacio, String, JTextArea";				
-               Object[] result = esp.convertRgb2ycbcr(2, path);
-               cmd += "\nFinalizado convertRgb2hsv ................ ok";
+            Object[] result = esp.convertRgb2ycbcr(2, path);
+            cmd += "\nFinalizado convertRgb2hsv ................ ok";
    			imgHsv = getBufferedImageFromDeployedComponent(result[1]);
    			cmd += "\nFinalizado getBufferedImageFromDeplyedComponent";
    			kill(result); // -> Kill result							

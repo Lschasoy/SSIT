@@ -11,6 +11,8 @@ import java.awt.image.BufferedImage;
 
 import javax.swing.JPanel;
 
+import main.Info;
+
 
 public class ImagePanel extends JPanel implements MouseListener, MouseMotionListener{
 	
@@ -56,7 +58,10 @@ public class ImagePanel extends JPanel implements MouseListener, MouseMotionList
 			offset = new Point(0, 0);
 			addMouseListener(this);
 			addMouseMotionListener(this);
-		}			
+		}else{
+			Info.msgError("Error", "Imagen Panel - no image");
+		}
+		
 	}
 
 	public void paint(Graphics g) {
@@ -174,7 +179,7 @@ public class ImagePanel extends JPanel implements MouseListener, MouseMotionList
 		@Override
 		public void mouseReleased(MouseEvent e) {
 			if (listener == Listener.ROI){
-				System.out.println(">>> mouseReleased: " + e.toString());
+				System.out.println(">>> mouseReleased: " + e.getX()+' '+e.getY());
 				mouseReleasedRoi(e);
 			}
 			if (listener == Listener.PERFIL){
@@ -192,7 +197,11 @@ public class ImagePanel extends JPanel implements MouseListener, MouseMotionList
 		public void mouseExited(MouseEvent e) {}
 	
 		@Override
-		public void mouseMoved(MouseEvent e) {}
+		public void mouseMoved(MouseEvent e) {
+			int x =  e.getX(); //e.getTrigger().getX();
+            int y =  e.getY(); //e.getTrigger().getY(); 
+			Info.posXY(" Image [x: " + String.valueOf(x),", y: " + String.valueOf(y)+"]");
+		}
 
 		
 	public void mousePressedPerfil(MouseEvent e) {
@@ -229,6 +238,7 @@ public class ImagePanel extends JPanel implements MouseListener, MouseMotionList
 	public void mousePressedRoi(MouseEvent e) {
 		
 		begin = bringCloser(e.getPoint());
+		System.out.println("mousePressedRoi");
 		end = begin;
 		
 	}
@@ -236,6 +246,7 @@ public class ImagePanel extends JPanel implements MouseListener, MouseMotionList
 	public void mouseReleasedRoi(MouseEvent e) {
 		if(!validRoi()) {
 			begin = null;
+			System.out.println("mouseReleasedRoi");
 			repaint();
 		}
 	}

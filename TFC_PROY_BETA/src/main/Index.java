@@ -5,28 +5,22 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
 import javax.swing.ImageIcon;
-import javax.swing.JButton;
 import javax.swing.JDialog;
 import javax.swing.JFileChooser;
-import javax.swing.JLabel;
+
 import javax.swing.JMenu;
 import javax.swing.JMenuBar;
 import javax.swing.JMenuItem;
 import javax.swing.JTextArea;
-import javax.swing.UIManager;
-import javax.swing.JTextPane;
 
 import Images.ImageFilter;
 
 import java.io.File;
-import java.awt.Dialog.ModalityType;
-import java.awt.Dialog.ModalExclusionType;
+
 
 import javax.swing.JProgressBar;
-import javax.swing.JPanel;
-import javax.swing.border.BevelBorder;
 import java.awt.Color;
-import javax.swing.border.LineBorder;
+
 
 
 
@@ -119,7 +113,7 @@ public class Index extends JDialog {
 		       if (returnVal == JFileChooser.APPROVE_OPTION){
 		    	    progressBar.setVisible(true);
 		    	    MainWindow.main(fc.getSelectedFile(), digStart, progressBar);	
-		    			    	    		        		     				             		    	    		             		        		      
+		    		dispose();	    	    		        		     				             		    	    		             		        		      
 		       }
 			   
 			  // => FIN 	
@@ -200,8 +194,7 @@ public class Index extends JDialog {
 				 
 				 int returnVal = fc.showOpenDialog(fc);				 
 			     if (returnVal == JFileChooser.APPROVE_OPTION){			    	
-			    	 MainWindow.main(fc.getSelectedFile(),digStart, progressBar); 
-			    	 
+			    	 MainWindow.main(fc.getSelectedFile(),digStart, progressBar); 			    	 
 		        	 dispose();
 			     }	 
 			    				 				 			    
