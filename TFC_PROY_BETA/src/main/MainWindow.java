@@ -28,6 +28,7 @@ import org.xnap.commons.gui.CloseableTabbedPane;
 import Images.Image;
 import Images.ImageFilter;
 import Images.ImagePanel;
+import Images.Tracer;
 
 import com.mathworks.toolbox.javabuilder.MWException;
 
@@ -53,7 +54,7 @@ public class MainWindow {
 	
 	private static JFrame miVentana;
 
-	private static JPanel [] canales = {new JPanel(), new JPanel(), new JPanel(), new JPanel()};  
+	public static JPanel [] canales = {new JPanel(), new JPanel(), new JPanel(), new JPanel()};  
 	public static CloseableTabbedPane jTP;
 	
 	private Canales jdCanales;
@@ -87,7 +88,7 @@ public class MainWindow {
 	 */
 	public void initialize(){
 		
-		miVentana.setTitle("TFG - sImage beta v.4.0");
+		miVentana.setTitle("lsch Segementation v1.0");
 		miVentana.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		miVentana.setSize(1140, 680); //->Notocar	
 		miVentana.getContentPane().setLayout(new BorderLayout());
@@ -108,9 +109,8 @@ public class MainWindow {
 //===================================================================================================================	
 	public MainWindow(File file, JTextArea msg, JProgressBar progressBar) throws MWException {
 		
-		new Mensajes();		
-		msg.append("  Instanciando Command Line : .......... ok\n"); progressBar.setValue(100);
-		new Archivos();
+		
+		new Archivos(); progressBar.setValue(100);
 		msg.append("  Instanciando clase de manipulacion de archivo: .......... ok\n");progressBar.setValue(200);
 		jdCanales = new Canales();
 		msg.append("  Instanciando Histogramas y canales: .......... ok\n");progressBar.setValue(300);
@@ -134,14 +134,12 @@ public class MainWindow {
 		msg.append("  Informacion de Histograma: .......... ok\n");progressBar.setValue(700);		
 		miVentana = new JFrame(); initialize();
 	    msg.append(" Configurando ventana principal : .......... ok\n");progressBar.setValue(900);	
-						
-			
+		
 		msg.append("  Load Imagen: .......... ok\n");
 		try {
-			if (file.isFile()){
-			   Image newImg = new Image(file,ImageIO.read(file),true, canales);
-			   Info.msg(0,newImg.name, newImg.img);			   
-			   mostrar(newImg);
+			if (file.isFile()){			   
+			   Tracer.insert(file,ImageIO.read(file),true, canales);			   			  
+			   
 			}else{
 				File []list = file.listFiles();
 				ImageFilter imgFiltro= new ImageFilter();	// -> Filtros	
@@ -149,7 +147,7 @@ public class MainWindow {
 		    		if (imgFiltro.accept(list[i]) && (list[i].isFile())){
 		    			System.out.println("Load image batch: "+  list[i]);
 		    		    Image newImg = new Image(file,ImageIO.read(list[i]),true,canales);
-		    		    Info.msg(0,newImg.name, newImg.img);			   
+		    		    //Info.msg(0,newImg.name, newImg.img);			   
 		 			    mostrar(newImg);
 		    		}
 		    	 }	
@@ -199,9 +197,8 @@ public class MainWindow {
 					
 					FormSegment seg = new FormSegment();
 					FormSegment.main(seg, getPath(), fun);
-														
-					Image img = new Image(null,seg.getImgOut(),false,canales);					
-				    mostrar(img);											     
+					Tracer.insert("*ImageSegment", seg.getImgOut());
+																					    
 			    }
 			    if (comboBox.getSelectedItem().equals(comboBox.getItemAt(2) .toString())){
 			    	System.out.println("Segementacion_2");				        			
@@ -219,25 +216,20 @@ public class MainWindow {
 		cbSpaceColor.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent arg0) {
 				
-			    if (cbSpaceColor.getSelectedItem().equals(cbSpaceColor.getItemAt(1) .toString())){
-			    	System.out.println("HSV");			    				    				    				    
-			    	Image newImg = new Image(getFile(),espColor.toImgHsv(esp, getPath()),true, canales);
-			    	Info.msg(9,newImg.name, newImg.img);
-					mostrar(newImg);			    	
+			    if (cbSpaceColor.getSelectedItem().equals(cbSpaceColor.getItemAt(1) .toString())){			    	    				    				    				   
+			    	
+			    	Tracer.insert("*ImageHSV", espColor.toImgHsv(esp, getPath()));			    						
 			    	scPanel.add(jdCanales.generarComoboBox("HSV", getCurrentImage().img));			    				        			    
 			    }   
 			    if (cbSpaceColor.getSelectedItem().equals(cbSpaceColor.getItemAt(2) .toString())){
-			    	System.out.println("LAB");			    				    				    				   
-			    	Image newImg = new Image(getFile(),espColor.toImglab(esp, getPath()),true, canales);
-			    	Info.msg(9,newImg.name, newImg.img);
-					mostrar(newImg);			    	
+			    	
+			    	Tracer.insert("*ImageLAB", espColor.toImglab(esp, getPath()));			    									    
 			    	scPanel.add(jdCanales.generarComoboBox("LAB", getCurrentImage().img));			    				    	
 			    }
 			    if (cbSpaceColor.getSelectedItem().equals(cbSpaceColor.getItemAt(3) .toString())){
 			    	System.out.println("YCbCr");			    				    				    				    
-			    	Image newImg = new Image(getFile(),espColor.toImgYCbCr(esp, getPath()),true, canales);
-			    	Info.msg(9,newImg.name, newImg.img);
-					mostrar(newImg);			    	
+			    	
+			    	Tracer.insert("*ImageLAB", espColor.toImgYCbCr(esp, getPath()));					    				    
 			    	scPanel.add(jdCanales.generarComoboBox("YCbCr", getCurrentImage().img));			    	
 			    }
 			}
@@ -265,8 +257,8 @@ public class MainWindow {
 				public void actionPerformed(ActionEvent e) {
 					oImage = getCurrentImage();
 					removeCurrentImage();
-					Image newImg = new Image(oImage.getFileCompleto(),Tools.Zoom_out(oImage.toBufferedImage()),false, canales);
-					Info.msg(2,newImg.name, newImg.img);
+					Image newImg = new Image(oImage.getFileCompleto(),Tools.Zoom_out(oImage.img),false, canales);
+					//Info.msg(2,newImg.name, newImg.img);
 					mostrar(newImg);																
 				}
 			});				
@@ -278,8 +270,8 @@ public class MainWindow {
 			ZoomMinus.addActionListener(new ActionListener() {
 				public void actionPerformed(ActionEvent e) {
 					oImage = getCurrentImage();				
-					 Image newImg = new Image(getFile(),Tools.Zoom_in(oImage.toBufferedImage()),false, canales);
-					 Info.msg(3,newImg.name, newImg.img);
+					 Image newImg = new Image(getFile(),Tools.Zoom_in(oImage.img),false, canales);
+					// Info.msg(3,newImg.name, newImg.img);
 					 removeCurrentImage(); 
 					 mostrar(newImg);								 			  
 				}
@@ -289,10 +281,10 @@ public class MainWindow {
 			JButton girarIZQ = new JButton ();
 			girarIZQ.setIcon(new ImageIcon("image\\gIn.png", "Girar Izq"));
 			girarIZQ.addActionListener(new ActionListener() {
-				public void actionPerformed(ActionEvent arg0) {					 							  
+				public void actionPerformed(ActionEvent arg0) {						 
 					 oImage = getCurrentImage();				
-					 Image newImg = new Image(getFile(),Tools.rotarI(oImage.toBufferedImage()),false, canales);
-					 Info.msg(4,newImg.name, newImg.img);
+					 Image newImg = new Image(getFile(),Tools.rotarI(oImage.img),false, canales);
+					// Info.msg(4,newImg.name, newImg.img);
 					 removeCurrentImage(); 
 					 mostrar(newImg);							 
 				}
@@ -304,8 +296,8 @@ public class MainWindow {
 			girarDCH.addActionListener(new ActionListener() {
 				public void actionPerformed(ActionEvent arg0) {											  	
 					oImage = getCurrentImage();				
-					Image newImg = new Image(oImage.getFileCompleto(),Tools.rotarD(oImage.toBufferedImage()),false, canales);
-					Info.msg(5,newImg.name, newImg.img);
+					Image newImg = new Image(oImage.getFileCompleto(),Tools.rotarD(oImage.img),false, canales);
+					//Info.msg(5,newImg.name, newImg.img);
 					removeCurrentImage(); 
 					mostrar(newImg);						 			 
 				}
@@ -316,18 +308,23 @@ public class MainWindow {
 			JButton desHacer = new JButton ();
 			desHacer.setIcon(new ImageIcon("image\\atras.png", " atras"));
 			desHacer.addActionListener(new ActionListener() {
-				public void actionPerformed(ActionEvent arg0) {				
-					System.out.println("Falta por hacer");			 									
-				}
+				public void actionPerformed(ActionEvent arg0) {
+					System.out.println("Pulsado el boton deshacer");
+					if (getCurrentImage() != null){
+						removeCurrentImage();
+						Tracer.getLast();			 									
+				}   }
 			});			
 			
 			barTools.add(desHacer);
-	        // ==================== DESHACER ===================================
+	        // ==================== DESHACER Todo ===================================
 			JButton goTo = new JButton ();
 			goTo.setIcon(new ImageIcon("image\\atras_all.png", " deshacer todo"));
 			goTo.addActionListener(new ActionListener() {
 				public void actionPerformed(ActionEvent arg0) {
-					System.out.println("Falta por hacer");								
+					System.out.println("Pulsado el boton deshacer todo");
+					removeCurrentImage();
+					mostrar(Tracer.getFirst());								
 				}
 			});
 			barTools.add(goTo);	
@@ -360,13 +357,11 @@ public class MainWindow {
 		cargarImagen.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {								   				   				   				 
 				try {
-					File pathFile = Archivos.loadFile();
-					System.out.println("Load Image: " + pathFile.toString());
-					oImage = new Image(pathFile,ImageIO.read(pathFile),true, canales);										
-					Info.msg(0,oImage.name, oImage.img);					
-					mostrar(oImage);
+					File file = Archivos.loadFile();
+					Tracer.insert(file,ImageIO.read(file),true, canales);
+					
 				} catch (IOException e1) {
-					JOptionPane.showMessageDialog(null, "Erro al cargar", "Load Error", JOptionPane.ERROR_MESSAGE);					
+					JOptionPane.showMessageDialog(null, "Hubo error durante la carga", "Load error", JOptionPane.ERROR_MESSAGE);					
 				}				   
 			}
 		});

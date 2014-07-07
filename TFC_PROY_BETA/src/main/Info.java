@@ -32,32 +32,11 @@ public class Info extends JPanel {
 		}
 	}
 //==========================================================================	
-	public static void msg(int opcion, String file, BufferedImage img){
+	public static void msg(String msg, String file, BufferedImage img){
 		
-	
+		labels[1].setText(msg);
 		labels[3].setText(file);
-		labels[5].setText("Tipo = " + img.getType() + " Alto = " + img.getHeight() + " Ancho = " + img.getWidth());
-		switch (opcion) {
-			 case 0: labels[1].setText("load");
-				 break;
-			case 1: labels[1].setText("save");
-		     	break;
-			case 2: labels[1].setText("Zoom Out");
-		     	break;
-			case 3: labels[1].setText("Zoom In");
-		     	break;
-			case 4: labels[1].setText("Rotar Izq");
-				break;
-			case 5: labels[1].setText("Rotar Dch");
-	     		break;
-			case 8: labels[1].setText("Seleccionar canal");
-     		    break;	
-			case 9: labels[1].setText("Espacio de color");
- 		   	break;	    
-	     	default: labels[1].setText("Error");
-	     		 break;
-		}			
-	
+		labels[5].setText("Tipo = " + img.getType() + " Alto = " + img.getHeight() + " Ancho = " + img.getWidth());					
 	}
 	public static void posXY(String msg1, String msg2){
 		labels[etiquetas.length -2].setText(msg1);

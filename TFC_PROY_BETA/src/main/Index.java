@@ -20,12 +20,19 @@ import java.io.File;
 
 import javax.swing.JProgressBar;
 import java.awt.Color;
+import javax.swing.JPanel;
+import java.awt.FlowLayout;
 
 
 
 
 public class Index extends JDialog {
 	
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
+
 	static final int FULL_PROGRESS = 1000;
 	
 	private JTextArea digStart;	
@@ -60,19 +67,12 @@ public class Index extends JDialog {
 	 * Create the dialog.
 	 */
 	public Index() {		
-	   	    	   
-	    digStart = new JTextArea();
-	    digStart.setLineWrap(true);
-	    digStart.setEditable(false);
-	    digStart.setBackground(Color.LIGHT_GRAY);
-	    digStart.setLayout(null);
-	    digStart.setBounds(15,30,400,220);
-	    
 	    
 	    progressBar = new JProgressBar();
 	    progressBar.setValue(0);		
 		progressBar.setMaximum(FULL_PROGRESS);
 		progressBar.setStringPainted(true);
+		progressBar.setVisible(false);
 					    	   
 		setTitle("Segmentation Tools - ULL - TFG");
 		setBounds(0, 0, 400, 250);
@@ -80,8 +80,23 @@ public class Index extends JDialog {
 		
 		getContentPane().setLayout(new BorderLayout());
 		getContentPane().add(panelSup(0,0,400,25), BorderLayout.NORTH);
-		getContentPane().add(digStart, BorderLayout.CENTER);
 		getContentPane().add(progressBar, BorderLayout.SOUTH);
+		
+		JPanel panel = new JPanel();
+		panel.setBackground(Color.WHITE);
+		FlowLayout flowLayout = (FlowLayout) panel.getLayout();
+		flowLayout.setAlignOnBaseline(true);
+		getContentPane().add(panel, BorderLayout.CENTER);
+		
+	    digStart = new JTextArea();
+	    panel.add(digStart);
+	    digStart.setRows(4);
+	    digStart.setWrapStyleWord(true);
+	    digStart.setLineWrap(true);
+	    digStart.setEditable(false);
+	    digStart.setBackground(Color.WHITE);	    
+	    digStart.setBounds(15,30,300,220);
+	    digStart.setText("Segemtation Tools: Es una interfaz de usuario java para la segmentacion de imagenes de forma f\u00E1cil, implementa funciones de MATLAB para generar las imagenes segmentadas\r\n\r\n  Version 1.0 - Primera revisi\u00F3n");
 								 	
 	}
 	

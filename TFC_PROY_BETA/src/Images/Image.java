@@ -22,9 +22,7 @@ public class Image {
 	private static DibujarGrafica dg;
 	
     
-	public  BufferedImage toBufferedImage() {
-        return img;
-	}
+	
 	
 	public Image(File file,  BufferedImage img, boolean saved, JPanel [] canales) {
 		
@@ -55,11 +53,15 @@ public class Image {
 	        JOptionPane.showMessageDialog(null, "Dibujar Histograma", "[constructor image]", JOptionPane.ERROR_MESSAGE);
 	    }  		
 	}
-		
-	public void changeImg(BufferedImage img){
-		this.img = img;
-	}
-
+   		
+    public boolean isIgual (Image img2){
+    	System.out.println(this.name +"  " +img2.name);
+    	if ((this != null) &&(this.name.equals(img2.name)) && (this.saved == img2.saved)) 
+    			return true;
+    	return false;
+    }
+    
+    
 	public File getFileCompleto(){
 		return new File(file.getParent(), prefijo + file.getName());
 	}

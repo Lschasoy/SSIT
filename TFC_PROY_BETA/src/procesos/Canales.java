@@ -4,13 +4,13 @@ import java.awt.Color;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.image.BufferedImage;
-import java.io.File;
+
 
 import javax.swing.DefaultComboBoxModel;
 import javax.swing.JComboBox;
 import javax.swing.JPanel;
 
-import Images.Image;
+import Images.Tracer;
 import main.Info;
 import main.MainWindow;
 
@@ -26,8 +26,6 @@ public class Canales{
 	private String[] YCbCr = {"Canales", "canal_C", "canal_Y", "canal_K"};
 	private BufferedImage imgOut; 
 	
-	private File tmpFile;
-	
 	
 //====================================================================================================
 	
@@ -42,30 +40,20 @@ public class Canales{
 			public void actionPerformed(ActionEvent arg0) {
 			    if (cbCanales.getSelectedItem().equals(cbCanales.getItemAt(1) .toString())){
 			    	System.out.println("Generando canal: "+ cbCanales.getItemAt(1) .toString());
-			         gCanalR(MainWindow.getCurrentImage().img);			         
-			         			         			        						 
-					 tmpFile = new File ("\\tmp", cbCanales.getItemAt(1) .toString());					  
-					 Image newImg = new Image(tmpFile,imgOut,true, canales);
-					 Info.msg(8,newImg.name, newImg.img);
-					 MainWindow.mostrar(newImg);
+			         gCanalR(MainWindow.getCurrentImage().img);			         			         			         			        						 					 					  
+					 Tracer.insert(cbCanales.getItemAt(1) .toString(), imgOut);
 					 Info.msgOut(" Canales ", cbCanales.getItemAt(1) .toString());			       
 			    }   
 			    if (cbCanales.getSelectedItem().equals(cbCanales.getItemAt(2) .toString())){
 			    	System.out.println("Generando canal: "+ cbCanales.getItemAt(2) .toString());
 			         gCanalG(MainWindow.getCurrentImage().img);			         			         			         			        						
-					 tmpFile = new File ("\\tmp", cbCanales.getItemAt(2) .toString());					 
-					 Image newImg = new Image(tmpFile,imgOut,true, canales);
-					 Info.msg(8,newImg.name, newImg.img);
-					 MainWindow.mostrar(newImg);
+			         Tracer.insert(cbCanales.getItemAt(2) .toString(), imgOut);
 					 Info.msgOut(" Canales ", cbCanales.getItemAt(2) .toString());
 			    }
 			    if (cbCanales.getSelectedItem().equals(cbCanales.getItemAt(3) .toString())){
 			    	System.out.println("Generando canal: "+ cbCanales.getItemAt(3) .toString());
 			         gCanalB(MainWindow.getCurrentImage().img);			         			         			         			        						
-					 tmpFile = new File ("\\tmp", cbCanales.getItemAt(3) .toString());					  
-					 Image newImg = new Image(tmpFile,imgOut,true, canales);
-					 Info.msg(8,newImg.name, newImg.img);
-					 MainWindow.mostrar(newImg);
+			         Tracer.insert(cbCanales.getItemAt(3) .toString(), imgOut);
 					 Info.msgOut(" Canales ", cbCanales.getItemAt(3) .toString());
 			    }
 			}
