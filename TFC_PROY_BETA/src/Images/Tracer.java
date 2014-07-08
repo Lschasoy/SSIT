@@ -3,9 +3,6 @@ package Images;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.util.ArrayList;
-import java.util.Hashtable;
-
-import javax.swing.JPanel;
 
 import main.Info;
 import main.MainWindow;
@@ -14,24 +11,34 @@ import main.MainWindow;
 public class Tracer {
 	
     // Guardamos solo seis
-	private static ArrayList<Image> pila = new ArrayList();
+	private static ArrayList<Image> pila = new ArrayList<Image>();
 	private static int head = -1;
 	
 	//============================================================================
-    public static void insert(File file, BufferedImage img, boolean save, JPanel[] canales) {
+    public static void insert(File file, BufferedImage img) {
+    	    	
     	head++;
-  		pila.add(new Image(file, img , save, canales));
+    	if (file.exists())
+    		pila.add(new Image(file, img , true, MainWindow.canales));
+    	else
+    		pila.add(new Image(file, img , false, MainWindow.canales));
+    	
   		Info.msg("",file.getName(), img);  	
-  		MainWindow.mostrar(pila.get(head));
-  		
-  		
-  	}
-    public static void insert(String name, BufferedImage img) {
-    	head++;
-    	File file = new File(name);
-  		pila.add(new Image(file, img , true, MainWindow.canales));
-  		Info.msg(name,pila.get(head).name, img);  	
   		MainWindow.mostrar(pila.get(head));  		  		
+  	}
+    
+    public static void change(String name, BufferedImage img){
+    	MainWindow.getCurrentImage();
+    	MainWindow.removeCurrentImage();
+    	insert(name, img);    	
+    }
+    
+    public static void insert(String name, BufferedImage img) {
+    	head++;    	
+  		pila.add(new Image(null, img , false, MainWindow.canales));
+  		Info.msg(name,pila.get(head).name, img);  	
+  		MainWindow.mostrar(pila.get(head));  
+  		System.out.println("Insertado en tracer: "+ head);
   	}
     public static void  getLast() {     	    	
     	MainWindow.mostrar(pila.get(head));

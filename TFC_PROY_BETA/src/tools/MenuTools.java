@@ -3,17 +3,21 @@ package tools;
 import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.image.BufferedImage;
 
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JPanel;
 
 import main.MainWindow;
-import Images.Image;
+import Images.Tracer;
 
-public class Menu extends JPanel{
-
-	private static Image oImage;
+public class MenuTools extends JPanel{
+	
+	private static final long serialVersionUID = 1L;
+	
+	private static float xScaleFactor = 1;
+	private static float yScaleFactor = 1;
 	
 	public static JPanel getMenu(){
 		
@@ -26,11 +30,12 @@ public class Menu extends JPanel{
 		ZoomPlus.setIcon(new ImageIcon("image\\zIn.png", "Zoom ++"));
 		ZoomPlus.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				oImage = MainWindow.getCurrentImage();
-				MainWindow.removeCurrentImage();
-				//Image newImg = new Image(oImage.getFileCompleto(),Tools.Zoom_out(oImage.img),false, canales);
-				//Info.msg(2,newImg.name, newImg.img);
-				//mostrar(newImg);																
+				BufferedImage img = MainWindow.getCurrentImage().img;
+				if ( (img.getHeight() < 3000) && (img.getWidth() < 3000)){
+					xScaleFactor += 0.1;
+					yScaleFactor += 0.1;				
+				    Tracer.change("Alejar", Tools.zoom(img, xScaleFactor, yScaleFactor));
+				} 																
 			}
 		});				
 		
@@ -40,11 +45,12 @@ public class Menu extends JPanel{
 		ZoomMinus.setIcon(new ImageIcon("image\\zOut.png", "Zoom --"));
 		ZoomMinus.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				//oImage = getCurrentImage();				
-				// Image newImg = new Image(getFile(),Tools.Zoom_in(oImage.img),false, canales);
-				// Info.msg(3,newImg.name, newImg.img);
-				// removeCurrentImage(); 
-				// mostrar(newImg);								 			  
+				BufferedImage img = MainWindow.getCurrentImage().img;
+				if ( (img.getHeight() > 30) && (img.getWidth() > 30)){
+					xScaleFactor -= 0.1;
+					yScaleFactor -= 0.1;				
+				    Tracer.change("Acercar", Tools.zoom(img, xScaleFactor, yScaleFactor));
+				}    
 			}
 		});				
 		barTools.add(ZoomMinus);
@@ -53,11 +59,7 @@ public class Menu extends JPanel{
 		girarIZQ.setIcon(new ImageIcon("image\\gIn.png", "Girar Izq"));
 		girarIZQ.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent arg0) {						 
-				 //oImage = getCurrentImage();				
-				 //Image newImg = new Image(getFile(),Tools.rotarI(oImage.img),false, canales);
-				// Info.msg(4,newImg.name, newImg.img);
-				 //removeCurrentImage(); 
-				 //mostrar(newImg);							 
+				Tracer.change("Girar Izq", Tools.rotarI(MainWindow.getCurrentImage().img));						 
 			}
 		});					
 		barTools.add(girarIZQ);
@@ -66,11 +68,7 @@ public class Menu extends JPanel{
 		girarDCH.setIcon(new ImageIcon("image\\gOut.png", "Girar Dch"));
 		girarDCH.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent arg0) {											  	
-				//oImage = getCurrentImage();				
-				//Image newImg = new Image(oImage.getFileCompleto(),Tools.rotarD(oImage.img),false, canales);
-				//Info.msg(5,newImg.name, newImg.img);
-				//removeCurrentImage(); 
-				//mostrar(newImg);						 			 
+				Tracer.change("Girar Dch", Tools.rotarD(MainWindow.getCurrentImage().img));						 			 
 			}
 		});				
 		barTools.add(girarDCH);
@@ -80,11 +78,7 @@ public class Menu extends JPanel{
 		desHacer.setIcon(new ImageIcon("image\\atras.png", " atras"));
 		desHacer.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent arg0) {
-				System.out.println("Pulsado el boton deshacer");
-			/*	if (getCurrentImage() != null){
-					removeCurrentImage();
-					Tracer.getLast();			 												  
-				}*/
+				System.out.println("Pulsado el boton deshacer");			
 			}	
 		});			
 		

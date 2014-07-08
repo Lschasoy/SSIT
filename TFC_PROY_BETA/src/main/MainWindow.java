@@ -4,38 +4,35 @@ import java.awt.Dimension;
 import java.awt.EventQueue;
 import java.awt.GridLayout;
 
-import javax.imageio.ImageIO;
+
 import javax.swing.JFileChooser;
 import javax.swing.JFrame;
 import javax.swing.JMenuBar;
-import javax.swing.JOptionPane;
+
 import javax.swing.JProgressBar;
 import javax.swing.JTextArea;
 import javax.swing.JPanel;
 
 import java.io.File;
-import java.io.IOException;
-
 import javax.swing.JScrollPane;
 import javax.swing.UIManager;
 
 import org.xnap.commons.gui.CloseableTabbedPane;
 
 import Images.Image;
-import Images.ImageFilter;
 import Images.ImagePanel;
-import Images.Tracer;
+
 
 import com.mathworks.toolbox.javabuilder.MWException;
 
 import matlab.*;
 import matlabToJavaSC.Espacios;
 import matlabToJavaSC.Segmentacion;
-import menus.Menus;
-
+import menus.Abrir;
+import menus.MenuFiles;
 import procesos.Canales;
 import procesos.HistoInfo;
-import tools.Menu;
+import tools.MenuTools;
 
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
@@ -85,7 +82,7 @@ public class MainWindow {
 		miVentana.getContentPane().setLayout(new BorderLayout());
 			
 		miVentana.getContentPane().add(panelSup(),BorderLayout.PAGE_START);	
-		miVentana.getContentPane().add(Menu.getMenu(),BorderLayout.WEST);
+		miVentana.getContentPane().add(MenuTools.getMenu(),BorderLayout.WEST);
 		miVentana.getContentPane().add(jTP);				
 		miVentana.getContentPane().add(pFooter(), BorderLayout.PAGE_END);		
 		
@@ -117,29 +114,12 @@ public class MainWindow {
 		miVentana = new JFrame(); initialize();
 	    msg.append(" Configurando ventana principal : .......... ok\n");progressBar.setValue(900);	
 		
-	    new Menus();
+	    new MenuFiles();
 	    msg.append(" Inicializar todos los menus : .......... ok\n");
 	    
-		msg.append("  Load Imagen: .......... ok\n");
-		try {
-			if (file.isFile()){			   
-			   Tracer.insert(file,ImageIO.read(file),true, canales);			   			  
-			   
-			}else{
-				File []list = file.listFiles();
-				ImageFilter imgFiltro= new ImageFilter();	// -> Filtros	
-		    	 for (int i = 0; i < list.length; i++ ){
-		    		if (imgFiltro.accept(list[i]) && (list[i].isFile())){		    			
-		    		    Image newImg = new Image(file,ImageIO.read(list[i]),true,canales);
-		    		    //Info.msg(0,newImg.name, newImg.img);			   
-		 			    mostrar(newImg);
-		    		}
-		    	 }	
-			}
-		} catch (IOException e) {
-			JOptionPane.showMessageDialog(null, "[Error] No Image", "Error", JOptionPane.ERROR_MESSAGE);
-		}
-	  		  
+	    Abrir.load(file);
+		msg.append(" Load Imagen: .......... ok\n");
+	    	  		 
 	}
 	 			
 	public JPanel pFooter(){		
@@ -178,7 +158,7 @@ public class MainWindow {
 		
 								
 		// ========== Carga de todos los menus ==========================
-        barSup.add(Menus.getMenu());           // ==> File Menu        
+        barSup.add(MenuFiles.getMenu());           // ==> File Menu        
         barSup.add(FormSegment.getMenu(fun));  // ==> Segmetacion Menu
         barSup.add(espColor.getMenu(esp));     // ==> Color's Space Menu
         barSup.add(Canales.getMenu());     // ==> Color's Space Menu

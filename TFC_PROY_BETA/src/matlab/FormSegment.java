@@ -1,19 +1,20 @@
 package matlab;
 
 import java.awt.BorderLayout;
+import java.awt.Dimension;
 import java.awt.FlowLayout;
 import java.awt.GridLayout;
 
 import javax.swing.JButton;
 import javax.swing.JDialog;
 import javax.swing.JPanel;
-
 import javax.swing.JLabel;
 import javax.swing.JMenu;
 import javax.swing.JMenuItem;
 import javax.swing.JTextArea;
 import javax.swing.JTextField;
 import javax.swing.SwingConstants;
+
 
 
 
@@ -54,7 +55,7 @@ public class FormSegment extends JDialog {
     public static JMenu getMenu(final Segmentacion fun){
     	
 	
-		JMenu menuSegment = new JMenu("Algoritm's Segment");
+		JMenu menu = new JMenu("Algoritm's Segment");
 		
 		JMenuItem msSegment = new JMenuItem("ms Segment");		
 		msSegment.addActionListener(new ActionListener() {
@@ -64,7 +65,7 @@ public class FormSegment extends JDialog {
 				Tracer.insert("*ImageSegment", seg.getImgOut());		   
 			}
 		});
-		menuSegment.add(msSegment); 
+		menu.add(msSegment); 
 		
 		JMenuItem srmSegment = new JMenuItem("srm Segment");		
 		srmSegment.addActionListener(new ActionListener() {
@@ -72,9 +73,9 @@ public class FormSegment extends JDialog {
 				System.out.println("Segundo algoritmo de segementacion");		   
 			}
 		});
-		menuSegment.add(srmSegment);
+		menu.add(srmSegment);
 		
-		return 	menuSegment;	
+		return 	menu;	
     }
 
 	/**

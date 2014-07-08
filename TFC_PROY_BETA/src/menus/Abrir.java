@@ -31,5 +31,26 @@ public class Abrir {
 			}
 		}
 	}
-	
-}
+	/**
+	 * @return: load image 
+	 */
+	public static void load(File file){
+		
+		try {
+			if (file.isFile()){			   
+			   Tracer.insert(file,ImageIO.read(file));			   			  
+			   
+			}else{ //--> Cargamos un direc
+				File []list = file.listFiles();
+				ImageFilter imgFiltro= new ImageFilter();	
+		    	 for (int i = 0; i < list.length; i++ ){
+		    		if (imgFiltro.accept(list[i]) && (list[i].isFile()))
+		    			Tracer.insert(list[i],ImageIO.read(list[i]));		    		    		    		
+		    	 }	
+			}
+		} catch (IOException e) {
+			JOptionPane.showMessageDialog(null, "[Error] No Image", "Error", JOptionPane.ERROR_MESSAGE);
+		}
+		
+	} // end of load
+}// class end

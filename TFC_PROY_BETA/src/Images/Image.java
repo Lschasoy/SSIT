@@ -26,13 +26,15 @@ public class Image {
 	
 	public Image(File file,  BufferedImage img, boolean saved, JPanel [] canales) {
 		
-		//System.out.println("$$$ Genenado la imagen: "+ file.getAbsolutePath());
-		
+				
 		this.file = file;
 		this.img = img;
 		//this.format = ImageFilter.getExtension(file);
 		if (saved)
 			this.name = file.getName();
+		else
+			this.name = "new";
+		
 		this.saved = saved;
 		panel = new ImagePanel(this);
 		dg = new DibujarGrafica();   //Grafica asociada a cada imagen
@@ -75,8 +77,8 @@ public class Image {
 			return;
 		}
 		this.file = file;
-		this.prefijo = "";
-		this.format = ImageFilter.getExtension(file);
+	//	this.prefijo = "";
+	//	this.format = ImageFilter.getExtension(file);
 	}
 
 	public Point topLeftRoi() {

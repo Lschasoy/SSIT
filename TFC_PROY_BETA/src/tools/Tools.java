@@ -25,8 +25,6 @@ import main.Info;
 @SuppressWarnings("serial")
 public class Tools extends JPanel {
 	
-	private static float xScaleFactor = 1;
-	private static float yScaleFactor = 1;
 	private static float degree = 0;	
 	
 	
@@ -65,23 +63,7 @@ public class Tools extends JPanel {
 	    }
 	    
 	 // =================== ZOOM IMAGEN =======================================================================
-	  public static BufferedImage Zoom_in(BufferedImage img){
-		  String cad =  "xcale: " +String.valueOf(xScaleFactor) + " "+ "yscale: " + String.valueOf(yScaleFactor);
-		  Info.msgOut(" Zoom ", cad);
-		  if (( img.getHeight() > 0) && ( img.getWidth() > 0)){
-			  xScaleFactor -= 0.1;
-			  yScaleFactor -= 0.1;
-			  return zoom(img, xScaleFactor,yScaleFactor);
-		  }	  
-		  return img;	
-	  }
-	  public static BufferedImage Zoom_out(BufferedImage img){
-		  String cad =  "xcale: " +String.valueOf(xScaleFactor) + " "+ "yscale: " + String.valueOf(yScaleFactor);
-		  Info.msgOut(" Zoom ", cad);
-		  xScaleFactor += 0.1;
-		  yScaleFactor += 0.1;
-	      return zoom(img, xScaleFactor,yScaleFactor);
-	  }
+	
 	  public static BufferedImage zoom(BufferedImage originalImage, float xScaleFactor, float yScaleFactor) {
 		  
 		  int newW = (int) (originalImage.getWidth() * xScaleFactor);

@@ -34,7 +34,6 @@ public class DibujarGrafica {
 
 	private Histograma ObjHistograma;
 	private int[][] histograma;	
-	private Color c1;
 	private BufferedImage newImg;
 	private CategoryPlot plot;
 	

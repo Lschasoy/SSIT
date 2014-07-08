@@ -6,7 +6,6 @@ import javax.swing.JMenuItem;
 import javax.swing.JOptionPane;
 
 import procesos.Canales;
-
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.image.BufferedImage;
@@ -30,7 +29,7 @@ public class ColorSpace extends JDialog {
     
     public JMenu getMenu(final Espacios espacios){
     	
-      JMenu cSpace = new JMenu("Color's Space");
+      JMenu menu = new JMenu("Color's Space");
 		
 		JMenuItem rgb = new JMenuItem("HSV");		
 		rgb.addActionListener(new ActionListener() {
@@ -44,7 +43,7 @@ public class ColorSpace extends JDialog {
 		    	}		   
 			}
 		});		
-		cSpace.add(rgb); 
+		menu.add(rgb); 
 		
 		
 		JMenuItem lab = new JMenuItem("LAB");		
@@ -60,7 +59,7 @@ public class ColorSpace extends JDialog {
 				  
 			}
 		});		
-		cSpace.add(lab);
+		menu.add(lab);
 		
 		JMenuItem yCbCr = new JMenuItem("YCbCr");		
 		yCbCr.addActionListener(new ActionListener() {
@@ -74,9 +73,9 @@ public class ColorSpace extends JDialog {
 		    	}		   			   
 			}
 		});		
-		cSpace.add(yCbCr);
+		menu.add(yCbCr);
     	
-		return cSpace; 
+		return menu; 
     }
 	
  
