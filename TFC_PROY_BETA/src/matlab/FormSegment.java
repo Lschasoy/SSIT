@@ -7,11 +7,15 @@ import java.awt.GridLayout;
 import javax.swing.JButton;
 import javax.swing.JDialog;
 import javax.swing.JPanel;
-import javax.swing.border.EmptyBorder;
+
 import javax.swing.JLabel;
+import javax.swing.JMenu;
+import javax.swing.JMenuItem;
 import javax.swing.JTextArea;
 import javax.swing.JTextField;
 import javax.swing.SwingConstants;
+
+
 
 
 
@@ -20,9 +24,12 @@ import java.awt.event.ActionListener;
 import java.awt.event.ActionEvent;
 import java.awt.image.BufferedImage;
 
+import main.MainWindow;
 import matlabToJavaSC.*;
 
 import javax.swing.JProgressBar;
+
+import Images.Tracer;
 
 
 @SuppressWarnings("serial")
@@ -40,6 +47,35 @@ public class FormSegment extends JDialog {
 	private BufferedImage imgOut;
 	private JProgressBar progressBar;
 	private JTextArea traza;
+	
+	/** 
+    * @return JMenu con los algoritmos de segementacion
+    */
+    public static JMenu getMenu(final Segmentacion fun){
+    	
+	
+		JMenu menuSegment = new JMenu("Algoritm's Segment");
+		
+		JMenuItem msSegment = new JMenuItem("ms Segment");		
+		msSegment.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {								   				   				   				 
+				FormSegment seg = new FormSegment();
+				FormSegment.main(seg, MainWindow.getPath(), fun);
+				Tracer.insert("*ImageSegment", seg.getImgOut());		   
+			}
+		});
+		menuSegment.add(msSegment); 
+		
+		JMenuItem srmSegment = new JMenuItem("srm Segment");		
+		srmSegment.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {								   				   				   				 
+				System.out.println("Segundo algoritmo de segementacion");		   
+			}
+		});
+		menuSegment.add(srmSegment);
+		
+		return 	menuSegment;	
+    }
 
 	/**
 	 * Launch the application.

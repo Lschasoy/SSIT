@@ -1,9 +1,19 @@
 package matlab;
 
 import javax.swing.JDialog;
+import javax.swing.JMenu;
+import javax.swing.JMenuItem;
+import javax.swing.JOptionPane;
+
+import procesos.Canales;
+
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.awt.image.BufferedImage;
 
+import main.MainWindow;
 import matlabToJavaSC.*;
+import Images.Tracer;
 
 import com.mathworks.toolbox.javabuilder.Images;
 import com.mathworks.toolbox.javabuilder.MWException;
@@ -13,63 +23,107 @@ import com.mathworks.toolbox.javabuilder.MWNumericArray;
 @SuppressWarnings("serial")
 public class ColorSpace extends JDialog {
 
-	private BufferedImage imgHsv;
-    private String cmd = null;
+	private BufferedImage imgOut;        
+    /**
+     * @return: Menu  
+     */
+    
+    public JMenu getMenu(final Espacios espacios){
+    	
+      JMenu cSpace = new JMenu("Color's Space");
+		
+		JMenuItem rgb = new JMenuItem("HSV");		
+		rgb.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {								   				   				   				 
+			if (MainWindow.getFile().exists()){
+		    		Tracer.insert("ImageHSV", toImgHsv(espacios, MainWindow.getPath()));			    						
+		    	    Canales.setCanal("HSV");
+		        }else{ 
+		    		String cad = "Debe guardar la imagen " + MainWindow.getPath() + " antes de cambiar el espacio de color";
+		    		JOptionPane.showMessageDialog(null, cad, "Informacion", JOptionPane.ERROR_MESSAGE);
+		    	}		   
+			}
+		});		
+		cSpace.add(rgb); 
+		
+		
+		JMenuItem lab = new JMenuItem("LAB");		
+		lab.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {								   				   				   				 
+				if (MainWindow.getFile().exists()){
+		    		Tracer.insert("ImageLab", toImgLab(espacios, MainWindow.getPath()));			    						
+		    	    Canales.setCanal("LAB");
+		        }else{ 
+		    		String cad = "Debe guardar la imagen " + MainWindow.getPath() + " antes de cambiar el espacio de color";
+		    		JOptionPane.showMessageDialog(null, cad, "Informacion", JOptionPane.ERROR_MESSAGE);
+		    	}		   
+				  
+			}
+		});		
+		cSpace.add(lab);
+		
+		JMenuItem yCbCr = new JMenuItem("YCbCr");		
+		yCbCr.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {								   				   				   				 
+				if (MainWindow.getFile().exists()){
+		    		Tracer.insert("ImageYCbCr", toImgYCbCr(espacios, MainWindow.getPath()));			    						
+		    	    Canales.setCanal("YCbCr");
+		        }else{ 
+		    		String cad = "Debe guardar la imagen " + MainWindow.getPath() + " antes de cambiar el espacio de color";
+		    		JOptionPane.showMessageDialog(null, cad, "Informacion", JOptionPane.ERROR_MESSAGE);
+		    	}		   			   
+			}
+		});		
+		cSpace.add(yCbCr);
+    	
+		return cSpace; 
+    }
 	
  
 	
-   //========================================================================================
-	public BufferedImage toImgHsv(Espacios esp, String path) {
+ //========================================================================================
+	public BufferedImage toImgHsv(Espacios esp, String pathString) {
+		Object[] result;
 		try {
-		    cmd = "\nRun ColorSpace ...... param: Espacio, String, JTextArea";				
-            Object[] result = esp.convertRgb2hsv(2, path);
-            cmd += "\nFinalizado convertRgb2hsv ................ ok";
-			imgHsv = getBufferedImageFromDeployedComponent(result[1]);
-			cmd += "\nFinalizado getBufferedImageFromDeplyedComponent";
+			result = esp.convertRgb2hsv(2, pathString);					 
+			imgOut = getBufferedImageFromDeployedComponent(result[1]);		
 			kill(result); // -> Kill result							
-			cmd += "\nkill of tmp Object ..................";
+		
 			
 		} catch (MWException e) {		
-			cmd = "\nRun ColorSpace: [ERROR] \n";
+			String cad = "ha ocurrido un error durante la generacion Imagen Hsv";
+    		JOptionPane.showMessageDialog(null, cad, "Error toImgHsv", JOptionPane.ERROR_MESSAGE);
 			
 		}		
-		cmd += "\n.... End of ColorSpace .................. ok\n";		
-		return imgHsv;
+		
+		return imgOut;
     }
 	   //========================================================================================
-   	public BufferedImage toImglab(Espacios esp, String path) {
-   		try {
-   		    cmd = "\nRun ColorSpace ...... param: Espacio, String, JTextArea";				
-               Object[] result = esp.convertRgb2lab(2, path);
-               cmd += "\nFinalizado convertRgb2hsv ................ ok";
-   			imgHsv = getBufferedImageFromDeployedComponent(result[1]);
-   			cmd += "\nFinalizado getBufferedImageFromDeplyedComponent";
-   			kill(result); // -> Kill result							
-   			cmd += "\nkill of tmp Object ..................";
+   	public BufferedImage toImgLab(Espacios esp, String path) {
+   		try {   					
+            Object[] result = esp.convertRgb2lab(2, path);        
+   			imgOut = getBufferedImageFromDeployedComponent(result[1]);
+   			kill(result); // -> Kill result							   			
    			
    		} catch (MWException e) {		
-   			cmd = "\nRun ColorSpace: [ERROR] \n";
+   			String cad = "ha ocurrido un error durante la generacion Imagen Lab";
+    		JOptionPane.showMessageDialog(null, cad, "Error toImgLab", JOptionPane.ERROR_MESSAGE);
    			
    		}		
-   		cmd += "\n.... End of ColorSpace .................. ok\n";   		
-   		return imgHsv;
+   		
+   		return imgOut;
        }
     //========================================================================================
    	public BufferedImage toImgYCbCr(Espacios esp, String path) {
-   		try {
-   		    cmd = "\nRun ColorSpace ...... param: Espacio, String, JTextArea";				
-            Object[] result = esp.convertRgb2ycbcr(2, path);
-            cmd += "\nFinalizado convertRgb2hsv ................ ok";
-   			imgHsv = getBufferedImageFromDeployedComponent(result[1]);
-   			cmd += "\nFinalizado getBufferedImageFromDeplyedComponent";
-   			kill(result); // -> Kill result							
-   			cmd += "\nkill of tmp Object ..................";
-   			
+   		try {   		    			
+            Object[] result = esp.convertRgb2ycbcr(2, path);            
+   			imgOut = getBufferedImageFromDeployedComponent(result[1]);
+   			kill(result); // -> Kill result							   			   			
    		} catch (MWException e) {		
-   			cmd = "\nRun ColorSpace: [ERROR] \n";   			
-   		}		
-   		cmd += "\n.... End of ColorSpace .................. ok\n";   		
-   		return imgHsv;
+   			String cad = "ha ocurrido un error durante la generacion Imagen YCbCr";
+    		JOptionPane.showMessageDialog(null, cad, "Error toImgYCbCr", JOptionPane.ERROR_MESSAGE);   			
+   		}		   		
+   		return imgOut;
        }	
    //========================================================================================
 	public void kill (Object[] result){
@@ -86,4 +140,4 @@ public class ColorSpace extends JDialog {
 	        return resImg;
 	}
 
-}
+}// fin de la clase

@@ -5,10 +5,8 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.image.BufferedImage;
 
-
-import javax.swing.DefaultComboBoxModel;
-import javax.swing.JComboBox;
-import javax.swing.JPanel;
+import javax.swing.JMenu;
+import javax.swing.JMenuItem;
 
 import Images.Tracer;
 import main.Info;
@@ -17,70 +15,74 @@ import main.MainWindow;
 
 public class Canales{
 
-	@SuppressWarnings("rawtypes")
-	private JComboBox cbCanales;
-	
-	private String[] rgb = {"Canales", "canal_R", "canal_G", "canal_B"};
-	private String[] hsv = {"Canales", "canal_H", "canal_S", "canal_V"};
-	private String[] lab = {"Canales", "canal_L", "canal_A", "canal_B"};
-	private String[] YCbCr = {"Canales", "canal_C", "canal_Y", "canal_K"};
-	private BufferedImage imgOut; 
 	
 	
-//====================================================================================================
+	private static String[] rgb = { "canal_R", "canal_G", "canal_B"};
+	private static String[] hsv = { "canal_H", "canal_S", "canal_V"};
+	private static String[] lab = { "canal_L", "canal_A", "canal_B"};
+	private static String[] YCbCr = {"canal_C", "canal_Y", "canal_K"};
 	
-	@SuppressWarnings({ "rawtypes", "unchecked" })
-	public JComboBox init(final JPanel [] canales){
-		System.out.println("Clases Canales - Constructor");
-		cbCanales = new JComboBox();				
-		cbCanales.setBounds(305, 0, 150, 20);
-		cbCanales.setModel(new DefaultComboBoxModel(rgb));		
-		// =========================== Espacio de Colores ====================================		
-		cbCanales.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent arg0) {
-			    if (cbCanales.getSelectedItem().equals(cbCanales.getItemAt(1) .toString())){
-			    	System.out.println("Generando canal: "+ cbCanales.getItemAt(1) .toString());
-			         gCanalR(MainWindow.getCurrentImage().img);			         			         			         			        						 					 					  
-					 Tracer.insert(cbCanales.getItemAt(1) .toString(), imgOut);
-					 Info.msgOut(" Canales ", cbCanales.getItemAt(1) .toString());			       
-			    }   
-			    if (cbCanales.getSelectedItem().equals(cbCanales.getItemAt(2) .toString())){
-			    	System.out.println("Generando canal: "+ cbCanales.getItemAt(2) .toString());
-			         gCanalG(MainWindow.getCurrentImage().img);			         			         			         			        						
-			         Tracer.insert(cbCanales.getItemAt(2) .toString(), imgOut);
-					 Info.msgOut(" Canales ", cbCanales.getItemAt(2) .toString());
-			    }
-			    if (cbCanales.getSelectedItem().equals(cbCanales.getItemAt(3) .toString())){
-			    	System.out.println("Generando canal: "+ cbCanales.getItemAt(3) .toString());
-			         gCanalB(MainWindow.getCurrentImage().img);			         			         			         			        						
-			         Tracer.insert(cbCanales.getItemAt(3) .toString(), imgOut);
-					 Info.msgOut(" Canales ", cbCanales.getItemAt(3) .toString());
-			    }
+	private static BufferedImage imgOut;
+	private static String[] act = rgb;
+	
+	public static JMenu getMenu(){
+				 
+		JMenu menu = new JMenu("Canales");						
+		// ============ CANAL 0 =====================================
+		JMenuItem c0 = new JMenuItem("Canal 1");		
+		c0.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				System.out.println("Generando canal: "+ act[0]);
+		        gCanalR(MainWindow.getCurrentImage().img);			         			         			         			        						 					 					  
+				Tracer.insert(act[0], imgOut);
+			    Info.msgOut(" Canales ",act[0]);			    		  
 			}
-		});	
+		});
+		menu.add(c0);
 		
-		return cbCanales;
-	}
-
-//====================================================================================================
-	@SuppressWarnings({ "rawtypes", "unchecked" })
-	public JComboBox generarComoboBox(String espacio, final BufferedImage img){
-	    System.out.println("GeneradorComboBox: "+ espacio);
+		// ============ CANAL 1 =====================================
+		JMenuItem c1 = new JMenuItem("Canal 2");		
+		c1.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				System.out.println("Generando canal: "+ act[1]);
+		        gCanalG(MainWindow.getCurrentImage().img);			         			         			         			        						 					 					  
+				Tracer.insert(act[1], imgOut);
+			    Info.msgOut(" Canales ",act[1]);			    		  
+			}
+		});
+		menu.add(c1);
+		// ============ CANAL 2 =====================================
+		JMenuItem c2 = new JMenuItem("Canal 3");		
+		c2.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				System.out.println("Generando canal: "+ act[2]);
+		        gCanalB(MainWindow.getCurrentImage().img);			         			         			         			        						 					 					  
+				Tracer.insert(act[2], imgOut);
+			    Info.msgOut(" Canales ",act[2]);			    		  
+			}
+		});
+		menu.add(c2);			
+			
+		return menu;	
+	}		
+//====================================================================================================	
+	public static void setCanal(String espacio){
+	    System.out.println("Canales: Fijar espacio de color: "+ espacio);
 				
 		switch(espacio){
-			case "RGB": cbCanales.setModel(new DefaultComboBoxModel(rgb));
+			case "RGB": act = rgb;
 					   break;	
-			case "HSV": cbCanales.setModel(new DefaultComboBoxModel(hsv));
+			case "HSV": act = hsv;
 				       break;
-			case "LAB": cbCanales.setModel(new DefaultComboBoxModel(lab));
+			case "LAB": act = lab;
 			           break;
-			case "YCbCr": cbCanales.setModel(new DefaultComboBoxModel(YCbCr));
+			case "YCbCr": act = YCbCr; 
 					   break;			
-		}		
-	    return cbCanales;
+		}	
+		
 	}
 //================================================================================================	
-	 public final void gCanalB(BufferedImage image){
+	 public final static void gCanalB(BufferedImage image){
 		 System.out.println("Pintando en el canal B");
 		 imgOut = new BufferedImage(image.getWidth(), image.getHeight(),image.getType());
 		 
@@ -93,7 +95,7 @@ public class Canales{
 		 }	    								
 	 }
 //====================================================================================================
-	 public final void gCanalG(BufferedImage image){
+	 public final static void gCanalG(BufferedImage image){
 		 System.out.println("Pintando en el canal G");
 		 imgOut = new BufferedImage(image.getWidth(), image.getHeight(),image.getType());;
 		 
@@ -107,7 +109,7 @@ public class Canales{
 		 							
 	  }
 //====================================================================================================
-	 public final void gCanalR(BufferedImage image) {
+	 public final static void gCanalR(BufferedImage image) {
 		System.out.println("Pintando en el canal R");
 		imgOut = new BufferedImage(image.getWidth(), image.getHeight(),image.getType());;
 		

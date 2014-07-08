@@ -1,4 +1,5 @@
 package main;
+import java.awt.Image;
 import java.awt.Toolkit;
 import java.awt.image.BufferedImage;
 import java.io.File;
@@ -41,15 +42,20 @@ public class Archivos {
 //=================================================================================	
 	public void saveFile(){
 		
-		fc = new JFileChooser();
-		fc.setDialogTitle("Specify a file to save");   
-		 
-		int userSelection = fc.showSaveDialog(fc);
-		 
-		if (userSelection == JFileChooser.APPROVE_OPTION) {
-		    File fileToSave = fc.getSelectedFile();
-		  
+		Images.Image image = MainWindow.getCurrentImage();
+		MainWindow.chooser.setSelectedFile(image.getFileCompleto());
+		int returnValue = MainWindow.chooser.showSaveDialog(MainWindow.miVentana);
+		if (returnValue == JFileChooser.APPROVE_OPTION) {
+			image.cambiarFile(MainWindow.chooser.getSelectedFile());
+			try {
+				ImageIO.write(image.img, "jpg", image.getFileCompleto());
+				image.saved = true;
+				
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
 		}
+		
 	}
 
 }

@@ -2,13 +2,8 @@ package procesos;
 
 import java.awt.BorderLayout;
 import java.awt.Color;
-import java.awt.Point;
-import java.awt.geom.Point2D;
-import java.awt.geom.Rectangle2D;
 import java.awt.image.BufferedImage;
-import java.text.DecimalFormat;
-import java.text.DecimalFormatSymbols;
-import java.text.NumberFormat;
+
 
 import javax.swing.JPanel;
 
@@ -17,19 +12,14 @@ import org.jfree.chart.ChartMouseEvent;
 import org.jfree.chart.ChartMouseListener;
 import org.jfree.chart.ChartPanel;
 import org.jfree.chart.JFreeChart;
-import org.jfree.chart.axis.CategoryAxis;
-import org.jfree.chart.axis.ValueAxis;
-import org.jfree.chart.entity.CategoryLabelEntity;
+
 import org.jfree.chart.entity.ChartEntity;
-import org.jfree.chart.entity.XYItemEntity;
+
 import org.jfree.chart.plot.CategoryPlot;
 import org.jfree.chart.plot.PlotOrientation;
-import org.jfree.chart.plot.XYPlot;
+
 import org.jfree.chart.renderer.category.BarRenderer;
 import org.jfree.data.category.DefaultCategoryDataset;
-import org.jfree.data.xy.XYDataset;
-import org.jfree.ui.RectangleEdge;
-
 import Images.ImagePanel;
 import Images.Tracer;
  
@@ -43,14 +33,12 @@ public class DibujarGrafica {
      */
 
 	private Histograma ObjHistograma;
-	private int[][] histograma;
-	private int count = 0, x0, y0, x, y;
+	private int[][] histograma;	
 	private Color c1;
 	private BufferedImage newImg;
 	private CategoryPlot plot;
 	
-	double  chartpx = 0.0, chartpy = 0.0;
-	double chartY = 0.0, chartX = 0.0;
+
 	
 	
 	public DibujarGrafica(){
@@ -121,70 +109,55 @@ public class DibujarGrafica {
         
         
         newImg = clona(image);
+   
            
         panel.addChartMouseListener(new ChartMouseListener(){        	
-            public void chartMouseClicked(ChartMouseEvent e){            	
-            	count++;
-            	x = e.getTrigger().getX(); 
-                y = e.getTrigger().getY();            
-                
-                if ((count %2) == 0){
-                  if (HistoInfo.clicked(newImg.getRGB(x0, y0), newImg.getRGB(x, y))){ // Se ha clicked dos veces                    	 
-                	  if (x0 > x ) {int tmp = x; x = x0; x0 = tmp;}
-                	  if (y0 > y ) {int tmp = y; y = y0; y0 = tmp;}                      
-                	  
-		              while (x0 <= x){
-		            	while (y0 <= y){                			 
-		        			 c1 = new Color(newImg.getRGB(x0, y0));                			 
-		        			 pintar(c1,newImg,colorBarras);		        			  
-		        			 y0++;
-		        		 }        
-		        		 x0++;
-		       	     }   
-		              Tracer.insert("*image", newImg);
-                  } // end of if when clicked
-               } // end of if when count == 2
-               else{                                   
-            	  x0 = x;
-            	  y0 = y;   
-            	  String punto = " Click on ("+ x0 +':'+ y0 +") ";
-            	  HistoInfo.click(newImg.getRGB(x0, y0), punto, colorBarras);
-               }                            
+            public void chartMouseClicked(ChartMouseEvent e){            	            	            	            
+                int columna = getColumna(e);
+                if (( columna != -1) && HistoInfo.clicked(columna, histograma[columna], colorBarras)){ // Se ha clicked dos veces                    	                 	  		            		            	 		        			
+		        	  pintar(columna,newImg,colorBarras);		        			  		        			 		        		        		 		       	      
+		              Tracer.insert("*image", newImg); // Generar una nueva imagen 
+                  }      
+                                         
             }
             
 			@Override
 			public void chartMouseMoved(ChartMouseEvent event) {
-		     /* Funcion para capturar la posicion del raton sobre el Histograma */			
-			    int x = event.getTrigger().getX();
-		        int y = event.getTrigger().getY();
-		        ChartEntity entity = event.getEntity();
-		        if (entity != null) {
-		        	String cad = entity.toString();		            
-		        	if (((cad.indexOf("[") + 1 ) != -1) && (cad.indexOf("]") != -1)){ 
-		            	int pos = Integer.parseInt(cad.substring(cad.indexOf("[") + 1, cad.indexOf("]")));
-		            	HistoInfo.posXY(String.valueOf(pos), String.valueOf(histograma[pos]),pos, colorBarras);  	
-		            	System.out.println("Mouse Moved - Columna " + pos + "  Valor: " + histograma[pos] );
-		        	}	
-		        }
-		        else {
-		            System.out.println("Mouse moved: " + x + ", " + y + ": null entity.");
-		        }
-						 			
-			}
+		     /* Funcion para capturar la posicion del raton sobre el Histograma */
+				int columna = getColumna(event);
+				if (columna != -1)
+					HistoInfo.posXY(String.valueOf(columna), String.valueOf(histograma[columna]),columna, colorBarras);
+			}	
         });   
          
         jpHisto.validate();        
         
     }
-  
+ //==========================================================================================================
+    // Funcion: Captura una barra del histograma 
+    public int getColumna(ChartMouseEvent event){
+
+        ChartEntity entity = event.getEntity();
+        if (entity != null) {
+        	String cad = entity.toString();		            
+        	if (((cad.indexOf("[") + 1 ) != -1) && (cad.indexOf("]") != -1)){ 
+            	return Integer.parseInt(cad.substring(cad.indexOf("[") + 1, cad.indexOf("]")));            	  
+            	
+        	}	
+        }
+		return -1;        			 	
+   }
+    	
+    
  //==========================================================================================================        
     public static BufferedImage clona(BufferedImage imagen){
     	BufferedImage copia = new BufferedImage (imagen.getWidth(),imagen.getHeight(),imagen.getType());
     	copia.setData(imagen.getData());
     	return copia;
     }
-    public void pintar (Color c1, final BufferedImage image, final Color colorBarras){
+    public void pintar (int c1, final BufferedImage image, final Color colorBarras){
     	    	       
+    	int valor_en_canal = 0;
     	
          for (int u = 0; u < image.getWidth(); u++){
          	for (int v = 0; v < image.getHeight(); v++){
@@ -193,8 +166,16 @@ public class DibujarGrafica {
          		 int r = c2.getRed();
          		 int b = c2.getBlue();
          		 int g = c2.getGreen();
+         		 // ============ canal ======== 
+	     		 if (colorBarras.equals(Color.RED))                 	            	   
+                      valor_en_canal = r;  	            
+	        	 if (colorBarras.equals(Color.GREEN))                	            	   
+	        		 valor_en_canal = g;
+	        	 if (colorBarras.equals(Color.BLUE))                	            	   
+	        		 valor_en_canal = b;
+	        	  
          		          	  	 
-                 if (c1.getRGB() == c2.getRGB()){              
+                 if (c1 == valor_en_canal){              
              	     image.setRGB(u, v, new Color(0,255,0).getRGB()); // Pintar de verde
              	        
          	     }else{ // Colocar en grises

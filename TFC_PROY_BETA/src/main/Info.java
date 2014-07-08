@@ -18,6 +18,7 @@ public class Info extends JPanel {
 	private static Font font2 = new Font("Serif", Font.PLAIN, 11);
 	//==========================================================================	
 	public Info(){
+		this.setBackground(Color.WHITE);
 		// ========= Inicializamos ==================
 		for (int i = 0; i < etiquetas.length; i++)
 			labels[i] = new JLabel(etiquetas[i]);
