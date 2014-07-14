@@ -1,0 +1,294 @@
+package images;
+import java.awt.Point;
+import java.awt.image.BufferedImage;
+import java.io.File;
+
+import javax.swing.JOptionPane;
+import javax.swing.JPanel;
+
+import channel.DibujarGrafica;
+import main.Info;
+import main.MainWindow;
+
+public class Image {
+
+	private File file;
+	private String prefijo;
+	public String name;
+	
+	public BufferedImage img;
+	public ImagePanel panel;
+	public boolean saved;
+	// Usado para la informacion
+	private ImageInfo info;
+	private long pixelsOut;
+	
+	public String format;        // Atributos para guardar la información de la imagen
+	private static DibujarGrafica dg;
+	
+    
+	
+	
+	public Image(File file,  BufferedImage img, boolean saved, JPanel [] canales) {
+		
+				
+		this.file = file;
+		this.img = img;
+		//this.format = ImageFilter.getExtension(file);
+		if (saved)
+			this.name = file.getName();
+		else
+			this.name = "new";
+		
+		this.saved = saved;
+		panel = new ImagePanel(this);
+		dg = new DibujarGrafica();   //Grafica asociada a cada imagen
+		try {
+			dg.Graficar (img, panel, canales);
+		}catch (Exception e) {
+	        JOptionPane.showMessageDialog(null, "Dibujar Histograma", "[constructor image]", JOptionPane.ERROR_MESSAGE);
+	    }
+		
+		
+	}
+	// myFuncion: Repintar los canales
+	public  void canales(JPanel [] canales){
+		System.out.println("Pintando los canales de " + name);
+		try {
+			dg.Graficar (img, panel, canales);
+		}catch (Exception e) {
+	        JOptionPane.showMessageDialog(null, "Dibujar Histograma", "[constructor image]", JOptionPane.ERROR_MESSAGE);
+	    }  		
+	}
+   		
+    public boolean isIgual (Image img2){
+    	System.out.println(this.name +"  " +img2.name);
+    	if ((this != null) &&(this.name.equals(img2.name)) && (this.saved == img2.saved)) 
+    			return true;
+    	return false;
+    }
+    
+    
+	public File getFileCompleto(){
+		return new File(file.getParent(), prefijo + file.getName());
+	}
+	
+	public File getFileOriginal(){
+		return file;
+	}
+	
+	public void cambiarFile(File file) {
+		if (file.getAbsolutePath().compareTo(getFileCompleto().getAbsolutePath()) == 0){
+			return;
+		}
+		this.file = file;
+	//	this.prefijo = "";
+	//	this.format = ImageFilter.getExtension(file);
+	}
+
+	public Point topLeftRoi() {
+		if (!panel.validRoi()) {
+			return new Point(0, 0);
+		} else {
+			Point topLeft = panel.getTopLeftRoi();
+			return panel.getCoordinate(topLeft.x, topLeft.y);
+		}
+	}
+
+	public boolean validRoi(){
+		return panel.validRoi();
+	}
+	
+	public int widthRoi() {
+		if (!panel.validRoi()) {
+			return img.getWidth();
+		} else {
+			return panel.getBottomRightRoi().x - panel.getTopLeftRoi().x + 1;
+		}
+	}
+
+	public int heightRoi() {
+		if (!panel.validRoi()) {
+			return img.getHeight();
+		} else {
+			return panel.getBottomRightRoi().y - panel.getTopLeftRoi().y + 1;
+		}
+	}
+	
+	public void setPixelsOut(long pixOut) {
+	}
+	// Se usa en class Rotar
+	public static Image crearImagen(int width, int height,Image img, String funcion) {
+		BufferedImage newImg = new BufferedImage(width, height, BufferedImage.TYPE_INT_RGB);
+		Info.msg(funcion,"new", newImg);  
+		return new Image(img.file,newImg, false, MainWindow.canales);
+	}
+	
+
+	public static String getString(int value) {
+		return "R=" + red(value) + ", G=" + green(value) + ", B=" + blue(value);
+	}
+
+	public static int red(int value) {
+		return ((0x0FF0000 & value) >> 16);
+	}
+
+	public static int green(int value) {
+		return ((0x00FF00 & value) >> 8);
+	}
+
+	public static int blue(int value) {
+		return (0x0FF & value);
+	}
+
+	public static double grey(int value) { // Modelo NTSC
+		return (double)0.299 * red(value) + (double)0.587 * green(value) + (double)0.114 * blue(value);
+	}
+
+	public static int rgb(int r, int g, int b) {
+		return (((0x0FF & r) << 16) | ((0x0FF & g) << 8) | (0x0FF & b));
+	}
+
+	public static int rgb(int grey) {
+		return (((0x0FF & grey) << 16) | ((0x0FF & grey) << 8) | (0x0FF & grey));
+	}
+	
+	public static int[] rgb2array(int value, int[] array){
+		array[0] = red(value);
+		array[1] = green(value);
+		array[2] = blue(value);
+		return array;
+	}
+	
+	public static int array2rgb(int[] values){
+		return rgb(values[0], values[1], values[2]);
+	}
+	
+	public static int array2rgb(float[] values){
+		return rgb(Math.round(values[0]), Math.round(values[1]), Math.round(values[2]));
+	}
+    //=======================================================================================================
+	// Informacion de la imagen
+	//=========================================================================================
+	public ImageInfo getInfo() {
+		if ((info == null) || (panel.validRoi())) {
+			ImageInfo inf = new ImageInfo();
+
+			long numPixels = widthRoi() * heightRoi();
+			if (!panel.validRoi()) {
+				numPixels -= pixelsOut; 
+			}
+			
+			Point src = topLeftRoi();
+			for (int x = 0; x < widthRoi(); x++) {
+				for (int y = 0; y < heightRoi(); y++) {
+					int rgbLevel = img.getRGB(src.x + x, src.y + y);
+					int r = red(rgbLevel);
+					int g = green(rgbLevel);
+					int b = blue(rgbLevel);
+					int greyLevel = (int)Math.round(grey(rgbLevel));
+					// Rango dinámico para R
+					if (r > inf.maxR) inf.maxR = r;
+					if (r < inf.minR) inf.minR = r;
+					// Rango dinámico para G
+					if (g > inf.maxG) inf.maxG = g;
+					if (g < inf.minG) inf.minG = g;
+					// Rango dinámico para B
+					if (b > inf.maxB) inf.maxB = b;
+					if (b < inf.minB) inf.minB = b;
+					// Histograma
+					inf.hist[greyLevel]++;
+					inf.histR[r]++;
+					inf.histG[g]++;
+					inf.histB[b]++;
+//					inf.histAc[greyLevel]++;
+//					inf.histAcR[r]++;
+//					inf.histAcG[g]++;
+//					inf.histAcB[b]++;
+					// Brillo
+					inf.brillo += greyLevel;
+					inf.brilloR += r;
+					inf.brilloG += g;
+					inf.brilloB += b;
+					// Contraste
+					// Entropía
+				}
+			}
+			inf.hist[0] -= pixelsOut;
+			inf.histR[0] -= pixelsOut;
+			inf.histG[0] -= pixelsOut;
+			inf.histB[0] -= pixelsOut;
+			
+			// Hallamos los histogramas acumulados
+			for (int i = 0; i < inf.hist.length - 1; i++) {
+				inf.histAc[i] += inf.hist[i];
+				inf.histAc[i+1] += inf.histAc[i];
+				inf.histAcR[i] += inf.histR[i];
+				inf.histAcR[i+1] += inf.histAcR[i];
+				inf.histAcG[i] += inf.histG[i];
+				inf.histAcG[i+1] += inf.histAcG[i];
+				inf.histAcB[i] += inf.histB[i];
+				inf.histAcB[i+1] += inf.histAcB[i];
+			}
+			inf.histAc[255] += inf.hist[255];
+			inf.histAcR[255] += inf.histR[255];
+			inf.histAcG[255] += inf.histG[255];
+			inf.histAcB[255] += inf.histB[255];
+			
+			// Hallamos la media de los valores de gris (brillo) y de color
+			inf.brillo /= numPixels;
+			inf.brilloR /= numPixels;
+			inf.brilloG /= numPixels;
+			inf.brilloB /= numPixels;
+
+			// Hallamos la desviación típica de la imagen (contraste) a partir del histograma
+	        for (int i = 0; i < inf.hist.length; i++) {
+	            inf.contraste += inf.hist[i] * Math.pow((double)(i - inf.brillo), 2);
+	            inf.contR += inf.histR[i] * Math.pow((double)(i - inf.brilloR), 2);
+	            inf.contG += inf.histG[i] * Math.pow((double)(i - inf.brilloG), 2);
+	            inf.contB += inf.histB[i] * Math.pow((double)(i - inf.brilloB), 2);
+	        }
+	        inf.contraste = Math.round((float)Math.sqrt((1/(double)numPixels) * inf.contraste));
+	        inf.contR = Math.round((float)Math.sqrt((1/(double)numPixels) * inf.contR));
+	        inf.contG = Math.round((float)Math.sqrt((1/(double)numPixels) * inf.contG));
+	        inf.contB = Math.round((float)Math.sqrt((1/(double)numPixels) * inf.contB));
+	        
+	        // Calculamos la entropía de la imagen a partir del histograma
+	        inf.entropia = 0;
+	        for(int i = 0; i < inf.hist.length; i++) {
+	            if (inf.hist[i] > 0) {
+	                double prob = ((double)inf.hist[i] / (double)numPixels);
+	                double logProb = Math.log10(prob)/Math.log10(2);
+	                inf.entropia = inf.entropia - (prob*logProb);
+	            }
+	            if (inf.histR[i] > 0) {
+	                double prob = ((double)inf.histR[i] / (double)numPixels);
+	                double logProb = Math.log10(prob)/Math.log10(2);
+	                inf.entR = inf.entR - (prob*logProb);
+	            }
+	            if (inf.histG[i] > 0) {
+	                double prob = ((double)inf.histG[i] / (double)numPixels);
+	                double logProb = Math.log10(prob)/Math.log10(2);
+	                inf.entG = inf.entG - (prob*logProb);
+	            }
+	            if (inf.histB[i] > 0) {
+	                double prob = ((double)inf.histB[i] / (double)numPixels);
+	                double logProb = Math.log10(prob)/Math.log10(2);
+	                inf.entB = inf.entB - (prob*logProb);
+	            }
+	        }
+			
+	        if (info == null) info = inf;
+	        
+			return inf;
+		}
+		else {
+			return info;
+		}
+	}
+    //=========================================================================================	
+	public void resetInfo() {
+		this.info = null;
+		this.getInfo();
+	}
+}

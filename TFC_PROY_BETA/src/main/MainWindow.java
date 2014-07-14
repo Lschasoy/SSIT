@@ -1,27 +1,37 @@
 package main;
+import images.Image;
+import images.ImagePanel;
+
 import java.awt.BorderLayout;
 import java.awt.Dimension;
 import java.awt.EventQueue;
 import java.awt.GridLayout;
 
 
+
+
+
+
 import javax.swing.JFileChooser;
 import javax.swing.JFrame;
 import javax.swing.JMenuBar;
-
 import javax.swing.JProgressBar;
 import javax.swing.JTextArea;
 import javax.swing.JPanel;
 
 import java.io.File;
+
 import javax.swing.JScrollPane;
 import javax.swing.UIManager;
 
 import org.xnap.commons.gui.CloseableTabbedPane;
 
-import Images.Image;
-import Images.ImagePanel;
+import procesos.MenuTools;
 
+
+
+import channel.Canales;
+import channel.HistoInfo;
 
 import com.mathworks.toolbox.javabuilder.MWException;
 
@@ -30,14 +40,13 @@ import matlabToJavaSC.Espacios;
 import matlabToJavaSC.Segmentacion;
 import menus.Abrir;
 import menus.MenuFiles;
-import procesos.Canales;
-import procesos.HistoInfo;
-import tools.MenuTools;
 
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.Insets;
 import java.awt.Font;
+
+import javax.swing.JTabbedPane;
 
 
 public class MainWindow {
@@ -104,6 +113,7 @@ public class MainWindow {
 		espColor = new ColorSpace();
 		msg.append("  Cargando funciones de espacio de color .......... ok\n");
 		jTP = new CloseableTabbedPane(); 		
+		jTP.setTabLayoutPolicy(JTabbedPane.SCROLL_TAB_LAYOUT);
 		jtpMouseClick();	// --> Mouse click pestaña	
 		msg.append("  Instanciando las pestañas: .......... ok\n");progressBar.setValue(600);
 		
@@ -113,10 +123,7 @@ public class MainWindow {
 		msg.append("  Informacion de Histograma: .......... ok\n");progressBar.setValue(700);		
 		miVentana = new JFrame(); initialize();
 	    msg.append(" Configurando ventana principal : .......... ok\n");progressBar.setValue(900);	
-		
-	    new MenuFiles();
-	    msg.append(" Inicializar todos los menus : .......... ok\n");
-	    
+			    	    
 	    Abrir.load(file);
 		msg.append(" Load Imagen: .......... ok\n");
 	    	  		 

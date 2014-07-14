@@ -1,4 +1,4 @@
-package Images;
+package images;
 
 import java.awt.Color;
 import java.awt.Dimension;
@@ -19,7 +19,7 @@ public class ImagePanel extends JPanel implements MouseListener, MouseMotionList
 	
 	private static final long serialVersionUID = 1L;
 	public Image image;
-	public BufferedImage img;
+	public BufferedImage img, imgOut;
 	Dimension imgSize;
 	Point offset;
 
@@ -28,9 +28,7 @@ public class ImagePanel extends JPanel implements MouseListener, MouseMotionList
 	Point begin = null;
 	Point end = null;
 	boolean roiPainted = false;
-	
-	public ImagePanel(){}
-
+		
 	public static Listener listener = Listener.ROI;
 	
 	private enum Listener{
@@ -156,6 +154,8 @@ public class ImagePanel extends JPanel implements MouseListener, MouseMotionList
 		return false;
 	}
 	
+//===================================================================================================
+// Funciones de Mouse	
 	@Override
 	public void mouseDragged(MouseEvent e) {
 		if (listener == Listener.ROI){
@@ -178,8 +178,7 @@ public class ImagePanel extends JPanel implements MouseListener, MouseMotionList
 
 		@Override
 		public void mouseReleased(MouseEvent e) {
-			if (listener == Listener.ROI){
-				System.out.println(">>> mouseReleased: " + e.getX()+' '+e.getY());
+			if (listener == Listener.ROI){				
 				mouseReleasedRoi(e);
 			}
 			if (listener == Listener.PERFIL){
@@ -188,7 +187,17 @@ public class ImagePanel extends JPanel implements MouseListener, MouseMotionList
 		}
 
 		@Override
-		public void mouseClicked(MouseEvent e) {}
+		public void mouseClicked(MouseEvent e) {
+						
+			
+			int width = end.x - begin.x;
+			int height = end.y - begin.y;
+			System.out.println("He hecho click"+ width+' '+ height);
+			if ((width > 15 ) && (height > 15))			
+				Selected.main(width , height, getCoordinate(begin.x, begin.y), img);	
+			begin = null;
+			repaint();
+		}
 
 		@Override
 		public void mouseEntered(MouseEvent e) {}
@@ -197,15 +206,16 @@ public class ImagePanel extends JPanel implements MouseListener, MouseMotionList
 		public void mouseExited(MouseEvent e) {}
 	
 		@Override
-		public void mouseMoved(MouseEvent e) {
-			int x =  e.getX(); //e.getTrigger().getX();
-            int y =  e.getY(); //e.getTrigger().getY(); 
-			Info.posXY(" Image [x: " + String.valueOf(x),", y: " + String.valueOf(y)+"]");
+		public void mouseMoved(MouseEvent e) {					
+            Point po = getCoordinate(e.getX(), e.getY());
+            if (po != null)
+			    Info.posXY(" Image [x: " + String.valueOf(po.x),", y: " + String.valueOf(po.y)+"]");
 		}
 
 		
 	public void mousePressedPerfil(MouseEvent e) {
 		if (getCoordinate(e.getX(), e.getY()) != null){		
+			System.out.println("mousePressedPerfil");
 			begin = e.getPoint();
 			end = begin;
 		}
@@ -215,38 +225,35 @@ public class ImagePanel extends JPanel implements MouseListener, MouseMotionList
 		if (!validRecta()) {			
 			begin = null;
 		}
-		else{
-			//Perfil.nuevaRecta(image, getCoordinate(begin.x, begin.y), getCoordinate(end.x, end.y));
-		}
+		/*else{
+			Perfil.nuevaRecta(image, getCoordinate(begin.x, begin.y), getCoordinate(end.x, end.y));
+		}*/
 	}
 	
 	public void mouseDraggedPerfil(MouseEvent e) {
-		end = bringCloser(e.getPoint());
-		if (validRecta() || roiPainted) {
+		end = bringCloser(e.getPoint());		
+		if (validRecta() || roiPainted) {						
 			repaint();
 		}
 	}
 	
-	
+	// Pintar la zona seleccionada
 	public void mouseDraggedRoi(MouseEvent e) {
 		end = bringCloser(e.getPoint());
-		if (validRoi() || roiPainted) {
+		if (validRoi() || roiPainted) {			
 			repaint();
 		}
 	}
 	// Cuando pinto un rectangulo --> Doy las coordenadas
 	public void mousePressedRoi(MouseEvent e) {
 		
-		begin = bringCloser(e.getPoint());
-		System.out.println("mousePressedRoi");
-		end = begin;
-		
+		begin = bringCloser(e.getPoint());			
+		//end = begin;				
 	}
 
 	public void mouseReleasedRoi(MouseEvent e) {
-		if(!validRoi()) {
-			begin = null;
-			System.out.println("mouseReleasedRoi");
+		if(!validRoi()) {			
+			//begin = null;			
 			repaint();
 		}
 	}

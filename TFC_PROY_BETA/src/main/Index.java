@@ -1,5 +1,7 @@
 package main;
 
+import images.ImageFilter;
+
 import java.awt.BorderLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -7,20 +9,21 @@ import java.awt.event.ActionListener;
 import javax.swing.ImageIcon;
 import javax.swing.JDialog;
 import javax.swing.JFileChooser;
-
 import javax.swing.JMenu;
 import javax.swing.JMenuBar;
 import javax.swing.JMenuItem;
 import javax.swing.JTextArea;
 
-import Images.ImageFilter;
-
 import java.io.File;
 
 
+
 import javax.swing.JProgressBar;
+
 import java.awt.Color;
+
 import javax.swing.JPanel;
+
 import java.awt.FlowLayout;
 
 

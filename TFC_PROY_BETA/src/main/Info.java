@@ -29,6 +29,8 @@ public class Info extends JPanel {
 				labels[i].setFont(font2);
 			else
 				labels[i].setFont(font1);
+			
+			labels[etiquetas.length -2].setFont(font1); // --> Para Pox
 			add(labels[i]);
 		}
 	}

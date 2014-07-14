@@ -1,11 +1,12 @@
 package menus;
 
+import images.Image;
+
 import java.io.IOException;
 
 import javax.imageio.ImageIO;
 import javax.swing.JOptionPane;
 
-import Images.Image;
 import main.MainWindow;
 
 public class Guardar {

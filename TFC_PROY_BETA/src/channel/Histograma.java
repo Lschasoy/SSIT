@@ -1,4 +1,4 @@
-package procesos;
+package channel;
 import java.awt.Color;
 import java.awt.image.BufferedImage;
 

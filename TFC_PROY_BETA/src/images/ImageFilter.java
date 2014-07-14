@@ -1,4 +1,4 @@
-package Images;
+package images;
 import java.io.File;
 
 import javax.swing.filechooser.FileFilter;

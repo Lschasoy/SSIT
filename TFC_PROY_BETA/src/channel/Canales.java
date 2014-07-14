@@ -1,4 +1,6 @@
-package procesos;
+package channel;
+
+import images.Tracer;
 
 import java.awt.Color;
 import java.awt.event.ActionEvent;
@@ -8,7 +10,6 @@ import java.awt.image.BufferedImage;
 import javax.swing.JMenu;
 import javax.swing.JMenuItem;
 
-import Images.Tracer;
 import main.Info;
 import main.MainWindow;
 
@@ -34,7 +35,7 @@ public class Canales{
 			public void actionPerformed(ActionEvent e) {
 				System.out.println("Generando canal: "+ act[0]);
 		        gCanalR(MainWindow.getCurrentImage().img);			         			         			         			        						 					 					  
-				Tracer.insert(act[0], imgOut);
+				Tracer.insert("Channel paint",act[0], imgOut);
 			    Info.msgOut(" Canales ",act[0]);			    		  
 			}
 		});
@@ -46,7 +47,7 @@ public class Canales{
 			public void actionPerformed(ActionEvent e) {
 				System.out.println("Generando canal: "+ act[1]);
 		        gCanalG(MainWindow.getCurrentImage().img);			         			         			         			        						 					 					  
-				Tracer.insert(act[1], imgOut);
+				Tracer.insert("Channel paint",act[1], imgOut);
 			    Info.msgOut(" Canales ",act[1]);			    		  
 			}
 		});
@@ -57,7 +58,7 @@ public class Canales{
 			public void actionPerformed(ActionEvent e) {
 				System.out.println("Generando canal: "+ act[2]);
 		        gCanalB(MainWindow.getCurrentImage().img);			         			         			         			        						 					 					  
-				Tracer.insert(act[2], imgOut);
+				Tracer.insert("Channel paint",act[2], imgOut);
 			    Info.msgOut(" Canales ",act[2]);			    		  
 			}
 		});

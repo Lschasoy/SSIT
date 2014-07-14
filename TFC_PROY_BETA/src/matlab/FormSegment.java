@@ -1,7 +1,8 @@
 package matlab;
 
+import images.Tracer;
+
 import java.awt.BorderLayout;
-import java.awt.Dimension;
 import java.awt.FlowLayout;
 import java.awt.GridLayout;
 
@@ -21,6 +22,7 @@ import javax.swing.SwingConstants;
 
 
 
+
 import java.awt.event.ActionListener;
 import java.awt.event.ActionEvent;
 import java.awt.image.BufferedImage;
@@ -29,8 +31,6 @@ import main.MainWindow;
 import matlabToJavaSC.*;
 
 import javax.swing.JProgressBar;
-
-import Images.Tracer;
 
 
 @SuppressWarnings("serial")
@@ -62,7 +62,7 @@ public class FormSegment extends JDialog {
 			public void actionPerformed(ActionEvent e) {								   				   				   				 
 				FormSegment seg = new FormSegment();
 				FormSegment.main(seg, MainWindow.getPath(), fun);
-				Tracer.insert("*ImageSegment", seg.getImgOut());		   
+				Tracer.insert("MS segement","ImageSegment", seg.getImgOut());		   
 			}
 		});
 		menu.add(msSegment); 

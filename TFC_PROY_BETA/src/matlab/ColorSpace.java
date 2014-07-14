@@ -1,18 +1,19 @@
 package matlab;
 
+import images.Tracer;
+
 import javax.swing.JDialog;
 import javax.swing.JMenu;
 import javax.swing.JMenuItem;
 import javax.swing.JOptionPane;
 
-import procesos.Canales;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.image.BufferedImage;
 
 import main.MainWindow;
 import matlabToJavaSC.*;
-import Images.Tracer;
+import channel.Canales;
 
 import com.mathworks.toolbox.javabuilder.Images;
 import com.mathworks.toolbox.javabuilder.MWException;
@@ -35,7 +36,7 @@ public class ColorSpace extends JDialog {
 		rgb.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {								   				   				   				 
 			if (MainWindow.getFile().exists()){
-		    		Tracer.insert("ImageHSV", toImgHsv(espacios, MainWindow.getPath()));			    						
+		    		Tracer.insert("toImgHsv", "ImageHSV", toImgHsv(espacios, MainWindow.getPath()));			    						
 		    	    Canales.setCanal("HSV");
 		        }else{ 
 		    		String cad = "Debe guardar la imagen " + MainWindow.getPath() + " antes de cambiar el espacio de color";
@@ -50,7 +51,7 @@ public class ColorSpace extends JDialog {
 		lab.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {								   				   				   				 
 				if (MainWindow.getFile().exists()){
-		    		Tracer.insert("ImageLab", toImgLab(espacios, MainWindow.getPath()));			    						
+		    		Tracer.insert("toImgLab","ImageLab", toImgLab(espacios, MainWindow.getPath()));			    						
 		    	    Canales.setCanal("LAB");
 		        }else{ 
 		    		String cad = "Debe guardar la imagen " + MainWindow.getPath() + " antes de cambiar el espacio de color";
@@ -65,7 +66,7 @@ public class ColorSpace extends JDialog {
 		yCbCr.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {								   				   				   				 
 				if (MainWindow.getFile().exists()){
-		    		Tracer.insert("ImageYCbCr", toImgYCbCr(espacios, MainWindow.getPath()));			    						
+		    		Tracer.insert("toImgYCbCr","ImageYCbCr", toImgYCbCr(espacios, MainWindow.getPath()));			    						
 		    	    Canales.setCanal("YCbCr");
 		        }else{ 
 		    		String cad = "Debe guardar la imagen " + MainWindow.getPath() + " antes de cambiar el espacio de color";

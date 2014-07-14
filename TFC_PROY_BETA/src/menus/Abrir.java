@@ -1,5 +1,8 @@
 package menus;
 
+import images.ImageFilter;
+import images.Tracer;
+
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
@@ -10,8 +13,6 @@ import javax.swing.JFileChooser;
 
 import javax.swing.JOptionPane;
 
-import Images.ImageFilter;
-import Images.Tracer;
 import main.MainWindow;
 
 public class Abrir {
@@ -25,7 +26,7 @@ public class Abrir {
 			File file = MainWindow.chooser.getSelectedFile();
 			try {
 				BufferedImage img = ImageIO.read(file);
-				Tracer.insert(file.getName(), img);								
+				Tracer.insert("Simple load",file, img);								
 			} catch (IOException e) {
 				JOptionPane.showMessageDialog(null, "Hubo error durante la carga", "Abrir informacion", JOptionPane.ERROR_MESSAGE);
 			}
@@ -38,14 +39,14 @@ public class Abrir {
 		
 		try {
 			if (file.isFile()){			   
-			   Tracer.insert(file,ImageIO.read(file));			   			  
+			   Tracer.insert("Simple load",file,ImageIO.read(file));			   			  
 			   
 			}else{ //--> Cargamos un direc
 				File []list = file.listFiles();
 				ImageFilter imgFiltro= new ImageFilter();	
 		    	 for (int i = 0; i < list.length; i++ ){
 		    		if (imgFiltro.accept(list[i]) && (list[i].isFile()))
-		    			Tracer.insert(list[i],ImageIO.read(list[i]));		    		    		    		
+		    			Tracer.insert("Multi load", list[i],ImageIO.read(list[i]));		    		    		    		
 		    	 }	
 			}
 		} catch (IOException e) {

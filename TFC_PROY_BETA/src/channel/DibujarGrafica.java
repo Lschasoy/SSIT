@@ -1,8 +1,12 @@
-package procesos;
+package channel;
+
+import images.ImagePanel;
+import images.Tracer;
 
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.image.BufferedImage;
+
 
 
 import javax.swing.JPanel;
@@ -12,16 +16,11 @@ import org.jfree.chart.ChartMouseEvent;
 import org.jfree.chart.ChartMouseListener;
 import org.jfree.chart.ChartPanel;
 import org.jfree.chart.JFreeChart;
-
 import org.jfree.chart.entity.ChartEntity;
-
 import org.jfree.chart.plot.CategoryPlot;
 import org.jfree.chart.plot.PlotOrientation;
-
 import org.jfree.chart.renderer.category.BarRenderer;
 import org.jfree.data.category.DefaultCategoryDataset;
-import Images.ImagePanel;
-import Images.Tracer;
  
 
 public class DibujarGrafica {
@@ -115,7 +114,7 @@ public class DibujarGrafica {
                 int columna = getColumna(e);
                 if (( columna != -1) && HistoInfo.clicked(columna, histograma[columna], colorBarras)){ // Se ha clicked dos veces                    	                 	  		            		            	 		        			
 		        	  pintar(columna,newImg,colorBarras);		        			  		        			 		        		        		 		       	      
-		              Tracer.insert("*image", newImg); // Generar una nueva imagen 
+		              Tracer.insert("Select color","image", newImg); // Generar una nueva imagen 
                   }      
                                          
             }
