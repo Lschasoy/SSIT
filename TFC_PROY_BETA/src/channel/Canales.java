@@ -7,6 +7,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.image.BufferedImage;
 
+import javax.swing.ImageIcon;
 import javax.swing.JMenu;
 import javax.swing.JMenuItem;
 
@@ -28,7 +29,9 @@ public class Canales{
 	
 	public static JMenu getMenu(){
 				 
-		JMenu menu = new JMenu("Canales");						
+		JMenu menu = new JMenu("Canales");	
+		menu.setIcon(new ImageIcon(Canales.class.getResource("/menu.png")));
+		
 		// ============ CANAL 0 =====================================
 		JMenuItem c0 = new JMenuItem("Canal 1");		
 		c0.addActionListener(new ActionListener() {

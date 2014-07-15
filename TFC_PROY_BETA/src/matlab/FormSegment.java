@@ -6,6 +6,7 @@ import java.awt.BorderLayout;
 import java.awt.FlowLayout;
 import java.awt.GridLayout;
 
+import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JDialog;
 import javax.swing.JPanel;
@@ -15,6 +16,7 @@ import javax.swing.JMenuItem;
 import javax.swing.JTextArea;
 import javax.swing.JTextField;
 import javax.swing.SwingConstants;
+
 
 
 
@@ -56,6 +58,7 @@ public class FormSegment extends JDialog {
     	
 	
 		JMenu menu = new JMenu("Algoritm's Segment");
+		menu.setIcon(new ImageIcon(FormSegment.class.getResource("/menu.png")));
 		
 		JMenuItem msSegment = new JMenuItem("ms Segment");		
 		msSegment.addActionListener(new ActionListener() {

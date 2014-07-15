@@ -4,6 +4,7 @@ import images.ImageFilter;
 
 import java.awt.BorderLayout;
 import java.awt.EventQueue;
+import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
@@ -14,6 +15,7 @@ import javax.swing.JLabel;
 import javax.swing.JMenu;
 import javax.swing.JMenuBar;
 import javax.swing.JMenuItem;
+import javax.swing.JScrollPane;
 import javax.swing.JTextArea;
 import javax.swing.UIManager;
 
@@ -26,7 +28,9 @@ import java.awt.FlowLayout;
 import javax.swing.SwingConstants;
 
 import com.mathworks.toolbox.javabuilder.MWException;
+
 import java.awt.Font;
+import javax.swing.ScrollPaneConstants;
 
 
 public class Index extends JDialog {
@@ -91,11 +95,14 @@ public class Index extends JDialog {
 		getContentPane().setLayout(new BorderLayout());
 		getContentPane().add(panelSup(0,0,400,25), BorderLayout.NORTH);
 		
-		panel = new JPanel();
+		panel = new JPanel(new GridLayout(2,1));
 		panel.setBackground(Color.BLACK);
-		FlowLayout flowLayout = (FlowLayout) panel.getLayout();
-		flowLayout.setAlignOnBaseline(true);
-		getContentPane().add(panel, BorderLayout.CENTER);
+		JScrollPane scroll = new JScrollPane();			
+		scroll.setVerticalScrollBarPolicy(ScrollPaneConstants.VERTICAL_SCROLLBAR_NEVER);
+		scroll.setHorizontalScrollBarPolicy(ScrollPaneConstants.HORIZONTAL_SCROLLBAR_NEVER);
+		scroll.setViewportView(panel);
+		
+		getContentPane().add(scroll, BorderLayout.CENTER);
 		
 	    digStart = new JTextArea();	    
 	    digStart.setWrapStyleWord(true);

@@ -2,10 +2,13 @@ package matlab;
 
 import images.Tracer;
 
+import javax.swing.ImageIcon;
 import javax.swing.JDialog;
 import javax.swing.JMenu;
 import javax.swing.JMenuItem;
 import javax.swing.JOptionPane;
+
+import procesos.MenuTools;
 
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -31,6 +34,7 @@ public class ColorSpace extends JDialog {
     public JMenu getMenu(final Espacios espacios){
     	
       JMenu menu = new JMenu("Color's Space");
+      menu.setIcon(new ImageIcon(ColorSpace.class.getResource("/menu.png")));
 		
 		JMenuItem rgb = new JMenuItem("HSV");		
 		rgb.addActionListener(new ActionListener() {

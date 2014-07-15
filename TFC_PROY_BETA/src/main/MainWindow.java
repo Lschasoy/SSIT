@@ -7,8 +7,6 @@ import java.awt.Dimension;
 import java.awt.GridLayout;
 
 
-
-
 import javax.swing.JFileChooser;
 import javax.swing.JFrame;
 import javax.swing.JMenuBar;
@@ -94,11 +92,15 @@ public class MainWindow extends Thread {
 				jTP.setTabLayoutPolicy(JTabbedPane.SCROLL_TAB_LAYOUT);
 				jtpMouseClick();	// --> Mouse click pestaña	
 				msg.append("  Instanciando las pestañas: .......... ok\n");
-				
+												
 				info = new Info();		
 				msg.append("  Instanciando clase de informacion: .......... ok\n");
 				hInfo = new HistoInfo();			
-				msg.append("  Informacion de Histograma: .......... ok\n");		
+				msg.append("  Informacion de Histograma: .......... ok\n");
+				
+				fun = new Segmentacion();
+				msg.append("  Cargando lanzadores de funciones de segementacion: .......... ok\n");
+				
 				miVentana = new JFrame(); initialize();
 			    msg.append(" Configurando ventana principal : .......... ok\n");	
 					    	    
