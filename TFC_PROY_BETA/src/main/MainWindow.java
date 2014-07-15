@@ -4,10 +4,7 @@ import images.ImagePanel;
 
 import java.awt.BorderLayout;
 import java.awt.Dimension;
-import java.awt.EventQueue;
 import java.awt.GridLayout;
-
-
 
 
 
@@ -15,20 +12,13 @@ import java.awt.GridLayout;
 import javax.swing.JFileChooser;
 import javax.swing.JFrame;
 import javax.swing.JMenuBar;
-import javax.swing.JProgressBar;
 import javax.swing.JTextArea;
 import javax.swing.JPanel;
 
 import java.io.File;
-
 import javax.swing.JScrollPane;
-import javax.swing.UIManager;
-
 import org.xnap.commons.gui.CloseableTabbedPane;
-
 import procesos.MenuTools;
-
-
 
 import channel.Canales;
 import channel.HistoInfo;
@@ -49,7 +39,7 @@ import java.awt.Font;
 import javax.swing.JTabbedPane;
 
 
-public class MainWindow {
+public class MainWindow extends Thread {
 	
 	public static JFrame miVentana;
 
@@ -63,29 +53,17 @@ public class MainWindow {
     private Info info;
     private HistoInfo hInfo;
     private ColorSpace espColor;
-    /******************* MAIN  *****************************/	 
-	public static void main(final File file, final JTextArea digStart, final JProgressBar progressBar) {
-		EventQueue.invokeLater(new Runnable() {
-			public void run() {
-				try {					
-					UIManager.setLookAndFeel("com.sun.java.swing.plaf.nimbus.NimbusLookAndFeel");					
-					new MainWindow(file, digStart, progressBar);
-					progressBar.setValue(1000);
-					digStart.append("  Generando ventana principal: .......... FIN");					
-					
-				} catch (Exception e) {
-					e.printStackTrace();
-				}
-			}
-		});		
-	}
-//===================================================================================================================
+    
+
+  
+    //===================================================================================================================
 	/**name: initialize 
 	 * descrip: Configuracion y distribucion de la pantalla principal
 	 */
 	public void initialize(){
+							
+		miVentana.setTitle("--- SSIT V-1.0 ---");
 		
-		miVentana.setTitle("lsch Segementation v1.0");
 		miVentana.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		miVentana.setSize(1140, 680); //->Notocar	
 		miVentana.getContentPane().setLayout(new BorderLayout());
@@ -93,41 +71,47 @@ public class MainWindow {
 		miVentana.getContentPane().add(panelSup(),BorderLayout.PAGE_START);	
 		miVentana.getContentPane().add(MenuTools.getMenu(),BorderLayout.WEST);
 		miVentana.getContentPane().add(jTP);				
-		miVentana.getContentPane().add(pFooter(), BorderLayout.PAGE_END);		
-		
-		//miVentana.setResizable(false);
+		miVentana.getContentPane().add(pFooter(), BorderLayout.PAGE_END);					
 		miVentana.setVisible(true);
-		
-	}
+			
+					
+	}// end initialize
 //===================================================================================================================	
-	public MainWindow(File file, JTextArea msg, JProgressBar progressBar) throws MWException {
+	public void run(File file, JTextArea msg) throws MWException {
 		
-		
-		chooser =  new JFileChooser(); progressBar.setValue(100);
-		msg.append("  Instanciando clase de manipulacion de archivo: .......... ok\n");progressBar.setValue(200);
-		msg.append("  Instanciando Histogramas y canales: .......... ok\n");progressBar.setValue(300);
-		esp = new Espacios();
-		msg.append("  Instanciando Espacios de colores: .......... ok\n");progressBar.setValue(400);
-		fun = new Segmentacion();
-		msg.append("  Cargando lanzadores de funciones de segementacion: .......... ok\n");progressBar.setValue(500);
-		espColor = new ColorSpace();
-		msg.append("  Cargando funciones de espacio de color .......... ok\n");
-		jTP = new CloseableTabbedPane(); 		
-		jTP.setTabLayoutPolicy(JTabbedPane.SCROLL_TAB_LAYOUT);
-		jtpMouseClick();	// --> Mouse click pestaña	
-		msg.append("  Instanciando las pestañas: .......... ok\n");progressBar.setValue(600);
-		
-		info = new Info();		
-		msg.append("  Instanciando clase de informacion: .......... ok\n");progressBar.setValue(700);
-		hInfo = new HistoInfo();			
-		msg.append("  Informacion de Histograma: .......... ok\n");progressBar.setValue(700);		
-		miVentana = new JFrame(); initialize();
-	    msg.append(" Configurando ventana principal : .......... ok\n");progressBar.setValue(900);	
-			    	    
-	    Abrir.load(file);
-		msg.append(" Load Imagen: .......... ok\n");
-	    	  		 
-	}
+		try{
+			synchronized(this){
+				chooser =  new JFileChooser();
+				msg.append("  Instanciando clase de manipulacion de archivo: .......... ok\n");
+				msg.append("  Instanciando Histogramas y canales: .......... ok\n");
+				esp = new Espacios();
+				msg.append("  Instanciando Espacios de colores: .......... ok\n");
+				fun = new Segmentacion();
+				msg.append("  Cargando lanzadores de funciones de segementacion: .......... ok\n");
+				espColor = new ColorSpace();
+				msg.append("  Cargando funciones de espacio de color .......... ok\n");
+				jTP = new CloseableTabbedPane(); 		
+				jTP.setTabLayoutPolicy(JTabbedPane.SCROLL_TAB_LAYOUT);
+				jtpMouseClick();	// --> Mouse click pestaña	
+				msg.append("  Instanciando las pestañas: .......... ok\n");
+				
+				info = new Info();		
+				msg.append("  Instanciando clase de informacion: .......... ok\n");
+				hInfo = new HistoInfo();			
+				msg.append("  Informacion de Histograma: .......... ok\n");		
+				miVentana = new JFrame(); initialize();
+			    msg.append(" Configurando ventana principal : .......... ok\n");	
+					    	    
+			    Abrir.load(file);
+				msg.append(" Load Imagen: .......... ok\n");
+				msg.append(" Initialization end: .......... ok\n");
+				
+				notify();
+			}	
+		} catch (MWException e) {		
+   			System.err.println("[Error]: while run main initialization");
+   		}	  		    	  		 
+	}// end of run
 	 			
 	public JPanel pFooter(){		
 		
@@ -162,8 +146,7 @@ public class MainWindow {
 		JMenuBar barSup = new JMenuBar();					
 		barSup.setFont(new Font("Segoe UI", Font.BOLD, 12));
 		barSup.setMargin(new Insets(2, 0, 2, 0));
-		
-								
+									
 		// ========== Carga de todos los menus ==========================
         barSup.add(MenuFiles.getMenu());           // ==> File Menu        
         barSup.add(FormSegment.getMenu(fun));  // ==> Segmetacion Menu

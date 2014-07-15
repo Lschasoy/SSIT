@@ -89,18 +89,40 @@ public class MenuTools extends JPanel{
 		});			
 		
 		barTools.add(copiar);
-       				
-		// ============== Brillo  ===================================
-		JButton brillo = new JButton();
-		brillo.setIcon(new ImageIcon(MenuTools.class.getResource("/icons/16/idea.png")));
-		brillo.setText("Opacar");
-		brillo.addActionListener(new ActionListener() {
+       								
+		// ============== ESPEJO HORIZONTAL  ===================================
+		JButton espejoH = new JButton();
+		espejoH.setIcon(new ImageIcon(MenuTools.class.getResource("/icons/16/editclear.png")));
+		espejoH.setText("E.Horizontal");
+		espejoH.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent arg0) {	
-				System.out.println("Falta por hacer");
+				EspejoHorizontal.run();
 			}
 		});
-		barTools.add(brillo);
+		barTools.add(espejoH);
 		
+		// ============== ESPEJO VERTICAL  ===================================
+		JButton espejoV = new JButton();
+		
+		espejoV.setText("Esp.Vertical");
+		espejoV.setIcon(new ImageIcon(MenuTools.class.getResource("/icons/16/editclear.png")));
+		espejoV.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent arg0) {	
+				EspejoVertical.run();
+			}
+		});
+		barTools.add(espejoV);
+		
+		// ============== LOGARITMO EXPONICIAL  ===================================
+		JButton logExp = new JButton();
+		logExp.setIcon(new ImageIcon(MenuTools.class.getResource("/javax/swing/plaf/basic/icons/image-delayed.png")));
+		logExp.setText("LogExp img");
+		logExp.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent arg0) {	
+				LogaritmicoExponencial.run();
+			}
+		});
+		barTools.add(logExp);
 		
 	   return barTools;		
 				
