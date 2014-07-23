@@ -7,17 +7,22 @@ import java.awt.Dimension;
 import java.awt.GridLayout;
 
 
+
+
 import javax.swing.JFileChooser;
 import javax.swing.JFrame;
 import javax.swing.JMenuBar;
+import javax.swing.JOptionPane;
 import javax.swing.JTextArea;
 import javax.swing.JPanel;
 
 import java.io.File;
-import javax.swing.JScrollPane;
-import org.xnap.commons.gui.CloseableTabbedPane;
-import procesos.MenuTools;
 
+import javax.swing.JScrollPane;
+
+import org.xnap.commons.gui.CloseableTabbedPane;
+
+import procesos.MenuTools;
 import channel.Canales;
 import channel.HistoInfo;
 
@@ -191,7 +196,15 @@ public class MainWindow extends Thread {
 		});		
 	}
 	//===========================================================================================================
-	public static String getPath (){ return getCurrentImage().getFileOriginal().getAbsolutePath().toString(); }
+	public static String getPath (){		
+		try {
+			return getCurrentImage().getFileOriginal().getAbsolutePath().toString();
+		} catch (Exception e) {
+			String cad = "Debe guardar la imagen antes de cambiar el espacio de color";
+    		JOptionPane.showMessageDialog(null, cad, "Informacion", JOptionPane.ERROR_MESSAGE);
+			return null;
+		}
+	}
 	public static File getFile () {return getCurrentImage().getFileOriginal();}
 	
 	public static Image getCurrentImage() {return getImage(jTP.getSelectedIndex());}

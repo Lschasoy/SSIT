@@ -7,6 +7,8 @@ import java.awt.event.ActionListener;
 
 
 
+
+
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JPanel;
@@ -16,16 +18,26 @@ public class MenuTools extends JPanel{
 	
 	private static final long serialVersionUID = 1L;
 	
-	
 	public static JPanel getMenu(){
 		
 	JPanel barTools = new JPanel();	
 	barTools.setLayout(new GridLayout(9,1));	
 	barTools.setBounds(0, 25, 562, 25);
 	
-
+		//==================== VOLVER =================================== 
+		JButton volver = new JButton ();
+		volver.setIcon(new ImageIcon(MenuTools.class.getResource("/volver.png")));
+		volver.setText(" Volver ");		
+		volver.setBackground(Color.WHITE);
+		volver.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent arg0) {
+				System.out.println("Pulsado el boton volver");			
+			}	
+		});			
+		
+		barTools.add(volver);
 	
-   //==================== Escalar ===================================
+		//==================== Escalar ===================================
 		JButton escalar = new JButton ();
 		escalar.setIcon(new ImageIcon(MenuTools.class.getResource("/escalar.png")));
 		escalar.setBackground(Color.WHITE);
@@ -62,18 +74,7 @@ public class MenuTools extends JPanel{
 		});
 		barTools.add(ajuste);
 							
-		//==================== CORTAR =================================== 
-		JButton cortar = new JButton ();
-		cortar.setIcon(new ImageIcon(MenuTools.class.getResource("/cortar.png")));
-		cortar.setText(" Cortar ");
-		cortar.setBackground(Color.WHITE);
-		cortar.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent arg0) {
-				System.out.println("Pulsado el boton cortar");			
-			}	
-		});			
-		
-		barTools.add(cortar);	
+	
 		// ==================== MUESTREO ===================================
 		JButton muestra = new JButton ();
 		muestra.setIcon(new ImageIcon(MenuTools.class.getResource("/muestra.png")));
@@ -88,7 +89,7 @@ public class MenuTools extends JPanel{
 						
 		//==================== Generar Ruido =================================== 
 		JButton ruido = new JButton ();
-		ruido.setIcon(new ImageIcon(MenuTools.class.getResource("/copy.png")));
+		ruido.setIcon(new ImageIcon(MenuTools.class.getResource("/ruido.png")));
 		ruido.setText("Apli. Ruido");
 		ruido.setBackground(Color.WHITE);
 		ruido.addActionListener(new ActionListener() {

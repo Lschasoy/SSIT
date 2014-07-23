@@ -8,8 +8,6 @@ import javax.swing.JMenu;
 import javax.swing.JMenuItem;
 import javax.swing.JOptionPane;
 
-import procesos.MenuTools;
-
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.image.BufferedImage;
@@ -38,14 +36,10 @@ public class ColorSpace extends JDialog {
 		
 		JMenuItem rgb = new JMenuItem("HSV");		
 		rgb.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent e) {								   				   				   				 
-			if (MainWindow.getFile().exists()){
-		    		Tracer.insert("toImgHsv", "ImageHSV", toImgHsv(espacios, MainWindow.getPath()));			    						
-		    	    Canales.setCanal("HSV");
-		        }else{ 
-		    		String cad = "Debe guardar la imagen " + MainWindow.getPath() + " antes de cambiar el espacio de color";
-		    		JOptionPane.showMessageDialog(null, cad, "Informacion", JOptionPane.ERROR_MESSAGE);
-		    	}		   
+			public void actionPerformed(ActionEvent e) {
+				String path =  MainWindow.getPath();				
+			    Tracer.insert("toImgHsv", "ImageHSV", toImgHsv(espacios, path));
+		    	Canales.setCanal("HSV");
 			}
 		});		
 		menu.add(rgb); 
@@ -54,14 +48,9 @@ public class ColorSpace extends JDialog {
 		JMenuItem lab = new JMenuItem("LAB");		
 		lab.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {								   				   				   				 
-				if (MainWindow.getFile().exists()){
-		    		Tracer.insert("toImgLab","ImageLab", toImgLab(espacios, MainWindow.getPath()));			    						
-		    	    Canales.setCanal("LAB");
-		        }else{ 
-		    		String cad = "Debe guardar la imagen " + MainWindow.getPath() + " antes de cambiar el espacio de color";
-		    		JOptionPane.showMessageDialog(null, cad, "Informacion", JOptionPane.ERROR_MESSAGE);
-		    	}		   
-				  
+				String path =  MainWindow.getPath();
+		        Tracer.insert("toImgLab","ImageLab", toImgLab(espacios, path));			    						
+		    	Canales.setCanal("LAB");		         
 			}
 		});		
 		menu.add(lab);
@@ -69,22 +58,16 @@ public class ColorSpace extends JDialog {
 		JMenuItem yCbCr = new JMenuItem("YCbCr");		
 		yCbCr.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {								   				   				   				 
-				if (MainWindow.getFile().exists()){
-		    		Tracer.insert("toImgYCbCr","ImageYCbCr", toImgYCbCr(espacios, MainWindow.getPath()));			    						
-		    	    Canales.setCanal("YCbCr");
-		        }else{ 
-		    		String cad = "Debe guardar la imagen " + MainWindow.getPath() + " antes de cambiar el espacio de color";
-		    		JOptionPane.showMessageDialog(null, cad, "Informacion", JOptionPane.ERROR_MESSAGE);
-		    	}		   			   
+				String path =  MainWindow.getPath();
+		    	Tracer.insert("toImgYCbCr","ImageYCbCr", toImgYCbCr(espacios, path));			    						
+		    	Canales.setCanal("YCbCr");
+		       		   
 			}
 		});		
 		menu.add(yCbCr);
     	
 		return menu; 
-    }
-	
- 
-	
+    }	 	
  //========================================================================================
 	public BufferedImage toImgHsv(Espacios esp, String pathString) {
 		Object[] result;

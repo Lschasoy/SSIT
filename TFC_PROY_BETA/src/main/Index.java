@@ -1,5 +1,5 @@
 package main;
-
+import com.mathworks.toolbox.javabuilder.MWException;
 import images.ImageFilter;
 
 import java.awt.BorderLayout;
@@ -22,13 +22,7 @@ import javax.swing.UIManager;
 import java.awt.Color;
 
 import javax.swing.JPanel;
-
-import java.awt.FlowLayout;
-
 import javax.swing.SwingConstants;
-
-import com.mathworks.toolbox.javabuilder.MWException;
-
 import java.awt.Font;
 import javax.swing.ScrollPaneConstants;
 
@@ -131,10 +125,10 @@ public class Index extends JDialog {
 	
 	private JMenu menuFile(){
 				
-		JMenu menuFile = new JMenu("File");		
+		JMenu menuFile = new JMenu("Archivo");		
 		
 		//==================== Load Image ===================================
-		JMenuItem cargarImagen = new JMenuItem("Load Image");
+		JMenuItem cargarImagen = new JMenuItem("Cargar Imagen");
 	    cargarImagen.setIcon(new ImageIcon(Index.class.getResource("/open.png")));
 		cargarImagen.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {	
@@ -172,7 +166,7 @@ public class Index extends JDialog {
 		});
 		menuFile.add(cargarImagen); 
 		
-		final JMenuItem exitApp = new JMenuItem("EXIT");
+		final JMenuItem exitApp = new JMenuItem("Salir");
 		exitApp.setIcon(new ImageIcon(Index.class.getResource("/exit.png")));
 		exitApp.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {								   				   				   				 
@@ -187,9 +181,9 @@ public class Index extends JDialog {
  //==========================================================================================
   private JMenu menuHelp(){
 	  
-	  JMenu menuHelp = new JMenu("Help");
+	  JMenu menuHelp = new JMenu("Ayuda");
 		//==================== Load Image ===================================
-		final JMenuItem welcome = new JMenuItem("Welcome");		
+		final JMenuItem welcome = new JMenuItem("Bienvenido");		
 		welcome.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {				
 				panel.remove(lb_bg);			
@@ -200,7 +194,7 @@ public class Index extends JDialog {
 		});
 		menuHelp.add(welcome); 
 		
-		JMenuItem about = new JMenuItem("About");		
+		JMenuItem about = new JMenuItem("Informacion");		
 		about.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {				
 				panel.remove(lb_bg);			
@@ -215,9 +209,9 @@ public class Index extends JDialog {
 //==========================================================================================
   private JMenu menuBatch(){
 	  
-	  JMenu menuBatch = new JMenu("Batch");
+	  JMenu menuBatch = new JMenu("Por lote");
 		//==================== Load Image ===================================
-		JMenuItem loadDir = new JMenuItem("Load Directory");		
+		JMenuItem loadDir = new JMenuItem("Cargar");		
 		loadDir.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {								   				   				   				 
 					
@@ -256,7 +250,7 @@ public class Index extends JDialog {
 		});
 		menuBatch.add(loadDir); 
 
-		JMenuItem segDir = new JMenuItem("Segments a Directory");		
+		JMenuItem segDir = new JMenuItem("Segmentar");		
 		segDir.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {								   				   				   				 
 				System.out.println("Segments a Directory ");									
